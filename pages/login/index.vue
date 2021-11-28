@@ -4,7 +4,7 @@
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
-            <form @submit.prevent="login()">
+            <form @submit.prevent="Sign()">
               <v-card class="elevation-12">
                 <v-toolbar dark color="primary">
                   <v-toolbar-title>Login form</v-toolbar-title>
@@ -66,13 +66,39 @@ export default {
   },
 
   methods: {
-    async login() {
-      this.$auth.loginWith("laravelJWT", {
-        data: {
-          email: this.email,
-          password: this.password,
-        },
-      });
+    async Sign() {
+      try {
+        await this.$auth
+          .loginWith("local", {
+            data: {
+              email: this.email,
+              password: this.password,
+            },
+          })
+          .then(() => {
+            this.$swal({
+              position: "center",
+              icon: "success",
+              title: "ยินดีต้อนรับเข้าสู่ระบบ",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            this.$router.push("/");
+          });
+      } catch (error) {
+        console.log(error);
+        this.$swal({
+          icon: "error",
+          title: "Oops...",
+          text: "Invalid username or password !",
+          confirmButtonText: `OK`,
+        }).then((item) => {
+          if (item.isConfirmed) {
+            this.email = "";
+            this.password = "";
+          }
+        });
+      }
     },
   },
 };

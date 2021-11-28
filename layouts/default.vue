@@ -1,12 +1,11 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
+    <v-app-bar color="white" app>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title v-text="title" />
+      <v-spacer />
+    </v-app-bar>
+    <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -24,21 +23,16 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar color="white" :clipped-left="clipped" fixed app flat>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-    </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
       </v-container>
     </v-main>
 
-    <v-footer :absolute="!fixed" app>
+    <!-- <v-footer :absolute="!fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
@@ -48,9 +42,7 @@ export default {
 
   data() {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
+      drawer: true,
       items: [
         {
           icon: "mdi-monitor-dashboard",
@@ -78,9 +70,6 @@ export default {
           to: "/supplier",
         },
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
       title: "ระบบสต๊อกสินค้า",
     };
   },

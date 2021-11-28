@@ -61,52 +61,58 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios    
     '@nuxtjs/axios',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
+    'nuxt-sweetalert2'
   ],
 
 
   auth: {
     strategies: {
-      'laravelJWT': {
-        provider: 'laravel/jwt',
-        url: base_url,
-        endpoints: {
-
-        },
+      local: {
         token: {
-          property: 'access_token',
-          maxAge: 60 * 60
+          property: "access_token",
+          required: true,
+          type: 'Bearer'
         },
-        refreshToken: {
-          maxAge: 20160 * 60
+        user: {
+          property: "user",
+          autoFetch: true
         },
-      },
+        endpoints: {
+          login: {
+            url: `${base_url}/api/auth/login`,
+            method: "post",
+            propertyName: "access_token"
+          },
+          logout: false,
+          user: {
+            url: `${base_url}/api/auth/user-profile`,
+            method: "get",
+            propertyName: false
+          }
+        },
+        autoFetchUser: true
+      }
     },
-
     redirect: {
-      login: '/login',
-      logout: '/',
-      callback: '/login',
-      home: '/'
+      login: "/login",
+      logout: "/",
+      callback: "/login",
+      home: "/"
     }
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    proxy: true
+    baseUrl: base_url,
+    proxyHeaders: false,
+    credentials: false,
+    cors: true
   },
-  proxy: {
-    '/laravel': {
-      target: 'http://localhost:62398',
-      pathRewrite: {
-        '^/laravel': '/'
-      }
-    }
-  },
-
   router: {
     middleware: ['auth']
   },
+
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
