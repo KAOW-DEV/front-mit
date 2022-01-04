@@ -109,9 +109,9 @@ export default {
     credentials: false,
     cors: true
   },
-  router: {
-    middleware: ['auth']
-  },
+  // router: {
+  //   middleware: ['auth']
+  // },
 
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

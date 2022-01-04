@@ -38,21 +38,34 @@
 
 <script>
 export default {
-  middleware: "auth",
-
   data() {
     return {
       drawer: true,
       items: [
         {
           icon: "mdi-monitor-dashboard",
-          title: "Dashboard",
-          to: "/dashboard",
+          title: "ข้อมูลลูกค้า",
+          to: "/customers",
         },
         {
           icon: "mdi-archive-search",
-          title: "สต๊อกสินค้า",
+          title: "รายละเอียดสินค้า",
           to: "/stock",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบส่งสินค้าชั่วคราว",
+          to: "/received",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบรับเงินชั่วคราว",
+          to: "/received",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบส่งสินค้า/บิลเงินสด",
+          to: "/received",
         },
         {
           icon: "mdi-package-down",
@@ -64,11 +77,11 @@ export default {
           title: "เบิก-จ่าย",
           to: "/pay",
         },
-        {
-          icon: "mdi-account-group",
-          title: "ผู้ผลิต",
-          to: "/supplier",
-        },
+        // {
+        //   icon: "mdi-account-group",
+        //   title: "ผู้ผลิต",
+        //   to: "/supplier",
+        // },
       ],
       title: "ระบบสต๊อกสินค้า",
     };
