@@ -1,6 +1,17 @@
 <template>
-  <div class="mt-2">
+  <div class="mt-2 mx-2">
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="90"></v-progress-circular>
+    </v-overlay>
+
     <v-card>
+      <v-toolbar flat color="primary" dark>
+        <h4><v-icon left>mdi-format-list-bulleted</v-icon> รานการสินค้า</h4>
+        <v-spacer></v-spacer>
+        <div class="mt-5">
+          <v-switch label="รายละเอียดเพิ่มเติม" v-model="show_more_detail"></v-switch>
+        </div>
+      </v-toolbar>
       <v-row>
         <v-col>
           <v-data-table :headers="header_table"></v-data-table>
@@ -34,25 +45,32 @@ export default {
   },
   data() {
     return {
+      overlay: true,
       dialog_product_detail: false,
 
+      // config 
+      show_more_detail: false,
+
+      // table 
       header_table: [
         {
           text: "รหัสสินค้า",
         },
       ],
+
+      list_product: [],
     };
   },
   methods: {
-    async get_list_stock() {
-      await this.$axios.get("/products")
-      .then(res_stock => {
-        console.log(res_stock.data);
-      })
+    async get_list_product() {
+      await this.$axios.get("/products").then((res_product) => {
+        this.list_product = res_product.data;
+        this.overlay = false;
+      });
     },
   },
   created() {
-    this.get_list_stock();
-  }
+    this.get_list_product();
+  },
 };
 </script>
