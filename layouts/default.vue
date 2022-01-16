@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  middleware: 'auth',
+  middleware: "auth",
   data() {
     return {
       drawer: true,
@@ -52,17 +52,17 @@ export default {
         {
           icon: "mdi-package-down",
           title: "ใบส่งสินค้าชั่วคราว",
-          to: "/received",
+          to: "/",
         },
         {
           icon: "mdi-package-down",
           title: "ใบรับเงินชั่วคราว",
-          to: "/received",
+          to: "/",
         },
         {
           icon: "mdi-package-down",
           title: "ใบส่งสินค้า/บิลเงินสด",
-          to: "/received",
+          to: "/",
         },
         {
           icon: "mdi-package-down",
