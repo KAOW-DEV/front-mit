@@ -51,6 +51,7 @@ export default {
       { text: "Protein (g)", value: "protein" },
       { text: "Actions", value: "actions", sortable: false },
     ],
+
   }),
 
   created() {
