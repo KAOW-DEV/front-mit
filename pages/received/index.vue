@@ -1,18 +1,19 @@
 <template>
-  <v-container grid-list-lg>
+  <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <v-btn color="success" class="float-end">
-          <v-icon>mdi-plus</v-icon>
+        <v-btn color="success" class="float-end" tile>
+          <v-icon>mdi-plus</v-icon>&nbsp;sเปิดบิลรับ
         </v-btn>
       </v-col>
     </v-row>
+
     <v-row class="mt-n2">
       <v-col cols="12">
-        <v-data-table :headers="headers" :items="items_product">
+        <v-data-table :headers="headers" :items="items_stock_receiveds">
           <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>รายละเอียดสินค้า</v-toolbar-title>
+            <v-toolbar flat color="green" dark>
+              <v-toolbar-title>รับเข้า</v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
           </template>
@@ -33,7 +34,13 @@
 
 
 <script>
+// import dailogInsert from "../../components/received/dailogInsert";
+
 export default {
+  // components: {
+  //   dailogInsert,
+  // },
+
   data: () => ({
     dialog_insert: false,
     dialog_update: false,
@@ -51,6 +58,9 @@ export default {
       { text: "Protein (g)", value: "protein" },
       { text: "Actions", value: "actions", sortable: false },
     ],
+
+    items_stock_receiveds: [],
+    list_product: [],
   }),
 
   created() {
@@ -58,7 +68,12 @@ export default {
   },
 
   methods: {
-    async get_products() {},
+    async get_products() {
+      await this.$axios.get("/stock-receiveds").then((res) => {
+        this.items_stock_receiveds = res.data;
+        console.log("items_stock_receiveds", this.items_stock_receiveds);
+      });
+    },
   },
 };
 </script>
