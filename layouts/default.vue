@@ -5,7 +5,7 @@
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" app>
+    <v-navigation-drawer v-model="drawer" app style="height: 100%">
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -46,8 +46,8 @@ export default {
         },
         {
           icon: "mdi-archive-search",
-          title: "รายละเอียดสินค้า",
-          to: "/stock",
+          title: "รายการสินค้า",
+          to: "/stock_list",
         },
         {
           icon: "mdi-package-down",
@@ -85,3 +85,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#app {
+  zoom: 80%;
+}
+</style>
