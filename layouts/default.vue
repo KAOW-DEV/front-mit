@@ -47,7 +47,7 @@ export default {
         {
           icon: "mdi-archive-search",
           title: "รายการสินค้า",
-          to: "/stock_list",
+          to: "/product_list",
         },
         {
           icon: "mdi-package-down",

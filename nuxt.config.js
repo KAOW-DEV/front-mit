@@ -5,7 +5,7 @@ const base_url = "http://localhost:1337/api";
 export default {
   // Base url
   env: {
-    baseUrl: process.env.BASE_URL || "http://localhost:1337/api",
+    baseUrl: base_url,
   },
   target: "static",
   ssr: false,
@@ -87,13 +87,13 @@ export default {
     },
   },
 
-  // // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  // axios: {
-  //   baseUrl: base_url,
-  //   proxyHeaders: false,
-  //   credentials: false,
-  //   cors: true,
-  // },
+  // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  axios: {
+    baseUrl: base_url,
+    proxyHeaders: false,
+    credentials: false,
+    cors: true,
+  },
   // // router: {
   // //   middleware: ['auth']
   // // },

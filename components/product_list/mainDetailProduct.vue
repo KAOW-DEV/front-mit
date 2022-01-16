@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="pa-2">
+    <!-- <v-card class="pa-2">
       <v-row>
         <v-col cols="8">
           <v-text-field outlined label="ค้นหา"></v-text-field>
@@ -14,7 +14,7 @@
           >
         </v-col>
       </v-row>
-    </v-card>
+    </v-card> -->
 
     <v-card class="mt-2">
       <v-tabs v-model="select_tabs" align-with-title>
@@ -32,10 +32,12 @@
 export default {
   data() {
     return {
+      base_api: process.env.baseUrl,
       select_tabs: null,
 
       item_taps: ["รายละเอียดสินค้า", "หน่วยซื้อขาย"],
     };
   },
+  
 };
 </script>
