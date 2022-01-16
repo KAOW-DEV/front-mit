@@ -74,11 +74,6 @@ export default {
           title: "เบิก-จ่าย",
           to: "/pay",
         },
-        // {
-        //   icon: "mdi-account-group",
-        //   title: "ผู้ผลิต",
-        //   to: "/supplier",
-        // },
       ],
       title: "ระบบสต๊อกสินค้า",
     };
