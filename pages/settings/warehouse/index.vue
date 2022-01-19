@@ -1,7 +1,11 @@
 <template>
-  <div>
-      <mainWarehouse></mainWarehouse>
-  </div>
+  <v-layout column class="justify-center align-center">
+    <v-flex xs12 sm4 pa-2 ma-2>
+      <v-card class="pa-2 ma-2>">
+        <mainWarehouse></mainWarehouse>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -11,6 +15,7 @@
       mainWarehouse,
     }
   }
+
 </script>
 
 <style>

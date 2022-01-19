@@ -1,6 +1,6 @@
 import colors from "vuetify/es5/util/colors";
 
-const base_url = "http://localhost:1337/api";
+const base_url = "http://localhost:1337";
 
 export default {
   // Base url
@@ -64,7 +64,7 @@ export default {
     // https://go.nuxtjs.dev/axios
     "@nuxtjs/axios",
     "@nuxtjs/auth",
-    "nuxt-sweetalert2",
+    "vue-sweetalert2/nuxt",
   ],
 
   auth: {
@@ -72,14 +72,15 @@ export default {
       local: {
         endpoints: {
           login: {
-            url: base_url + "/auth/local",
-            method: "post",
-            propertyName: "jwt",
+            url: `${base_url}/auth/local`,
+            method: 'post',
+            propertyName: 'jwt'
           },
+          logout: false,
           user: {
-            url: "users/me",
-            method: "get",
-            propertyName: false,
+            url: `${base_url}/users/me`,
+            method: 'get',
+            propertyName: false
           },
           logout: false,
         },
@@ -94,9 +95,9 @@ export default {
     credentials: false,
     cors: true,
   },
-  // // router: {
-  // //   middleware: ['auth']
-  // // },
+  router: {
+    middleware: ['auth']
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
