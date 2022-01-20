@@ -9,18 +9,26 @@
         <h4><v-icon left>mdi-format-list-bulleted</v-icon> รานการสินค้า</h4>
         <v-spacer></v-spacer>
         <div class="mt-5">
-          <v-switch label="รายละเอียดเพิ่มเติม" v-model="show_more_detail"></v-switch>
+          <v-switch
+            label="รายละเอียดเพิ่มเติม"
+            v-model="show_more_detail"
+            @change="change_show_more_detail"
+          ></v-switch>
         </div>
       </v-toolbar>
       <v-row>
         <v-col>
-          <v-data-table :headers="header_table"></v-data-table>
+          <v-data-table
+            :headers="header_table"
+            :items="list_product_data"
+            @dblclick:row="open_dialog_product_detail"
+          ></v-data-table>
         </v-col>
       </v-row>
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialog_product_detail">
+    <v-dialog v-model="dialog_product_detail" width="500">
       <v-card class="overflow-hidden">
         <v-toolbar flat color="primary" dark>
           <h3><v-icon left>mdi-note-text-outline</v-icon> ข้อมูลสินค้า</h3>
@@ -46,30 +54,52 @@ export default {
   data() {
     return {
       overlay: true,
-      dialog_product_detail: false,
+      dialog_product_detail: true,
 
-      // config 
+      // config
       show_more_detail: false,
 
-      // table 
-      header_table: [
-        {
-          text: "รหัสสินค้า",
-        },
-      ],
+      // table
+      header_table: [],
 
-      list_product: [],
+      list_product_data: [],
     };
   },
   methods: {
+    // dailog methods
+    open_dialog_product_detail() {
+      this.dialog_product_detail = true;
+    },
+
+    // get data
     async get_list_product() {
       await this.$axios.get("/products").then((res_product) => {
-        this.list_product = res_product.data;
+        console.log(res_product.data);
+        this.list_product_data = res_product.data;
         this.overlay = false;
       });
     },
+
+    // change methode
+    change_show_more_detail() {
+      if (this.show_more_detail == false) {
+        this.header_table = [
+          {
+            text: "รหัสสินค้า",
+            value: "barcode",
+          },
+          {
+            text: "รายละเอียดสินค้า",
+            value: "product_name",
+          },
+        ];
+      } else {
+        this.header_table = [];
+      }
+    },
   },
   created() {
+    this.change_show_more_detail();
     this.get_list_product();
   },
 };
