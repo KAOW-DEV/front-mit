@@ -28,12 +28,12 @@
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialog_product_detail" width="500">
+    <v-dialog v-model="dialog_product_detail" width="1000" persistent>
       <v-card class="overflow-hidden">
         <v-toolbar flat color="primary" dark>
           <h3><v-icon left>mdi-note-text-outline</v-icon> ข้อมูลสินค้า</h3>
           <v-spacer></v-spacer>
-          <v-btn icon><v-icon>mdi</v-icon></v-btn>
+          <v-btn icon @click="dialog_product_detail = false"><v-icon>mdi-close</v-icon></v-btn>
         </v-toolbar>
         <v-row>
           <v-col>

@@ -1,41 +1,62 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md4>
-            <form @submit.prevent="Sign()">
-              <v-card class="elevation-12">
-                <v-toolbar dark color="primary">
-                  <v-toolbar-title>Login form</v-toolbar-title>
-                </v-toolbar>
-                <v-card-text>
-                  <v-text-field
-                    v-model="email"
-                    label="E-mail or Username"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="show3 ? 'text' : 'password'"
-                    label="password"
-                    v-model="password"
-                    class="input-group--focused"
-                    @click:append="show3 = !show3"
-                    required
-                  ></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" type="submit">Login</v-btn>
-                </v-card-actions>
-              </v-card>
-            </form>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-content>
-  </v-app>
+  <v-container fill-height>
+    <v-row justify="center" align="center">
+      <v-col cols="12" sm="5" md="5">
+        <v-card class="pa-5 rounded-xl" elevation="12">
+          <form @submit.prevent="Sign">
+            <h1 class="text-center">
+              <v-icon>mdi-login-variant</v-icon> Sign In
+            </h1>
+            <v-divider class="my-5"></v-divider>
+            <v-row class="mb-n5">
+              <v-col cols="12">
+                <h4>Username or Email</h4>
+                <v-text-field
+                  outlined
+                  placeholder="Enter Username or Email"
+                  class="rounded-pill"
+                  prepend-icon="mdi-account"
+                  :disabled="text_field_disbled"
+                  required
+                  v-model="email"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row class="mt-n5">
+              <v-col cols="12">
+                <h4>Password</h4>
+                <v-text-field
+                  outlined
+                  placeholder="Password"
+                  class="rounded-pill"
+                  required
+                  label="Enter password"
+                  prepend-icon="mdi-lock"
+                  :disabled="text_field_disbled"
+                  :append-icon="value ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append="() => (value = !value)"
+                  :type="value ? 'password' : 'text'"
+                  v-model="password"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-card-actions>
+              <v-btn
+                class="css_botton ml-auto"
+                type="submit"
+                dark
+                elevation="0"
+                large
+                :loading="loading_btn"
+              >
+                Login
+              </v-btn>
+            </v-card-actions>
+          </form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -43,20 +64,20 @@ export default {
   layout: "login",
   data() {
     return {
-      email: null,
-
       show3: false,
-      password: "",
-      rules_password: {
-        required: (value) => !!value || "Required.",
-        min: (v) => v.length >= 8 || "Min 8 characters",
-        emailMatch: () => `The email and password you entered don't match`,
-      },
+      value: String,
+      text_field_disbled: false,
+      loading_btn: false,
+
+      email: null,
+      password: null,
     };
   },
 
   methods: {
     async Sign() {
+      this.text_field_disbled = true;
+      this.loading_btn = true;
       try {
         await this.$auth
           .loginWith("local", {
@@ -76,17 +97,15 @@ export default {
             this.$router.push("/");
           });
       } catch (error) {
-        console.log(error);
+        this.password = null;
+        this.text_field_disbled = false;
+        this.loading_btn = false;
+
         this.$swal({
           icon: "error",
           title: "Oops...",
-          text: "Invalid username or password !",
+          html: "<p>Invalid username or password ! </p>",
           confirmButtonText: `OK`,
-        }).then((item) => {
-          if (item.isConfirmed) {
-            this.email = "";
-            this.password = "";
-          }
         });
       }
     },
@@ -94,4 +113,57 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+button {
+  text-decoration: none;
+  /* position: absolute; */
+  border: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #fff;
+  width: 9em;
+  height: 3em;
+  line-height: 2em;
+  text-align: center;
+  background: linear-gradient(90deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
+  background-size: 300%;
+  border-radius: 30px;
+  z-index: 1;
+}
+
+button:hover {
+  animation: ani 8s linear infinite;
+  border: none;
+}
+
+@keyframes ani {
+  0% {
+    background-position: 0%;
+  }
+
+  100% {
+    background-position: 400%;
+  }
+}
+
+button:before {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  z-index: -1;
+  background: linear-gradient(90deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
+  background-size: 400%;
+  border-radius: 35px;
+  transition: 1s;
+}
+
+button:hover::before {
+  filter: blur(20px);
+}
+
+button:active {
+  background: linear-gradient(32deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
+}
+</style>
