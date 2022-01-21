@@ -5,13 +5,14 @@
         <v-toolbar-title>จัดการคลังสินค้า</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
               เพิ่มคลังสินค้า
             </v-btn>
           </template>
           <v-card>
+            <form @submit.prevent="save()">
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
@@ -20,7 +21,7 @@
               <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field v-model="editedItem.warehouse_name" label="ชื่อคลังสินค้า"></v-text-field>
+                    <v-text-field v-model="editedItem.warehouse_name" required label="ชื่อคลังสินค้า"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -31,10 +32,11 @@
               <v-btn color="red" text @click="close">
                 ยกเลิก
               </v-btn>
-              <v-btn color="blue darken-1" text @click="save()">
+              <v-btn color="blue darken-1" text type="submit">
                 ยืนยัน
               </v-btn>
             </v-card-actions>
+            </form>
           </v-card>
         </v-dialog>
       </v-toolbar>
