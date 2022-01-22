@@ -1,64 +1,70 @@
 <template>
-  <v-data-table :headers="headers" :items="rowData" sort-by="id" class="elevation-0">
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>จัดการหมวดหมู่สินค้า</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" width="600px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              เพิ่มหมวดหมู่สินค้า
-            </v-btn>
-          </template>
-          <v-card>
-            <form @submit.prevent="save()">
-              <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-text-field v-model="editedItem.category_name" required label="ชื่อหมวดหมู่สินค้า">
-                      </v-text-field>
-                    </v-col>
-                    <!-- <v-col cols="12">
+  <div>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-data-table :headers="headers" :items="rowData" sort-by="id" class="elevation-0">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>จัดการหมวดหมู่สินค้า</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" width="600px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                เพิ่มหมวดหมู่สินค้า
+              </v-btn>
+            </template>
+            <v-card>
+              <form @submit.prevent="save()">
+                <v-card-title>
+                  <span class="text-h5">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field v-model="editedItem.category_name" required label="ชื่อหมวดหมู่สินค้า">
+                        </v-text-field>
+                      </v-col>
+                      <!-- <v-col cols="12">
                       <v-select :items="groupItems" v-model="editedItem.groups" required item-text="group_name"
                         item-value="id" label="กลุ่มสินค้า"></v-select>
                     </v-col> -->
-                  </v-row>
-                </v-container>
-              </v-card-text>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="red" text @click="close">
-                  ยกเลิก
-                </v-btn>
-                <v-btn color="blue darken-1" text type="submit">
-                  ยืนยัน
-                </v-btn>
-              </v-card-actions>
-            </form>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon small @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        Reset
-      </v-btn>
-    </template>
-  </v-data-table>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="red" text @click="close">
+                    ยกเลิก
+                  </v-btn>
+                  <v-btn color="blue darken-1" text type="submit">
+                    ยืนยัน
+                  </v-btn>
+                </v-card-actions>
+              </form>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+        <v-icon small @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
+      <template v-slot:no-data>
+        <v-btn color="primary" @click="initialize">
+          Reset
+        </v-btn>
+      </template>
+    </v-data-table>
+  </div>
+
 </template>
 
 <script>

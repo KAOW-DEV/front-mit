@@ -2,10 +2,10 @@
   <div class=" justify-center align-center">
     <!-- <v-layout column class="justify-center align-center"> -->
     <!-- <v-flex xs12 sm4 pa-2 ma-2> -->
-    <v-card class="pa-2 ma-2>">
+    <v-card class="pa-2 ma-2" elevation="2">
       <searchCustomer></searchCustomer>
     </v-card>
-    <v-card class="mt-5 ma-2>">
+    <v-card class="mt-5 ma-2" elevation="0">
       <mainCustomer></mainCustomer>
     </v-card>
     <!-- </v-flex> -->
