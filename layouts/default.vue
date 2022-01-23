@@ -116,8 +116,8 @@ export default {
       users: [
         {
           icon: "mdi-package-up",
-          title: "categoreis",
-          to: "/settings/categoreis",
+          title: "users",
+          to: "/settings/users",
         },
       ],
       items: [
