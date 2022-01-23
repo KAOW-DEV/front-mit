@@ -3,11 +3,14 @@
     <v-overlay :value="overlay">
       <v-progress-circular indeterminate size="90"></v-progress-circular>
     </v-overlay>
-
+    <v-card class="pa-2 ma-2" elevation="2">
+      <searchProduct></searchProduct>
+    </v-card>
     <v-card>
       <v-toolbar flat color="primary" dark>
         <h4><v-icon left>mdi-format-list-bulleted</v-icon> รานการสินค้า</h4>
-        <v-spacer></v-spacer>
+        <v-spacer>
+        </v-spacer>
         <div class="mt-5">
           <v-switch
             label="รายละเอียดเพิ่มเติม"
@@ -19,12 +22,12 @@
       <v-row>
         <v-col>
           <v-data-table
+          class="row-pointer"
             :headers="header_table"
             :items="list_product_data"
             @dblclick:row="open_dialog_product_detail"
           >
           <template>
-            
           </template>
           </v-data-table>
         </v-col>
@@ -51,9 +54,11 @@
 
 <script>
 import mainDetailProduct from "../../components/product_list/mainDetailProduct";
+import searchProduct from "../../components/product_list/searchProduct.vue"
 export default {
   components: {
     mainDetailProduct,
+    searchProduct
   },
   data() {
     return {
@@ -89,9 +94,16 @@ export default {
       if (this.show_more_detail == false) {
         this.header_table = [
           {
-            text: "รหัสสินค้า",
-            value: "barcode",
+            text: "หมวดหมู่",
+            value: "categoreis.category_name",
+            sortable: false
           },
+          {
+            text: "กลุ่มสินค้า",
+            value: "group.group_name",
+            sortable: false
+          },
+
           {
             text: "รายละเอียดสินค้า",
             value: "product_name",
@@ -109,5 +121,7 @@ export default {
 };
 </script>
 <style>
-.pointer {cursor: pointer;}
+.row-pointer tbody tr :hover {
+  cursor: pointer;
+}
 </style>
