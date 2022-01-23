@@ -73,14 +73,14 @@ export default {
         endpoints: {
           login: {
             url: `${base_url}/auth/local`,
-            method: 'post',
-            propertyName: 'jwt'
+            method: "post",
+            propertyName: "jwt",
           },
           logout: false,
           user: {
             url: `${base_url}/users/me`,
-            method: 'get',
-            propertyName: false
+            method: "get",
+            propertyName: false,
           },
           logout: false,
         },
@@ -96,7 +96,7 @@ export default {
     cors: true,
   },
   router: {
-    middleware: ['auth']
+    middleware: ["auth"],
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

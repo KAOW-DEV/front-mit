@@ -86,6 +86,49 @@ export default {
   data() {
     return {
       drawer: true,
+      
+      items: [
+        {
+          icon: "mdi-monitor-dashboard",
+          title: "ลูกค้า",
+          to: "/customers",
+        },
+                {
+          icon: "mdi-monitor-dashboard",
+          title: "ซัฟพลายเออร์",
+          to: "/suppliers",
+        },
+        {
+          icon: "mdi-archive-search",
+          title: "รายการสินค้า",
+          to: "/product_list",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบส่งสินค้าชั่วคราว",
+          to: "/",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบรับเงินชั่วคราว",
+          to: "/",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "ใบส่งสินค้า/บิลเงินสด",
+          to: "/",
+        },
+        {
+          icon: "mdi-package-down",
+          title: "รับเข้า",
+          to: "/received",
+        },
+        {
+          icon: "mdi-package-up",
+          title: "เบิก-จ่าย",
+          to: "/pay",
+        },
+      ],
       admins: [
         {
           icon: "mdi-package-up",
@@ -118,48 +161,6 @@ export default {
           icon: "mdi-package-up",
           title: "users",
           to: "/settings/users",
-        },
-      ],
-      items: [
-        {
-          icon: "mdi-monitor-dashboard",
-          title: "ลูกค้า",
-          to: "/customers",
-        },
-                {
-          icon: "mdi-monitor-dashboard",
-          title: "ซัฟพลายเออร์",
-          to: "/customers",
-        },
-        {
-          icon: "mdi-archive-search",
-          title: "รายการสินค้า",
-          to: "/product_list",
-        },
-        {
-          icon: "mdi-package-down",
-          title: "ใบส่งสินค้าชั่วคราว",
-          to: "/",
-        },
-        {
-          icon: "mdi-package-down",
-          title: "ใบรับเงินชั่วคราว",
-          to: "/",
-        },
-        {
-          icon: "mdi-package-down",
-          title: "ใบส่งสินค้า/บิลเงินสด",
-          to: "/",
-        },
-        {
-          icon: "mdi-package-down",
-          title: "รับเข้า",
-          to: "/received",
-        },
-        {
-          icon: "mdi-package-up",
-          title: "เบิก-จ่าย",
-          to: "/pay",
         },
       ],
       title: "ระบบสต๊อกสินค้า",

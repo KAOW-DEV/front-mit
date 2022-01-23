@@ -1,25 +1,45 @@
 <template>
-  <div class=" justify-center align-center">
-    <!-- <v-layout column class="justify-center align-center"> -->
-    <!-- <v-flex xs12 sm4 pa-2 ma-2> -->
-    <v-card class="pa-2 ma-2" elevation="2">
-      <searchCustomer></searchCustomer>
+  <div class="ma-2">
+    <v-card-actions>
+      <v-btn class="ml-auto" color="primary" large @click="openDialogCustomerDetail">
+        <v-icon>mdi-account-plus</v-icon> เพิ่มลูกค้า
+      </v-btn>
+    </v-card-actions>
+    <v-card>
+      <v-toolbar flat color="primary" dark>
+        <h4><v-icon left>mdi-account-group</v-icon> รายการลูกค้า</h4>
+      </v-toolbar>
+      <v-row>
+        <v-col>
+          <v-data-table></v-data-table>
+        </v-col>
+      </v-row>
     </v-card>
-    <v-card class="mt-5 ma-2" elevation="0">
-      <mainCustomer></mainCustomer>
-    </v-card>
-    <!-- </v-flex> -->
-    <!-- </v-layout> -->
+
+    <!-- dialog  -->
+    <v-dialog v-model="dialogCustomerDetail">
+      <mainDetailCustomer></mainDetailCustomer>
+    </v-dialog>
   </div>
 </template>
+
 <script>
-  import mainCustomer from '~/components/customer/mainCustomer.vue'
-  import searchCustomer from '~/components/customer/searchCustomer.vue'
-  export default {
-    components: {
-      mainCustomer,
-      searchCustomer
+import mainDetailCustomer from "../../components/customer/mainDetailCustomer";
+export default {
+  components: {
+    mainDetailCustomer
+  },
+  data() {
+    return {
+
+      dialogCustomerDetail: true,
+    }
+  },
+  methods: {
+    openDialogCustomerDetail() {
+
     }
   }
-
+};
 </script>
+
