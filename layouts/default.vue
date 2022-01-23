@@ -89,27 +89,27 @@ export default {
       admins: [
         {
           icon: "mdi-package-up",
-          title: "Categoreis",
+          title: "หมวดหมู่",
           to: "/settings/categoreis",
         },
         {
           icon: "mdi-package-up",
-          title: "Group",
+          title: "กลุ่ม",
           to: "/settings/group",
         },
         {
           icon: "mdi-package-up",
-          title: "Trading zone",
+          title: "โซนการขาย",
           to: "/settings/trading_zone",
         },
         {
           icon: "mdi-package-up",
-          title: "Vendor Type",
+          title: "ประเภทผู้จำหน่าย",
           to: "/settings/vendor_type",
         },
         {
           icon: "mdi-package-up",
-          title: "Warehouse",
+          title: "คลัง",
           to: "/settings/warehouse",
         },
       ],
@@ -123,7 +123,7 @@ export default {
       items: [
         {
           icon: "mdi-monitor-dashboard",
-          title: "ข้อมูลลูกค้า",
+          title: "หมวดหมู่",
           to: "/customers",
         },
         {

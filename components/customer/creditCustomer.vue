@@ -86,7 +86,7 @@
       </v-row>
       <v-row class="my-n10">
         <v-col cols="12">
-          <v-textarea label="หมายเหตุเกี่ยวกับลูกค้า"></v-textarea>
+          <v-textarea outlined label="หมายเหตุเกี่ยวกับลูกค้า"></v-textarea>
         </v-col>
       </v-row>
       <v-row class="my-n10" justify="center" align="center">
@@ -106,5 +106,5 @@
 </script>
 
 <style>
-
+  
 </style>

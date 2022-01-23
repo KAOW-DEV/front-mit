@@ -22,7 +22,11 @@
             :headers="header_table"
             :items="list_product_data"
             @dblclick:row="open_dialog_product_detail"
-          ></v-data-table>
+          >
+          <template>
+            
+          </template>
+          </v-data-table>
         </v-col>
       </v-row>
     </v-card>
@@ -104,3 +108,6 @@ export default {
   },
 };
 </script>
+<style>
+.pointer {cursor: pointer;}
+</style>
