@@ -5,15 +5,15 @@
         <!-- <v-col cols="2">
           <v-subheader>รหัสลูกค้า</v-subheader>
         </v-col> -->
-        <v-col cols="2">
+        <v-col cols="4">
           <v-text-field dense outlined label="รหัสลูกค้า" value="123456789"></v-text-field>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="4">
           <v-btn elevation="2" outlined>รูปแบบรหัสอัตโนมัติ</v-btn>
         </v-col>
-        <v-col cols="4">
+        <!-- <v-col cols="4">
           <v-autocomplete dense outlined label="เลขที่บัญชีลูกหนี้"></v-autocomplete>
-        </v-col>
+        </v-col> -->
       </v-row>
       <!-- <v-row class="my-n10" justify="center" align="center">
         <v-col cols="2">

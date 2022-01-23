@@ -123,7 +123,12 @@ export default {
       items: [
         {
           icon: "mdi-monitor-dashboard",
-          title: "หมวดหมู่",
+          title: "ลูกค้า",
+          to: "/customers",
+        },
+                {
+          icon: "mdi-monitor-dashboard",
+          title: "ซัฟพลายเออร์",
           to: "/customers",
         },
         {
