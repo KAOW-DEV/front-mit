@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-btn color="success" class="float-end" tile>
-          <v-icon>mdi-plus</v-icon>&nbsp;sเปิดบิลรับ
+          <v-icon>mdi-plus</v-icon>&nbsp;เปิดบิลรับ
         </v-btn>
       </v-col>
     </v-row>
