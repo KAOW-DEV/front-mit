@@ -1,7 +1,12 @@
 <template>
   <div class="ma-2">
     <v-card-actions>
-      <v-btn class="ml-auto" color="primary" large @click="openDialogCustomerDetail">
+      <v-btn
+        class="ml-auto"
+        color="primary"
+        large
+        @click="openDialogCustomerDetail"
+      >
         <v-icon>mdi-account-plus</v-icon> เพิ่มลูกค้า
       </v-btn>
     </v-card-actions>
@@ -17,29 +22,23 @@
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialogCustomerDetail">
-      <mainDetailCustomer></mainDetailCustomer>
+    <v-dialog v-model="dialogCustomerDetail" width="1000" persistent>
+      <main-detail-customer></main-detail-customer>
     </v-dialog>
   </div>
 </template>
 
 <script>
-import mainDetailCustomer from "../../components/customer/mainDetailCustomer";
+import mainDetailCustomer from "~/components/customer/mainDetailCustomer.vue";
 export default {
-  components: {
-    mainDetailCustomer
-  },
+  components: { mainDetailCustomer },
   data() {
     return {
-
       dialogCustomerDetail: true,
-    }
+    };
   },
   methods: {
-    openDialogCustomerDetail() {
-
-    }
-  }
+    openDialogCustomerDetail() {},
+  },
 };
 </script>
-
