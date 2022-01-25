@@ -35,16 +35,16 @@
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialog_product_detail" width="1000" persistent>
+    <v-dialog v-model="dialog_product_detail" fullscreen width="1000" >
       <v-card class="overflow-hidden">
         <v-toolbar flat color="primary" dark>
           <h3><v-icon left>mdi-note-text-outline</v-icon> ข้อมูลสินค้า</h3>
           <v-spacer></v-spacer>
           <v-btn icon @click="dialog_product_detail = false"><v-icon>mdi-close</v-icon></v-btn>
         </v-toolbar>
-        <v-row>
+        <v-row class="pa-5">
           <v-col>
-            <mainDetailProduct></mainDetailProduct>
+            <productListUnit></productListUnit>
           </v-col>
         </v-row>
       </v-card>
@@ -54,11 +54,13 @@
 
 <script>
 import mainDetailProduct from "../../components/product_list/mainDetailProduct";
-import searchProduct from "../../components/product_list/searchProduct.vue"
+import searchProduct from "../../components/product_list/searchProduct.vue";
+import productListUnit from "../../components/product_list/productListUnit.vue"
 export default {
   components: {
     mainDetailProduct,
-    searchProduct
+    searchProduct,
+    productListUnit
   },
   data() {
     return {
