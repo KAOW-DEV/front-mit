@@ -44,7 +44,7 @@
         </v-toolbar>
         <v-row class="pa-5">
           <v-col>
-            <productListUnit></productListUnit>
+            <productListUnit :product.sync="editedItem"></productListUnit>
           </v-col>
         </v-row>
       </v-card>
@@ -64,8 +64,11 @@ export default {
   },
   data() {
     return {
-      overlay: true,
-      dialog_product_detail: true,
+      overlay: false,
+      dialog_product_detail: false,
+      product: null,
+      editedIndex: -1,
+      editedItem:{},
 
       // config
       show_more_detail: false,
@@ -78,7 +81,11 @@ export default {
   },
   methods: {
     // dailog methods
-    open_dialog_product_detail() {
+    open_dialog_product_detail(event, {item}) {
+      console.log(item)
+      this.editedIndex = this.list_product_data.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      // this.productId = id;
       this.dialog_product_detail = true;
     },
 
