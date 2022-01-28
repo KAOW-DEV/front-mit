@@ -1,32 +1,57 @@
 <template>
   <v-container fluid>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
     <v-row>
       <v-col cols="12">
-        <v-btn color="success" class="float-end" tile>
+        <v-card flat>
+          <v-card-title primary-titlev class="display-2">
+            รับเข้า
+          </v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-btn class="float-end" tile @click="openDailogInsert">
           <v-icon>mdi-plus</v-icon>&nbsp;เปิดบิลรับ
         </v-btn>
       </v-col>
     </v-row>
 
-    <v-row class="mt-n2">
+    <v-row>
       <v-col cols="12">
-        <v-data-table :headers="headers" :items="items_stock_receiveds">
-          <template v-slot:top>
-            <v-toolbar flat color="green" dark>
-              <v-toolbar-title>รับเข้า</v-toolbar-title>
-              <v-spacer></v-spacer>
-            </v-toolbar>
-          </template>
+        <v-card>
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="ค้นหา"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
 
-          <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
-              mdi-pencil
-            </v-icon>
-            <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-          </template>
-        </v-data-table>
+          <v-data-table :headers="headers" :items="itemStockReceived">
+            <template v-slot:item.actions="{ item }">
+              <v-icon small class="mr-2" @click="editItem(item)">
+                mdi-pencil
+              </v-icon>
+              <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-col>
     </v-row>
+
+    <v-dialog v-model="dialogInsertStockReceived" width="1400px" persistent>
+      <dailogInsertStockReceived
+        :dialogInsertStockReceived.sync="dialogInsertStockReceived"
+      >
+      </dailogInsertStockReceived>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -34,16 +59,21 @@
 
 
 <script>
-// import dailogInsert from "../../components/received/dailogInsert";
+import dailogInsertStockReceived from "../../components/received/dailogInsertStockReceived";
+import dailogUpdateStockReceived from "../../components/received/dailogUpdateStockReceived";
 
 export default {
-  // components: {
-  //   dailogInsert,
-  // },
+  components: {
+    dailogInsertStockReceived,
+    dailogUpdateStockReceived,
+  },
 
   data: () => ({
-    dialog_insert: false,
-    dialog_update: false,
+    overlay: false,
+    dialogInsertStockReceived: false,
+    dialogUpdateStockReceived: false,
+
+    search: "",
 
     headers: [
       {
@@ -59,8 +89,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
 
-    items_stock_receiveds: [],
-    list_product: [],
+    itemStockReceived: [],
   }),
 
   created() {
@@ -70,9 +99,13 @@ export default {
   methods: {
     async get_products() {
       await this.$axios.get("/stock-receiveds").then((res) => {
-        this.items_stock_receiveds = res.data;
-        console.log("items_stock_receiveds", this.items_stock_receiveds);
+        this.itemStockReceived = res.data;
+        console.log("itemStockReceived", this.itemStockReceived);
       });
+    },
+
+    openDailogInsert() {
+      this.dialogInsertStockReceived = true;
     },
   },
 };
