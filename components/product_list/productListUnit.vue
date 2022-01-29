@@ -3,7 +3,21 @@
     <v-row justify="center" align="center">
       <v-col cols="6">
         <v-row justify="center" align="center">
-          <v-simple-table fixed-header height="300px">
+          <v-data-table hide-default-footer height="300px"  :headers="headers" :items="rowData" item-key="name"
+            class="elevation-1">
+            <template v-slot:body="{ items }">
+              <tbody>
+                <tr :class="key === selectedRow ? 'custom-highlight-row row-pointer' : 'row-pointer'" @click="rowSelect(key)"
+                  v-for="(item, key) in items" :key="key">
+                  <td>{{ item.product_unit_barcode_in }}</td>
+                  <td>{{ item.product_unit_barcode_out }}</td>
+                  <td>{{ item.product_unit_name }}</td>
+                  <td>{{ item.product.product_name }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-data-table>
+          <!-- <v-simple-table fixed-header height="300px">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -30,7 +44,7 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table>
+          </v-simple-table> -->
         </v-row>
         <v-row justify="center" align="center">
           <div class="text-center">
@@ -241,7 +255,25 @@
       return {
         productUnits: [],
         overlay: false,
+        selectedRow: null,
         rowData: [],
+        headers: [{
+            text: 'รหัสสินค้า',
+            value: 'product_unit_barcode_in'
+          },
+          {
+            text: 'รหัสบารโค้ด',
+            value: 'product_unit_barcode_out'
+          },
+          {
+            text: 'ชื่อหน่วย',
+            value: 'product_unit_name'
+          },
+          {
+            text: 'ชื่อสินค้า',
+            value: 'product_name'
+          }
+        ],
         //input
         editedItem: {
           created_at: "",
@@ -314,7 +346,13 @@
       }
     },
     methods: {
-      async clickItem(item){
+      rowSelect(idx) {
+        this.selectedRow = idx;
+        // this.editedIndex = this.rowData.indexOf(idx)
+        this.editedItem = Object.assign({}, this.rowData[idx])
+
+      },
+      async clickItem(item) {
         this.editedItem = Object.assign({}, item)
       },
       async getProductUnit() {
@@ -347,7 +385,16 @@
         //   console.log(val);
         // }
         this.getProductUnit();
+        this.selectedRow = null;
       }
     }
   }
 </script>
+<style lang="css">
+  .custom-highlight-row {
+    background-color: rgb(177, 219, 252)
+  }
+  .row-pointer tbody tr :hover {
+  cursor: pointer;
+}
+</style>
