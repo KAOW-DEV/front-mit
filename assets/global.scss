@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'Sarabun';
+  src: local("Sarabun"),
+    url(~assets/font/Sarabun/Sarabun-Regular.ttf) format("truetype");
+}
+
+body {
+  font-family: 'Sarabun', sans-serif;
+}

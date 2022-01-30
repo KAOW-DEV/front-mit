@@ -86,14 +86,14 @@ export default {
   data() {
     return {
       drawer: true,
-      
+
       items: [
         {
           icon: "mdi-monitor-dashboard",
           title: "ลูกค้า",
           to: "/customers",
         },
-                {
+        {
           icon: "mdi-monitor-dashboard",
           title: "ซัฟพลายเออร์",
           to: "/suppliers",
@@ -173,4 +173,9 @@ export default {
 #app {
   zoom: 80%;
 }
+
+#app {
+  font-family: "Sarabun", sans-serif;
+}
 </style>
+

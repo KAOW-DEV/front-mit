@@ -1,21 +1,38 @@
 <template>
-  <v-card>
-    <v-card-title> เพิ่มบิลรับ </v-card-title>
-
-    <v-card color="black" dark>
-      <v-card-text class="mb-n7">
-        <v-row>
+  <div>
+    <v-card>
+      <v-toolbar color="green" dark class="elevation-0" tile>
+        <v-icon large>mdi-plus</v-icon>
+        <h2>เพิ่มบิลรับ</h2>
+        <v-spacer></v-spacer>
+        <v-btn icon color="red" @click="closeDialog">
+          <v-icon large>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+    </v-card>
+    <v-card color="black" dark tile>
+      <v-card-text>
+        <v-row class="mb-n10">
           <v-col cols="4">
             <v-row>
               <v-col cols="6">
                 <v-text-field
                   label="รับสินค้าจาก"
                   v-model="supplier_code"
-                  append-icon="mdi-magnify"
                   dense
                   outlined
                   readonly
-                ></v-text-field>
+                >
+                  <template v-slot:append>
+                    <v-btn
+                      @click="openDialogSuppliers"
+                      class="mt-n2 mr-n2"
+                      color="green"
+                      dark
+                      ><v-icon>mdi-account-search</v-icon></v-btn
+                    >
+                  </template>
+                </v-text-field>
               </v-col>
               <v-col cols="6">
                 <v-text-field
@@ -25,7 +42,17 @@
                   dense
                   outlined
                   readonly
-                ></v-text-field>
+                >
+                  <template v-slot:append>
+                    <v-btn
+                      @click="search_warehouses"
+                      class="mt-n2 mr-n2"
+                      color="green"
+                      dark
+                      ><v-icon>mdi-warehouse</v-icon></v-btn
+                    >
+                  </template>
+                </v-text-field>
               </v-col>
               <v-col cols="12" class="mt-n10">
                 <v-text-field
@@ -84,7 +111,24 @@
                   dense
                   outlined
                   readonly
-                ></v-text-field>
+                >
+                  <template v-slot:append>
+                    <v-btn
+                      @click="search_vat_types"
+                      class="mt-n2 mr-n2"
+                      color="green"
+                      dark
+                      ><v-icon>mdi-percent</v-icon></v-btn
+                    >
+                  </template>
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" class="text-center">
+                <v-btn color="warning" large>
+                  <v-icon large>mdi-barcode</v-icon>
+                  &nbsp; &nbsp;
+                  <h2>ยิงบาร์โค้ด</h2>
+                </v-btn>
               </v-col>
             </v-row>
           </v-col>
@@ -177,42 +221,45 @@
       </v-card-text>
     </v-card>
 
-    <v-card>
-      <v-data-table
-        :headers="headersStockReceivedDetail"
-        :items="itemsStockReceivedDetail"
-        dense
-        height="355"
-        fixed-header
-      >
-        <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-        </template>
-      </v-data-table>
-    </v-card>
+    <v-data-table
+      :headers="headersStockReceivedDetail"
+      :items="itemsStockReceivedDetail"
+      dense
+      height="355"
+      fixed-header
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon color="warning" small class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+        <v-icon color="red" small @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
 
-    <v-card color="black" dark>
+    <v-card color="black" dark tile>
       <v-card-text class="mb-n7">
         <v-row>
           <v-col cols="12">
             <v-row>
               <v-col cols="3">
                 <v-row>
+                  <v-col cols="12" class="mb-7"></v-col>
                   <v-col cols="12">
                     <v-text-field
                       label="ลด (%)"
                       dense
                       outlined
                       readonly
+                      color="warning"
                     ></v-text-field>
                   </v-col>
                 </v-row>
               </v-col>
               <v-col cols="3">
                 <v-row>
+                  <v-col cols="12" class="mb-7"></v-col>
                   <v-col cols="12">
                     <v-text-field
                       label="จำนวนเงิน ส่วนลด"
@@ -242,9 +289,10 @@
               </v-col>
               <v-col cols="3">
                 <v-row>
+                  <v-col cols="12" class="mb-7"></v-col>
                   <v-col cols="12">
                     <v-text-field
-                      label="ลดเงิน"
+                      label="ลดเงิน (บาท)"
                       dense
                       outlined
                       readonly
@@ -252,7 +300,7 @@
                   </v-col>
                   <v-col cols="12" class="mt-n10">
                     <v-text-field
-                      label="ภาษี"
+                      label="ภาษี (%)"
                       dense
                       outlined
                       readonly
@@ -278,6 +326,22 @@
                       readonly
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="12" class="mt-n10">
+                    <v-text-field
+                      label="รวม"
+                      dense
+                      outlined
+                      readonly
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" class="mt-n10">
+                    <v-text-field
+                      label="คงเหลือมูลค่าสินค้าสุทธิ"
+                      dense
+                      outlined
+                      readonly
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
               </v-col>
             </v-row>
@@ -286,20 +350,44 @@
       </v-card-text>
     </v-card>
 
-    <v-card>
+    <v-card tile>
       <v-card-actions>
+        <v-btn color="green" dark large>
+          <v-icon large>mdi-content-save</v-icon>
+          &nbsp; &nbsp;
+          <h2>บันทึก</h2>
+        </v-btn>
+        <v-btn class="mx-5" color="primary" dark large>
+          <v-icon large>mdi-printer</v-icon>
+          &nbsp; &nbsp;
+          <h2>พิมพ์</h2>
+        </v-btn>
         <v-spacer></v-spacer>
-        <v-btn class="mx-5" color="red" dark @click="closeDialog">ยกเลิก</v-btn>
-        <v-btn class="mx-5" color="green" dark>บันทึก</v-btn>
-        <v-spacer></v-spacer>
+        <v-btn color="red" dark large @click="closeDialog">
+          <v-icon large>mdi-close</v-icon>
+          &nbsp; &nbsp;
+          <h2>ยกเลิก</h2>
+        </v-btn>
       </v-card-actions>
     </v-card>
-  </v-card>
+
+    <v-dialog v-model="dialogSearchSuppliers" width="1200px" persistent>
+      <dialog-search-suppliers
+        :dialogSearchSuppliers.sync="dialogSearchSuppliers"
+      >
+      </dialog-search-suppliers>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
+import dialogSearchSuppliers from "../supplier/dialogSearchSuppliers.vue";
 export default {
+  components: { dialogSearchSuppliers },
   props: ["dialogInsertStockReceived"],
+
+  computed: {},
+
   data() {
     return {
       stock_received_date: new Date(
@@ -309,22 +397,20 @@ export default {
         .substr(0, 10),
       menu_stock_received_date: false,
 
-      itemsSuppliers: [],
-      supplier: [],
+      // dialog
+      dialogSearchSuppliers: false,
 
-      dialogSupplier: false,
-
+      // table
       headersStockReceivedDetail: [
-        {
-          text: "Dessert (100g serving)",
-          align: "start",
-          sortable: false,
-          value: "name",
-        },
-        { text: "Calories", value: "calories" },
-        { text: "Fat (g)", value: "fat" },
-        { text: "Carbs (g)", value: "carbs" },
-        { text: "Protein (g)", value: "protein" },
+        { text: "ลำดับ", value: "index" },
+        { text: "รหัสสินค้าภายใน", value: "product_unit_barcode_in" },
+        { text: "รหัสบาร์โค้ด", value: "product_unit_barcode_out" },
+        { text: "สินค้า/รายละเอียด", value: "product_unit_name" },
+        { text: "เบิกสินค้าจาก", value: "warehouse_name" },
+        { text: "หน่วยนับ", value: "product_unit_name" },
+        { text: "ราคา/หน่วย", value: "product_price" },
+        { text: "จำนวน", value: "stock_received_detail_goods_quatity" },
+        { text: "จำนวนสุทธิ", value: "stock_received_detail_goods_sum_price" },
         { text: "Actions", value: "actions", sortable: false },
       ],
       //   itemsStockReceivedDetail: [],
@@ -338,67 +424,11 @@ export default {
           protein: 4.0,
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
         {
           name: "Frozen Yogurt",
@@ -408,67 +438,11 @@ export default {
           protein: 4.0,
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
         {
           name: "Frozen Yogurt",
@@ -478,67 +452,11 @@ export default {
           protein: 4.0,
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
         {
           name: "Frozen Yogurt",
@@ -548,93 +466,45 @@ export default {
           protein: 4.0,
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
         {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
         {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
         },
       ],
     };
   },
 
-  created() {
-    this.getSuppliers();
-  },
+  created() {},
   methods: {
     async closeDialog() {
       this.$emit("update:dialogInsertStockReceived", false);
     },
 
-    async getSuppliers() {
-      await this.$axios.get("/suppliers").then((res) => {
-        this.itemsSuppliers = res.data;
-        console.log("itemsSuppliers", this.itemsSuppliers);
-      });
-    },
-
-    async openDialogSupplier() {
-      this.dialogSupplier = true;
+    async openDialogSuppliers() {
+      this.dialogSearchSuppliers = true;
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
+table.v-table thead th {
+  font-size: 20px !important;
+}
 </style>
