@@ -17,7 +17,10 @@
       </v-tabs>
       <v-tabs-items v-model="tabSelect">
         <v-tab-item>
-          <detail-customer @save="saveCustomer"></detail-customer>
+          <detail-customer
+            :detail_customer.sync="detail_customer"
+            @save="saveCustomer"
+          ></detail-customer>
         </v-tab-item>
         <v-tab-item>
           <credit-customer></credit-customer>
@@ -48,6 +51,19 @@ export default {
       // tab
       tabItems: ["ข้อมูลรายละเอียดลูกค้า", "วงเงินเครดิต"],
       tabSelect: null,
+
+      detail_customer: {
+        customer_id: null,
+        customer_account_number_payable: null,
+        customer_name: null,
+        customer_address_1: null,
+        customer_address_2: null,
+        customer_tel: null,
+        customer_fax: null,
+        customer_contact_name: null,
+        customer_home_page: null,
+        vendor_type: null,
+      },
     };
   },
   methods: {
@@ -55,7 +71,7 @@ export default {
       this.$emit("close");
     },
     saveCustomer() {
-      console.log();
+      console.log(this.detail_customer);
     },
   },
 };

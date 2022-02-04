@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card flat class="pl-2 pr-4">
+      {{ detail_customer }}
       <v-row class="mt-2">
         <v-col cols="2">
           <v-subheader>รหัสลูกค้า</v-subheader>
@@ -9,29 +10,31 @@
           <v-text-field
             outlined
             dense
-            :disabled="disabledCustomerId"
-            v-model="customer_id"
+            v-model="detail_customer.customer_id"
           ></v-text-field>
         </v-col>
         <v-col cols="2">
           <v-subheader>เลขที่บัญชีลูกหนี้</v-subheader>
         </v-col>
         <v-col cols="4">
-          <v-text-field outlined dense type="number"></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            type="number"
+            v-model="detail_customer.customer_account_number_payable"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-n10">
         <v-col cols="2">
-          <v-subheader>คำนำหน้า</v-subheader>
-        </v-col>
-        <v-col cols="2">
-          <v-select outlined dense></v-select>
-        </v-col>
-        <v-col cols="2">
           <v-subheader>ชื่อ/บริษัท</v-subheader>
         </v-col>
-        <v-col cols="6">
-          <v-text-field outlined dense v-model="customer_name"></v-text-field>
+        <v-col cols="10">
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_name"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-n10">
@@ -39,7 +42,11 @@
           <v-subheader>ที่อยู่ (1)</v-subheader>
         </v-col>
         <v-col cols="10">
-          <v-text-field outlined dense></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_address_1"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-n10">
@@ -47,7 +54,11 @@
           <v-subheader>ที่อยู่ (2)</v-subheader>
         </v-col>
         <v-col cols="10">
-          <v-text-field outlined dense></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_address_2"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-n10">
@@ -55,7 +66,14 @@
           <v-subheader>อำเภอ</v-subheader>
         </v-col>
         <v-col cols="2">
-          <v-text-field outlined dense></v-text-field>
+          <v-autocomplete
+            outlined
+            dense
+            :search-input.sync="searchAmphure"
+            :items="listAmphure"
+            item-text="name_th"
+            item-value="id"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="2">
           <v-subheader>จังหวัด</v-subheader>
@@ -75,13 +93,21 @@
           <v-subheader>เบอร์โทรศัพท์</v-subheader>
         </v-col>
         <v-col cols="4">
-          <v-text-field outlined dense></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_tel"
+          ></v-text-field>
         </v-col>
         <v-col cols="2">
           <v-subheader>เบอร์เฟกซ์</v-subheader>
         </v-col>
         <v-col cols="4">
-          <v-text-field outlined dense></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_fax"
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-n10">
@@ -89,7 +115,11 @@
           <v-subheader>ชื่อผู้ติดต่อ/รับเรื่อง</v-subheader>
         </v-col>
         <v-col cols="10">
-          <v-text-field outlined dense></v-text-field>
+          <v-text-field
+            outlined
+            dense
+            v-model="detail_customer.customer_contact_name"
+          ></v-text-field>
         </v-col>
       </v-row>
 
@@ -100,7 +130,11 @@
               <v-subheader>ชื่อ Home Page</v-subheader>
             </v-col>
             <v-col cols="8">
-              <v-text-field outlined dense></v-text-field>
+              <v-text-field
+                outlined
+                dense
+                v-model="detail_customer.customer_home_page"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row class="mt-n10">
@@ -154,23 +188,33 @@
 
 <script>
 export default {
-  props: ["update:customer_name"],
+  props: ["detail_customer"],
   data() {
     return {
-      // field disabled
-      disabledCustomerId: true,
-
-      // field input
-      customer_id: null,
-      customer_name: null
+      searchAmphure: null,
+      
+      // list select data 
+      listAmphure: [],
     };
   },
   methods: {
-      saveCustomer() {
-          console.log("e");
-          this.$emit("save", this.customer_name);
-          this.$emit("update:customer_name", this.customer_name);
-      }
-  }
+    async getAmphure(item) {
+      console.log(item);
+      await this.$axios
+        .get("/amphures?name_th_contains=" + item + "&_limit=10")
+        .then((resAmphure) => {
+          this.listAmphure = resAmphure.data;
+          console.log(resAmphure.data);
+        });
+    },
+  },
+  watch: {
+    searchAmphure(e) {
+      this.getAmphure(e);
+    },
+  },
+  created() {
+    this.getAmphure();
+  },
 };
 </script>
