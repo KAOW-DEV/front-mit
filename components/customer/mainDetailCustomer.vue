@@ -63,6 +63,8 @@ export default {
         customer_contact_name: null,
         customer_home_page: null,
         vendor_type: null,
+        amphure: [],
+        province: [],
       },
     };
   },

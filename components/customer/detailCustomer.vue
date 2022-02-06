@@ -73,13 +73,27 @@
             :items="listAmphure"
             item-text="name_th"
             item-value="id"
+            return-object
+            :error="errorSearchAmphure"
+            @change="onChangeAmphure"
+            v-model="detail_customer.amphure"
           ></v-autocomplete>
         </v-col>
         <v-col cols="2">
           <v-subheader>จังหวัด</v-subheader>
         </v-col>
         <v-col cols="2">
-          <v-text-field outlined dense></v-text-field>
+          <v-autocomplete
+            outlined
+            dense
+            :search-input.sync="searchProvince"
+            :items="listProvince"
+            item-text="name_th"
+            item-value="id"
+            :error="errorSearchProvince"
+            @change="onChangeProvince"
+            v-model="detail_customer.province"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="2">
           <v-subheader>รหัสไปรษณีย์</v-subheader>
@@ -191,20 +205,54 @@ export default {
   props: ["detail_customer"],
   data() {
     return {
+      // input sync
       searchAmphure: null,
-      
-      // list select data 
+      searchProvince: null,
+
+      // error input
+      errorSearchAmphure: false,
+      errorSearchProvince: false,
+
+      // list select data
       listAmphure: [],
+      listProvince: [],
     };
   },
   methods: {
+    // change methods
+    onChangeAmphure(item) {
+      console.log("item.province", item.province);
+      this.listProvince = item.province;
+      this.detail_customer.province = item.province
+    },
+    onChangeProvince(item) {
+      // console.log("item", item);
+    },
+
+    // get data api
     async getAmphure(item) {
-      console.log(item);
       await this.$axios
         .get("/amphures?name_th_contains=" + item + "&_limit=10")
         .then((resAmphure) => {
           this.listAmphure = resAmphure.data;
-          console.log(resAmphure.data);
+          this.errorSearchAmphure = false;
+          // console.log(resAmphure.data);
+        })
+        .catch((error) => {
+          this.errorSearchAmphure = true;
+        });
+    },
+    async getProvince(item, id) {
+      console.log(id);
+      await this.$axios
+        .get("/provinces?name_th_contains=" + item + "&_limit=10")
+        .then((resProvince) => {
+          this.listProvince = resProvince.data;
+          this.errorSearchProvince = false;
+          // console.log(resProvince.data);
+        })
+        .catch((error) => {
+          this.errorSearchProvince = true;
         });
     },
   },

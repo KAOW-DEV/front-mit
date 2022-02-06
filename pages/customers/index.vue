@@ -22,7 +22,7 @@
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialogCustomerDetail" width="1000" persistent>
+    <v-dialog v-model="dialogCustomerDetail" width="1200" persistent>
       <main-detail-customer
         @close="closeDialogCustomerDetail"
       ></main-detail-customer>
