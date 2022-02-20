@@ -19,13 +19,11 @@
           <v-btn
             color="green"
             dark
-            x-large
             class="float-end"
             tile
             @click="openDialogInsert"
           >
-            <v-icon x-large>mdi-plus</v-icon>&nbsp;
-            <h2>เพิ่มบิลรับ</h2>
+            <v-icon>mdi-database-plus</v-icon> เพิ่มบิลรับ
           </v-btn>
         </v-col>
       </v-row>
@@ -56,9 +54,11 @@
       </v-row>
     </v-container>
 
-    <v-dialog v-model="dialogInsertStockReceived" width="1400px" persistent>
+    <!-- dialogInsertStockReceived -->
+    <v-dialog v-model="dialogInsertStockReceived" persistent>
       <dialogInsertStockReceived
         :dialogInsertStockReceived.sync="dialogInsertStockReceived"
+        :overlay.sync="overlay"
       >
       </dialogInsertStockReceived>
     </v-dialog>
@@ -103,10 +103,15 @@ export default {
   }),
 
   created() {
-    this.get_products();
+    this.loadData();
   },
 
   methods: {
+    async loadData() {
+      this.overlay = true;
+      await this.get_products();
+      this.overlay = false;
+    },
     async get_products() {
       await this.$axios.get("/stock-receiveds").then((res) => {
         this.itemStockReceived = res.data;
