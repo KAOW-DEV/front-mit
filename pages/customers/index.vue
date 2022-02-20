@@ -22,8 +22,10 @@
     </v-card>
 
     <!-- dialog  -->
-    <v-dialog v-model="dialogCustomerDetail" width="1000" persistent>
-      <main-detail-customer></main-detail-customer>
+    <v-dialog v-model="dialogCustomerDetail" width="1200" persistent>
+      <main-detail-customer
+        @close="closeDialogCustomerDetail"
+      ></main-detail-customer>
     </v-dialog>
   </div>
 </template>
@@ -34,11 +36,16 @@ export default {
   components: { mainDetailCustomer },
   data() {
     return {
-      dialogCustomerDetail: true,
+      dialogCustomerDetail: false,
     };
   },
   methods: {
-    openDialogCustomerDetail() {},
+    openDialogCustomerDetail() {
+      this.dialogCustomerDetail = true;
+    },
+    closeDialogCustomerDetail() {
+      this.dialogCustomerDetail = false;
+    },
   },
 };
 </script>

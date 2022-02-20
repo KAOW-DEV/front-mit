@@ -3,134 +3,133 @@
     <v-overlay :value="overlay">
       <v-progress-circular indeterminate size="90"></v-progress-circular>
     </v-overlay>
-    <v-card class="pa-2 ma-2" elevation="2">
-      <searchProduct></searchProduct>
-    </v-card>
     <v-card>
-      <v-toolbar flat color="primary" dark>
-        <h4><v-icon left>mdi-format-list-bulleted</v-icon> รานการสินค้า</h4>
-        <v-spacer>
-        </v-spacer>
-        <div class="mt-5">
-          <v-switch
-            label="รายละเอียดเพิ่มเติม"
-            v-model="show_more_detail"
-            @change="change_show_more_detail"
-          ></v-switch>
-        </div>
+      <v-toolbar flat>
+        <v-toolbar-title>จัดการสินค้า</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-text-field class="mb-n6" dense label="รหัสสินค้า" placeholder="รหัสสินค้า" solo></v-text-field>
+        <v-spacer></v-spacer>
       </v-toolbar>
+    </v-card>
+    <v-card class="mt-5">
       <v-row>
-        <v-col>
-          <v-data-table
-          class="row-pointer"
-            :headers="header_table"
-            :items="list_product_data"
-            @dblclick:row="open_dialog_product_detail"
-          >
-          <template>
-          </template>
-          </v-data-table>
+        <v-col cols="2">
+          <v-subheader>รหัสสต็อกสินค้า (ภายใน)</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-btn block>เปลี่ยนรหัสสต็อกสินค้า</v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-btn block>COPYID</v-btn>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>ชื่อ/รายละเอียดสินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>ชื่อ/รายละเอียดสินค้า2</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>หมวดหมู่สินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>กลุ่มสินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>หน่วยนับสต็อกสินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>รหัสผู้จำหน่าย</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+        <v-col cols="4">
+          <v-text-field outlined dense label="ชื่อผู้จำหน่าย"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>ชื่อยี่ห้อสินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>ชื่อชุดสินค้า</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>ยอดคงเหลือ</v-subheader>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8">
+        <v-col cols="2">
+          <v-subheader>วันที่สร้าง</v-subheader>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field outlined dense></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-subheader>วันที่อัพเดตล่าสุด</v-subheader>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field outlined dense></v-text-field>
         </v-col>
       </v-row>
     </v-card>
-
-    <!-- dialog  -->
-    <v-dialog v-model="dialog_product_detail" fullscreen width="1000" >
-      <v-card class="overflow-hidden">
-        <v-toolbar flat color="primary" dark>
-          <h3><v-icon left>mdi-note-text-outline</v-icon> ข้อมูลสินค้า</h3>
-          <v-spacer></v-spacer>
-          <v-btn icon @click="dialog_product_detail = false"><v-icon>mdi-close</v-icon></v-btn>
-        </v-toolbar>
-        <v-row class="pa-5">
-          <v-col>
-            <productListUnit :product.sync="editedItem"></productListUnit>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import mainDetailProduct from "../../components/product_list/mainDetailProduct";
-import searchProduct from "../../components/product_list/searchProduct.vue";
-import productListUnit from "../../components/product_list/productListUnit.vue"
-export default {
-  components: {
-    mainDetailProduct,
-    searchProduct,
-    productListUnit
-  },
-  data() {
-    return {
-      overlay: false,
-      dialog_product_detail: false,
-      product: null,
-      editedIndex: -1,
-      editedItem:{},
+  export default {
+    components: {
 
-      // config
-      show_more_detail: false,
-
-      // table
-      header_table: [],
-
-      list_product_data: [],
-    };
-  },
-  methods: {
-    // dailog methods
-    open_dialog_product_detail(event, {item}) {
-      console.log(item)
-      this.editedIndex = this.list_product_data.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      // this.productId = id;
-      this.dialog_product_detail = true;
     },
-
-    // get data
-    async get_list_product() {
-      await this.$axios.get("/products").then((res_product) => {
-        console.log(res_product.data);
-        this.list_product_data = res_product.data;
-        this.overlay = false;
-      });
+    data() {
+      return {
+        overlay: false,
+      };
     },
-
-    // change methode
-    change_show_more_detail() {
-      if (this.show_more_detail == false) {
-        this.header_table = [
-          {
-            text: "หมวดหมู่",
-            value: "categoreis.category_name",
-            sortable: false
-          },
-          {
-            text: "กลุ่มสินค้า",
-            value: "group.group_name",
-            sortable: false
-          },
-
-          {
-            text: "รายละเอียดสินค้า",
-            value: "product_name",
-          },
-        ];
-      } else {
-        this.header_table = [];
-      }
-    },
-  },
-  created() {
-    this.change_show_more_detail();
-    this.get_list_product();
-  },
-};
+    methods: {},
+    created() {},
+  };
 </script>
-<style>
-.row-pointer tbody tr :hover {
-  cursor: pointer;
-}
-</style>
