@@ -5,7 +5,7 @@
     </v-overlay>
     <v-card>
       <v-toolbar flat>
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title>จัดการสินค้า</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-text-field class="mb-n6" dense label="รหัสสินค้า" placeholder="รหัสสินค้า" solo></v-text-field>
         <v-spacer></v-spacer>

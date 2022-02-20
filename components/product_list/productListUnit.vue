@@ -17,34 +17,6 @@
               </tbody>
             </template>
           </v-data-table>
-          <!-- <v-simple-table fixed-header height="300px">
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">
-                    รหัสสินค้า
-                  </th>
-                  <th class="text-left">
-                    รหัสบารโค้ด
-                  </th>
-                  <th class="text-left">
-                    ชื่อหน่วย
-                  </th>
-                  <th class="text-left">
-                    ชื่อสินค้า
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in rowData" :key="index" @click="clickItem(item)">
-                  <td>{{ item.product_unit_barcode_in }}</td>
-                  <td>{{ item.product_unit_barcode_out }}</td>
-                  <td>{{ item.product_unit_name }}</td>
-                  <td>{{ item.product.product_name }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table> -->
         </v-row>
         <v-row justify="center" align="center" class="mt-5">
           <v-col cols="4">
@@ -67,11 +39,11 @@
         <v-row justify="center" align="center" class="mt-n6">
           <v-col cols="4">
             <v-text-field type="number" v-model="editedItem.product_unit_price_no_vat" dense label="ทุน - NO VAT"
-              @change="calNoVat" @keydown="calNoVat" @keyup="calNoVat" suffix="บาท" outlined></v-text-field>
+              readonly suffix="บาท" outlined></v-text-field>
           </v-col>
           <v-col cols="4">
             <v-text-field type="number" v-model="editedItem.product_unit_price_vat" dense label="รวม VAT" suffix="บาท"
-              @change="calVat" @keyup="calVat" @keydown="calVat" outlined></v-text-field>
+              readonly outlined></v-text-field>
           </v-col>
         </v-row>
         <v-row justify="center" align="center" class="mt-n6">
@@ -86,26 +58,22 @@
         </v-row>
         <v-row class="mt-n6" justify="center" align="center">
           <div class="text-center">
-            <v-btn class="ma-2" outlined color="primary" @click="save">
+            <v-btn class="ma-2" outlined color="primary" @click="newItem">
               เพิ่มหน่วยซื้อ/ขาย
             </v-btn>
-            <v-btn class="ma-2" outlined color="primary" :disabled="selectedRow < 0" @click="save">
+            <v-btn class="ma-2" outlined color="primary" :disabled="selectedRow < 0" @click="editData">
               แก้ไขหน่วยซื้อ/ขาย
             </v-btn>
-            <v-btn class="ma-2" outlined color="primary" :disabled="selectedRow < 0">
+            <v-btn class="ma-2" outlined color="primary" :disabled="selectedRow < 0" @click="dialogSell = true">
+              ราคาขาย
+            </v-btn>
+            <v-btn class="ma-2" outlined color="red" :disabled="selectedRow < 0" @click="del">
               ลบหน่วยซื้อ/ขาย
             </v-btn>
           </div>
         </v-row>
-        <!-- <v-row justify="center" align="center" class="mt-n6">
-          <v-col cols="8">
-            <v-btn block>
-              บันทึก
-            </v-btn>
-          </v-col>
-        </v-row> -->
       </v-col>
-      <v-col cols="3">
+      <v-col cols="6">
         <v-row>
           <v-col cols="7">
             <v-subheader>ราคาตั้งจากส่วนกลาง (ล่าสุด)</v-subheader>
@@ -244,16 +212,137 @@
         </v-row> -->
         <v-row class="mt-n10">
           <v-col cols="5">
-            <v-subheader>วันที่อัพเดตล่าสุด</v-subheader>
+            <v-subheader>วันที่อัพเดตล่าสุด{{$route.params.id}}</v-subheader>
           </v-col>
           <v-col cols="7">
             <v-subheader>{{showTime(editedItem.product_price.updated_at)}}</v-subheader>
 
           </v-col>
         </v-row>
-
       </v-col>
     </v-row>
+    <v-dialog v-model="dialog" max-width="700px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">{{ showFormTitle() }}</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-row justify="center" align="center" class="mt-5">
+              <v-col cols="6">
+                <v-text-field v-model="editedItem.product_unit_barcode_in" dense label="รหัสสินค้า" outlined>
+                </v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="editedItem.product_unit_barcode_out" dense label="รหัสบาร์โค้ด" outlined>
+                </v-text-field>
+              </v-col>
+            </v-row>
+            <v-row justify="center" align="center" class="mt-n6">
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.product_detail" dense label="รายละเอียด(ย่อ)" outlined></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row justify="center" align="center" class="mt-n6">
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.product_detail_quatity" dense label="รายละเอียดบรรจุ" outlined>
+                </v-text-field>
+              </v-col>
+            </v-row>
+            <v-row justify="center" align="center" class="mt-n6">
+              <v-col cols="6">
+                <v-text-field v-model="editedItem.product_unit_name" dense label="หน่วยนับ" outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field type="number" v-model="editedItem.product_unit_quatity_contain" dense label="จำนวนบรรจุ"
+                  suffix="หน่วยนับ" outlined></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row justify="center" align="center" class="mt-n6">
+              <v-col cols="6">
+                <v-text-field type="number" v-model="editedItem.product_unit_price_no_vat" dense label="ทุน - NO VAT"
+                  @change="calNoVat" @keydown="calNoVat" @keyup="calNoVat" suffix="บาท" outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field type="number" v-model="editedItem.product_unit_price_vat" dense label="รวม VAT"
+                  suffix="บาท" @change="calVat" @keyup="calVat" @keydown="calVat" outlined></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" dark @click="close">
+            ยกเลิก
+          </v-btn>
+          <v-btn color="blue darken-1" dark @click="save">
+            บันทึก
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogSell" max-width="700px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">กำหนดราคาขายจาดต้นทุน</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-row justify="center" align="center" class="mt-5">
+          <v-col cols="6">
+            <v-text-field label="ราคาตั้งจากส่วนกลาง (ล่าสุด)" v-model="editedItem.product_price.product_unit_price_average" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ส่วนลดเปอร์เซ็น(ล่าสุด)" v-model="editedItem.product_price.product_unit_discount" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-01(บวก เปอร์เซ็น) P01" v-model="editedItem.product_price.P1" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-02(บวก เปอร์เซ็น) P02" v-model="editedItem.product_price.P2" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-03(บวก เปอร์เซ็น) P03" v-model="editedItem.product_price.P3" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-04(บวก เปอร์เซ็น) P04" v-model="editedItem.product_price.P4" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-05(บวก เปอร์เซ็น) P05" v-model="editedItem.product_price.P5" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-06(บวก เปอร์เซ็น) P06" v-model="editedItem.product_price.P6" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-07(บวก เปอร์เซ็น) P07" v-model="editedItem.product_price.P7" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-08(บวก เปอร์เซ็น) P08" v-model="editedItem.product_price.P8" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-09(บวก เปอร์เซ็น) P09" v-model="editedItem.product_price.P9" dense outlined></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field label="ราคาขาย-10(บวก เปอร์เซ็น) P10" v-model="editedItem.product_price.P10" dense outlined></v-text-field>
+          </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" dark @click="close">
+            ยกเลิก
+          </v-btn>
+          <v-btn color="blue darken-1" dark @click="save">
+            บันทึก
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -261,13 +350,16 @@
   import moment from "moment";
   moment.locale("th");
   export default {
-    props: ['product'],
     data() {
       return {
         productUnits: [],
         overlay: false,
+        dialog: false,
         selectedRow: -1,
+        formTitle: 'เพิ่มหน่วยซื้อ/ขาย',
+        dialogSell: false,
         rowData: [],
+        product: [],
         headers: [{
             text: 'รหัสสินค้า',
             value: 'product_unit_barcode_in'
@@ -315,11 +407,14 @@
           product_unit_barcode_in: null,
           product_unit_barcode_out: null,
           product_unit_name: "",
+          product_detail: "",
+          product_detail_quatity: "",
           product_unit_price_no_vat: 0,
           product_unit_price_vat: 0,
           product_unit_quatity_contain: 0,
           updated_at: null,
         },
+        editedIndex: -1,
         defaultItem: {
           created_at: "",
           id: null,
@@ -349,6 +444,8 @@
           product_unit_barcode_in: null,
           product_unit_barcode_out: null,
           product_unit_name: "",
+          product_detail: "",
+          product_detail_quatity: "",
           product_unit_price_no_vat: 0,
           product_unit_price_vat: 0,
           product_unit_quatity_contain: 0,
@@ -357,6 +454,12 @@
       }
     },
     methods: {
+      showFormTitle() {
+        return this.editedIndex === -1 ? 'เพิ่มหน่วยซื้อ/ขาย' : 'แก้ไขหน่วยซื้อ/ขาย'
+      },
+      editData() {
+        this.dialog = true;
+      },
       showTime(time) {
         if (time) {
           return moment(time).format('LLL');
@@ -376,12 +479,34 @@
       },
       rowSelect(idx) {
         this.selectedRow = idx;
+        this.editedIndex = idx;
         // this.selectedRow = this.rowData.indexOf(idx)
         this.editedItem = Object.assign({}, this.rowData[idx])
 
       },
       async clickItem(item) {
         this.editedItem = Object.assign({}, item)
+      },
+      newItem() {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.dialog = true;
+        this.editedIndex = -1;
+      },
+      del() {
+        this.$swal({
+          title: 'ลบข้อมูล',
+          text: "คุณต้องการลบสินค้าหรือไม่!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'ยืนยัน',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.deleteData();
+          }
+        })
       },
       save() {
         if (this.selectedRow > -1) {
@@ -418,7 +543,8 @@
       },
       async getProductUnit() {
         if (this.product) {
-          await this.$axios.get('/product-units?product=' + this.product.id + '?_limit=-1?_sort=id:DESC').then((
+          await this.$axios.get('/product-units?product=' + this.$route.params.id + '?_limit=-1?_sort=id:DESC')
+            .then((
               res) => {
               this.rowData = res.data;
               this.overlay = false;
@@ -434,6 +560,18 @@
             })
         }
 
+      },
+      close() {
+        this.dialog = false;
+        this.dialogSell = false;
+        if (this.selectedRow > -1) {
+          this.rowSelect(this.selectedRow)
+        } else {
+          this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+          })
+        }
       },
       async createData() {
         this.overlay = true;
