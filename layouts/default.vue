@@ -102,6 +102,10 @@ export default {
           icon: "mdi-archive-search",
           title: "รายการสินค้า",
           to: "/product_list",
+        },{
+          icon: "mdi-archive-search",
+          title: "สินค้า",
+          to: "/stock",
         },
         {
           icon: "mdi-package-down",
