@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-container fluid>
-      <v-row>
-        <v-col cols="12"> </v-col>
-      </v-row>
-    </v-container>
-
     <v-card>
       <v-card-title class="green--text">
         <v-icon large color="green">mdi-card-account-details-outline</v-icon>
@@ -248,26 +242,14 @@
 
 <script>
 export default {
-  props: ["dialogDetailSupplier", "supplier"],
+  props: ["dialogDetailSupplier", "itemSupplier"],
 
   data() {
     return {};
   },
 
-  watch: {
-    supplier(e) {
-      if (e != null) {
-        // console.log("e", e);
-        this.supplier = e;
-        console.log("supplier", this.supplier);
-      } else {
-        this.supplier = this.supplier;
-      }
-    },
-  },
-
   created() {
-    console.log("supplier", this.supplier);
+    // console.log("supplier", this.supplier);
   },
 
   methods: {
