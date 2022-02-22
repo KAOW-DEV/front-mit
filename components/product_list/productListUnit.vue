@@ -12,7 +12,7 @@
                   <td>{{ item.product_unit_barcode_in }}</td>
                   <td>{{ item.product_unit_barcode_out }}</td>
                   <td>{{ item.product_unit_name }}</td>
-                  <td>{{ item.product.product_name }}</td>
+                  <td>{{ item.product_desc }}</td>
                 </tr>
               </tbody>
             </template>
@@ -231,7 +231,7 @@
           <v-container>
             <v-row justify="center" align="center" class="mt-5">
               <v-col cols="6">
-                <v-text-field v-model="editedItem.product_unit_barcode_in" dense label="รหัสสินค้า" outlined>
+                <v-text-field readonly v-model="editedItem.product_unit_barcode_in" dense label="รหัสสินค้า" outlined>
                 </v-text-field>
               </v-col>
               <v-col cols="6">
@@ -241,12 +241,12 @@
             </v-row>
             <v-row justify="center" align="center" class="mt-n6">
               <v-col cols="12">
-                <v-text-field v-model="editedItem.product_detail" dense label="รายละเอียด(ย่อ)" outlined></v-text-field>
+                <v-text-field v-model="editedItem.product_desc" dense label="รายละเอียด(ย่อ)" outlined></v-text-field>
               </v-col>
             </v-row>
             <v-row justify="center" align="center" class="mt-n6">
               <v-col cols="12">
-                <v-text-field v-model="editedItem.product_detail_quatity" dense label="รายละเอียดบรรจุ" outlined>
+                <v-text-field v-model="editedItem.product_desc_pack" dense label="รายละเอียดบรรจุ" outlined>
                 </v-text-field>
               </v-col>
             </v-row>
@@ -277,7 +277,7 @@
           <v-btn color="red" dark @click="close">
             ยกเลิก
           </v-btn>
-          <v-btn color="blue darken-1" dark @click="save">
+          <v-btn color="blue darken-1" dark :loading="loadingData" @click="save">
             บันทึก
           </v-btn>
         </v-card-actions>
@@ -292,42 +292,54 @@
         <v-card-text>
           <v-container>
             <v-row justify="center" align="center" class="mt-5">
-          <v-col cols="6">
-            <v-text-field label="ราคาตั้งจากส่วนกลาง (ล่าสุด)" v-model="editedItem.product_price.product_unit_price_average" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ส่วนลดเปอร์เซ็น(ล่าสุด)" v-model="editedItem.product_price.product_unit_discount" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-01(บวก เปอร์เซ็น) P01" v-model="editedItem.product_price.P1" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-02(บวก เปอร์เซ็น) P02" v-model="editedItem.product_price.P2" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-03(บวก เปอร์เซ็น) P03" v-model="editedItem.product_price.P3" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-04(บวก เปอร์เซ็น) P04" v-model="editedItem.product_price.P4" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-05(บวก เปอร์เซ็น) P05" v-model="editedItem.product_price.P5" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-06(บวก เปอร์เซ็น) P06" v-model="editedItem.product_price.P6" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-07(บวก เปอร์เซ็น) P07" v-model="editedItem.product_price.P7" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-08(บวก เปอร์เซ็น) P08" v-model="editedItem.product_price.P8" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-09(บวก เปอร์เซ็น) P09" v-model="editedItem.product_price.P9" dense outlined></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="ราคาขาย-10(บวก เปอร์เซ็น) P10" v-model="editedItem.product_price.P10" dense outlined></v-text-field>
-          </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาตั้งจากส่วนกลาง (ล่าสุด)"
+                  v-model="editedItem.product_price.product_unit_price_average" dense outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ส่วนลดเปอร์เซ็น(ล่าสุด)" v-model="editedItem.product_price.product_unit_discount"
+                  dense outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-01(บวก เปอร์เซ็น) P01" v-model="editedItem.product_price.P1" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-02(บวก เปอร์เซ็น) P02" v-model="editedItem.product_price.P2" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-03(บวก เปอร์เซ็น) P03" v-model="editedItem.product_price.P3" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-04(บวก เปอร์เซ็น) P04" v-model="editedItem.product_price.P4" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-05(บวก เปอร์เซ็น) P05" v-model="editedItem.product_price.P5" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-06(บวก เปอร์เซ็น) P06" v-model="editedItem.product_price.P6" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-07(บวก เปอร์เซ็น) P07" v-model="editedItem.product_price.P7" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-08(บวก เปอร์เซ็น) P08" v-model="editedItem.product_price.P8" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-09(บวก เปอร์เซ็น) P09" v-model="editedItem.product_price.P9" dense
+                  outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field label="ราคาขาย-10(บวก เปอร์เซ็น) P10" v-model="editedItem.product_price.P10" dense
+                  outlined></v-text-field>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -337,7 +349,7 @@
           <v-btn color="red" dark @click="close">
             ยกเลิก
           </v-btn>
-          <v-btn color="blue darken-1" dark @click="save">
+          <v-btn color="blue darken-1" dark :loading="loadingSell" @click="updateDataPrice">
             บันทึก
           </v-btn>
         </v-card-actions>
@@ -354,6 +366,8 @@
       return {
         productUnits: [],
         overlay: false,
+        loadingData: false,
+        loadingSell: false,
         dialog: false,
         selectedRow: -1,
         formTitle: 'เพิ่มหน่วยซื้อ/ขาย',
@@ -374,7 +388,7 @@
           },
           {
             text: 'ชื่อสินค้า',
-            value: 'product_name'
+            value: 'product_desc'
           }
         ],
         //input
@@ -404,9 +418,13 @@
             product_unit_price_average: 0,
             updated_at: "2022-01-23T16:05:06.000Z"
           },
+          categorei: null,
+          group_name: null,
           product_unit_barcode_in: null,
           product_unit_barcode_out: null,
           product_unit_name: "",
+          product_desc_pack: "",
+          product_desc: "",
           product_detail: "",
           product_detail_quatity: "",
           product_unit_price_no_vat: 0,
@@ -441,8 +459,12 @@
             product_unit_price_average: 0,
             updated_at: "2022-01-23T16:05:06.000Z"
           },
+          categorei: null,
+          group_name: null,
           product_unit_barcode_in: null,
           product_unit_barcode_out: null,
+          product_desc_pack: "",
+          product_desc: "",
           product_unit_name: "",
           product_detail: "",
           product_detail_quatity: "",
@@ -509,36 +531,11 @@
         })
       },
       save() {
-        if (this.selectedRow > -1) {
-          this.$swal({
-            title: 'บันทึกข้อมูล',
-            text: "คุณต้องการบันทึกหรือไม่!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'บันทึก',
-            cancelButtonText: 'ยกเลิก'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.updateDataPrice();
-            }
-          })
+        if (this.editedIndex > -1) {
+          this.updateData();
         } else {
-          this.$swal({
-            title: 'บันทึกข้อมูล',
-            text: "คุณต้องการบันทึกหรือไม่!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'บันทึก',
-            cancelButtonText: 'ยกเลิก'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // this.createData();
-            }
-          })
+
+          this.createDataPrice();
         }
       },
       async getProductUnit() {
@@ -548,6 +545,16 @@
               res) => {
               this.rowData = res.data;
               this.overlay = false;
+              if (res) {
+                this.editedItem.product_unit_barcode_in = res.data[0].product_unit_barcode_in;
+                this.editedItem.group_name = res.data[0].product.group;
+                this.editedItem.categorei = res.data[0].product.categoreis;
+                this.editedItem.product = res.data[0].product.id;
+                this.defaultItem.product_unit_barcode_in = res.data[0].product_unit_barcode_in;
+                this.defaultItem.group_name = res.data[0].product.group;
+                this.defaultItem.categorei = res.data[0].product.categoreis;
+                this.defaultItem.product = res.data[0].product.id;
+              }
             })
             .catch(error => {
               this.$swal({
@@ -573,14 +580,26 @@
           })
         }
       },
-      async createData() {
+      async createData(price_id) {
+
         this.overlay = true;
         await this.$axios.post('/product-units', {
             group_name: this.editedItem.group_name,
-            categorei: this.editedItem.categorei
+            categorei: this.editedItem.categorei,
+            product_unit_barcode_in: this.editedItem.product_unit_barcode_in,
+            product_unit_barcode_out: this.editedItem.product_unit_barcode_out,
+            product_desc: this.editedItem.product_desc,
+            product_desc_pack: this.editedItem.product_desc_pack,
+            product_unit_name: this.editedItem.product_unit_name,
+            product_unit_price_no_vat: this.editedItem.product_unit_price_no_vat,
+            product_unit_price_vat: this.editedItem.product_unit_price_vat,
+            product_unit_quatity_contain: this.editedItem.product_unit_quatity_contain,
+            product: this.editedItem.product,
+            product_price: price_id
           })
           .then(response => {
             this.overlay = false;
+            this.loadingData = false;
             this.rowData.push(response.data)
             this.close();
             this.$swal({
@@ -592,6 +611,7 @@
           })
           .catch(error => {
             this.overlay = false;
+            this.loadingData = false;
             console.log('error', error);
             this.$swal({
               position: 'center',
@@ -602,28 +622,72 @@
             })
           })
       },
-      async updateData(price_id) {
+      async createDataPrice() {
+        this.overlay = true;
+        this.loadingData = true;
+        await this.$axios.post('/product-prices', {
+            P1: 0,
+            P2: 0,
+            P3: 0,
+            P4: 0,
+            P5: 0,
+            P6: 0,
+            P7: 0,
+            P8: 0,
+            P9: 0,
+            P10: 0,
+            P11: 0,
+            P12: 0,
+            P13: 0,
+            P14: 0,
+            P15: 0,
+            product_unit: 0,
+            product_unit_discount: 0,
+            product_unit_price_average: 0,
+          })
+          .then(response => {
+            this.createData(response.data.id)
+          })
+          .catch(error => {
+            this.loadingData = false;
+            this.overlay = false;
+            console.log('error', error);
+            this.$swal({
+              position: 'center',
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: error,
+              showConfirmButton: true,
+            })
+          })
+      },
+      async updateData() {
+        this.loadingData = true;
         await this.$axios.put('/product-units/' + this.editedItem.id, {
             product_unit_barcode_in: this.editedItem.product_unit_barcode_in,
             product_unit_barcode_out: this.editedItem.product_unit_barcode_out,
+            product_desc: this.editedItem.product_desc,
+            product_desc_pack: this.editedItem.product_desc_pack,
             product_unit_name: this.editedItem.product_unit_name,
             product_unit_price_no_vat: this.editedItem.product_unit_price_no_vat,
             product_unit_price_vat: this.editedItem.product_unit_price_vat,
             product_unit_quatity_contain: this.editedItem.product_unit_quatity_contain,
-            product_price: price_id
           })
           .then(response => {
+            this.loadingData = false;
+            this.dialog = false;
             Object.assign(this.rowData[this.selectedRow], response.data);
             this.overlay = false;
             this.$swal({
               position: 'center',
               icon: 'success',
               title: 'อัพเดตเรียบร้อย',
-              timer: 1500
+              showConfirmButton: false,
             })
           })
           .catch(error => {
             this.overlay = false;
+            this.loadingData = false;
             this.$swal({
               position: 'center',
               icon: 'error',
@@ -635,6 +699,7 @@
       },
       async updateDataPrice() {
         this.overlay = true;
+        this.loadingSell = true;
         await this.$axios.put('/product-prices/' + this.editedItem.product_price.id, {
             P1: this.editedItem.product_price.P1,
             P2: this.editedItem.product_price.P2,
@@ -656,10 +721,18 @@
             product_unit_price_average: this.editedItem.product_price.product_unit_price_average
           })
           .then(response => {
-            this.updateData(response.id);
+            this.overlay = false;
+            this.dialogSell = false;
+            this.$swal({
+              position: 'center',
+              icon: 'success',
+              title: 'สำเร็จ',
+              showConfirmButton: false,
+            })
           })
           .catch(error => {
             this.overlay = false;
+            this.dialogSell = false;
             this.$swal({
               position: 'center',
               icon: 'error',
@@ -679,7 +752,8 @@
               position: 'center',
               icon: 'success',
               title: 'ลบเรียบร้อย',
-              timer: 1500
+              timer: 1500,
+              showConfirmButton: false,
             })
           })
           .catch(error => {

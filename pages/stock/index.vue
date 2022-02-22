@@ -2,10 +2,11 @@
   <v-container grid-list-lg>
     <v-row>
       <v-col cols="12">
-        <v-btn color="primary" class="float-end ma-2" :disabled="selected.length < 1">
+        <!-- <v-btn color="primary" class="float-end ma-2" :disabled="selected.length < 1">
           <v-icon>mdi-plus</v-icon>
           import
-        </v-btn>
+        </v-btn> -->
+        <importData :selected="selected" class="float-end ma-2"></importData>
         <v-btn color="success" class="float-end ma-2" :disabled="selected.length < 1" @click="exportData()">
           <v-icon>mdi-plus</v-icon>
           export
@@ -21,7 +22,6 @@
               <v-spacer></v-spacer>
             </v-toolbar>
           </template>
-
           <template v-slot:item.no="{ index }">
             <b>{{index+1}}</b>
           </template>
@@ -35,8 +35,12 @@
 
 
 <script>
+import importData from '../../components/import.vue'
   var XLSX = require("xlsx");
   export default {
+    components:{
+      importData
+    },
     data: () => ({
       dialog_insert: false,
       dialog_update: false,
@@ -59,7 +63,7 @@
         },
         {
           text: "สินค้า/รายละเอียด",
-          value: "product.product_name"
+          value: "product_unit_name"
         },
         {
           text: "หน่วยนับ",
@@ -94,7 +98,7 @@
           obj['groupid'] = item.product.categoreis;
           obj['subgroupid'] = item.product.group;
           obj['codeno'] = item.product_unit_barcode_in;
-          obj['description'] = item.product.product_name;
+          obj['description'] = item.product_desc;
           obj['company'] = item.product.supplier;
           obj['stock_unit'] = item.product_unit_name; //หน่วยเล็กสุด
           obj['plu_sdp'] = 0;
@@ -147,6 +151,8 @@
         const wb = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(wb, dataWS)
         XLSX.writeFile(wb, 'export.xlsx')
+        this.selected = [];
+
       },
       async get_products() {
         await this.$axios.get('/product-units?_limit=-1&_sort=id:DESC')
