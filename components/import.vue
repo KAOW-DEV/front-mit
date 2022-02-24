@@ -27,6 +27,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog transition="dialog-top-transition" v-model="dialogError" persistent max-width="1200">
+      <template v-slot:default="dialogError">
+        <v-card>
+          <v-toolbar color="primary" dark>รายการสินค้าที่ Import ไม่สำเร็จ</v-toolbar>
+          <v-card-text class="mt-5">
+            <v-data-table :headers="headers" :items="desserts" 
+              class="elevation-1">
+              <template v-slot:item.no="{ index }">
+                <b>{{index+1}}</b>
+              </template>
+            </v-data-table>
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn color="red" text @click="dialogError.value = false">ปิด</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -37,8 +55,49 @@
       return {
         dialog: false,
         loading: false,
+        dialogError: false,
         itemAll: [],
-        file: null
+        file: null,
+        headers: [{
+            text: "ลำดับ",
+            align: "start",
+            sortable: false,
+            value: "no",
+          },
+          {
+            text: "รหัสสินค้าภายใน",
+            value: "internal_code"
+          },
+          {
+            text: "รหัสบาร์โค้ด",
+            value: "barcodeid"
+          },
+          {
+            text: "สินค้า/รายละเอียด",
+            value: "description"
+          },
+          {
+            text: "หน่วยนับ",
+            value: "unit"
+          },
+          {
+            text: "ราคา/หน่วย",
+            value: "qty_control"
+          },
+          {
+            text: "จำนวน",
+            value: "baseqty"
+          },
+          {
+            text: "จำนวนเงินสุทธิ",
+            value: "price0"
+          },
+          {
+            text: "สาเหตุ",
+            value: "status"
+          }
+        ],
+        desserts:[]
       }
     },
     watch: {
@@ -103,25 +162,30 @@
             res) => {
 
             if (res.data.success) {
+              // this.$emit("get_products");
               this.$swal({
                 position: 'center',
                 icon: 'success',
                 title: 'สำเร็จ',
                 showConfirmButton: true,
               })
-              this.dialog = false;
             } else {
+              this.desserts = res.data.logError;
+              this.dialogError = true;
               this.$swal({
                 position: 'center',
                 icon: 'error',
                 title: 'เกิดข้อผิดพลาด',
                 text: error,
-                showConfirmButton: true,
+                showConfirmButton: false,
               })
             }
+            this.dialog = false;
             this.loading = false;
           })
           .catch(error => {
+            this.loading = false;
+            this.dialog = false;
             this.$swal({
               position: 'center',
               icon: 'error',
