@@ -162,7 +162,7 @@
             res) => {
 
             if (res.data.success) {
-              // this.$emit("get_products");
+              this.$emit("get_products");
               this.$swal({
                 position: 'center',
                 icon: 'success',

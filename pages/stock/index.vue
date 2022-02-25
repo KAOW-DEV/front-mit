@@ -6,7 +6,7 @@
           <v-icon>mdi-plus</v-icon>
           import
         </v-btn> -->
-        <importData :selected="selected" class="float-end ma-2"></importData>
+        <importData :selected="selected" v-on:get_products="get_products" class="float-end ma-2"></importData>
         <v-btn color="success" class="float-end ma-2" :disabled="selected.length < 1" @click="exportData()">
           <v-icon>mdi-plus</v-icon>
           export
