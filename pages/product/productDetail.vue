@@ -22,6 +22,7 @@
               <v-toolbar class="elevation-0">
                 <v-text-field
                   label="รหัสสินค้า"
+                  v-model="productSearch"
                   dense
                   outlined
                   hide-details=""
@@ -29,8 +30,12 @@
                   class="mr-2"
                   required
                 ></v-text-field>
-                <v-btn class="mx-1" type="submit">ค้นหาจากบาร์โค้ด</v-btn>
-                <v-btn class="mx-1" type="submit">ค้นหาจากชื่อ</v-btn>
+                <v-btn class="mx-1" type="submit" @click="typeSearchBarcode"
+                  >ค้นหาจากบาร์โค้ด</v-btn
+                >
+                <v-btn class="mx-1" type="submit" @click="typeSearchName"
+                  >ค้นหาจากชื่อ</v-btn
+                >
               </v-toolbar>
             </form>
           </v-card>
@@ -58,11 +63,11 @@
 
               <!-- tab-2 -->
               <v-tab-item value="tab-2">
-                <v-container fluid>
-                  <v-row>
-                    <v-col cols="12"> หน่วยซื้อ/ขาย </v-col>
-                  </v-row>
-                </v-container>
+                <card-product-unit
+                  :itemProduct.sync="itemProduct"
+                  :itemsProductUnit.sync="itemsProductUnit"
+                  :editItem.sync="editItem"
+                ></card-product-unit>
               </v-tab-item>
 
               <!-- tab-3 -->
@@ -87,13 +92,23 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-dialog v-model="dialogSearchProduct" persistent width="80vh">
+      <card-dialog-search-product
+        @closeDialogSearchProduct="closeDialogSearchProduct"
+        :itemsProduct.sync="itemsProduct"
+        :itemProduct.sync="itemProduct"
+      ></card-dialog-search-product>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import CardDialogSearchProduct from "~/components/product/cardDialogSearchProduct.vue";
 import cardProductDetail from "~/components/product/cardProductDetail.vue";
+import CardProductUnit from "~/components/product/cardProductUnit.vue";
 export default {
-  components: { cardProductDetail },
+  components: { cardProductDetail, CardDialogSearchProduct, CardProductUnit },
   data() {
     return {
       tab: "tab-1",
@@ -116,38 +131,17 @@ export default {
         product_active: true,
       },
 
-      itemProductUnit: {
-        id: 0,
-        product_unit_internal_code: null,
-        product_unit_barcode: null,
-        product_unit_name: null,
-        product_unit_description: null,
-        unit: {},
-        product_unit_quantity_number: 0,
-        product: {},
-      },
-
-      itemProductPrice: {
-        id: 0,
-        product_price_middle: 0,
-        product_price_discount: 0,
-        product_price_1: 0,
-        product_price_2: 0,
-        product_price_3: 0,
-        product_price_4: 0,
-        product_price_5: 0,
-        product_price_6: 0,
-        product_price_7: 0,
-        product_price_8: 0,
-        product_price_9: 0,
-        product_price_10: 0,
-        product_price_low_limit: 0,
-        product_unit: {},
-      },
+      itemsProductUnit: [],
 
       itemProductBarcode: [],
 
       editItem: false,
+      typeSearch: null,
+
+      productSearch: null,
+      dialogSearchProduct: false,
+
+      itemsProduct: [],
     };
   },
 
@@ -169,6 +163,74 @@ export default {
     async newProduct() {
       this.resetItemProduct();
       this.editItem = false;
+      this.productSearch = null;
+    },
+
+    async searchProduct() {
+      if (this.typeSearch == "ค้นหาจากบาร์โค้ด") {
+        await this.$axios
+          .get("/products?product_code=" + this.productSearch)
+          .then((res) => {
+            // console.log("product_code", res.data);
+            // this.itemsGroup = res.data;
+            if (res.data.length > 0) {
+              this.editItem = true;
+              this.itemsProduct = res.data;
+              this.openDialogSearchProduct();
+            } else {
+              this.alertAddProduct();
+            }
+          });
+      }
+
+      if (this.typeSearch == "ค้นหาจากชื่อ") {
+        await this.$axios
+          .get("/products?product_name_containss=" + this.productSearch)
+          .then((res) => {
+            console.log("product_code", res.data);
+            // this.itemsGroup = res.data;
+            if (res.data.length > 0) {
+              this.editItem = true;
+              this.itemsProduct = res.data;
+              this.openDialogSearchProduct();
+            } else {
+              this.alertAddProduct();
+            }
+          });
+      }
+    },
+
+    async openDialogSearchProduct() {
+      this.dialogSearchProduct = true;
+    },
+
+    async closeDialogSearchProduct() {
+      this.dialogSearchProduct = false;
+    },
+
+    async alertAddProduct() {
+      this.$swal({
+        title: "ยังไม่มีสินค้านี้ในระบบ",
+        text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.newProduct();
+        }
+      });
+    },
+
+    async typeSearchBarcode() {
+      this.typeSearch = "ค้นหาจากบาร์โค้ด";
+    },
+
+    async typeSearchName() {
+      this.typeSearch = "ค้นหาจากชื่อ";
     },
   },
 };

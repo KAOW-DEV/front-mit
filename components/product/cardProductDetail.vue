@@ -6,7 +6,7 @@
           <v-row>
             <v-col cols="6">
               <v-text-field
-                label="รหัสสต๊อกสินค้า(ภายใน)"
+                label="รหัสสินค้าหลัก"
                 dense
                 outlined
                 hide-details=""
@@ -59,6 +59,7 @@
                 outlined
                 hide-details=""
                 required
+                :readonly="itemProduct.group == null"
               ></v-autocomplete>
             </v-col>
           </v-row>
@@ -96,38 +97,7 @@
             <v-col cols="4">
               <v-text-field
                 label="ยอดคงเหลือ"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              >
-              </v-text-field>
-            </v-col>
-          </v-row>
-          <v-row class="">
-            <v-col cols="6">
-              <v-text-field
-                label="วันที่สร้างข้อมูล"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              >
-              </v-text-field>
-            </v-col>
-            <v-col cols="3">
-              <v-text-field
-                label="ปรับปรุงล่าสุดวันที่"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              >
-              </v-text-field>
-            </v-col>
-            <v-col cols="3">
-              <v-text-field
-                label="เวลา"
+                v-model="itemProduct.product_quantity"
                 dense
                 outlined
                 hide-details=""
@@ -137,16 +107,15 @@
             </v-col>
           </v-row>
 
-          <v-row>
-            <v-col cols="6">
+          <v-row v-show="itemProduct.created_at != null">
+            <v-col cols="4">
               <v-chip large label color="primary" text-color="white">
-                วันที่สร้างข้อมูล 12/04/2565 เวลา 17:17:17
+                {{ itemProduct.created_at }}
               </v-chip>
             </v-col>
-
-            <v-col cols="6">
+            <v-col cols="4">
               <v-chip large label color="warning">
-                วันที่สร้างแก้ไขลาสุด 12/04/2565 เวลา 17:17:17
+                {{ itemProduct.updated_at }}
               </v-chip>
             </v-col>
           </v-row>
@@ -170,7 +139,7 @@ import moment from "moment";
 moment.locale("th");
 
 export default {
-  props: ["itemProduct"],
+  props: ["itemProduct", "editItem"],
   data() {
     return {
       itemsGroup: [],
@@ -184,9 +153,20 @@ export default {
     this.getData();
   },
 
+  watch: {
+    itemProduct(val) {
+      if (val) {
+        // console.log("itemProduct", val);
+        this.getItemsSubGroup();
+        console.log("editItem", this.editItem);
+        this.convertDate(this.itemProduct);
+      }
+    },
+  },
   methods: {
     async getData() {
       this.getItemsGroup();
+      // this.getItemsSubGroup();
       this.getItemsUnit();
       this.getItemsSupplier();
     },
@@ -223,6 +203,106 @@ export default {
         // console.log("itemsGroup", res.data);
         this.itemsSupplier = res.data;
       });
+    },
+
+    async checkSave() {
+      this.$swal({
+        title: "ต้องการบันทึกข้อมูล ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if (this.editItem == true) {
+            this.updateProduct();
+          } else {
+            this.addProduct();
+          }
+        }
+      });
+    },
+
+    async alertSuccess() {
+      this.$swal({
+        title: "บันทึกข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertError() {
+      this.$swal({
+        title: "เกิดข้อผิดพลาด",
+        text: "ตรวจสอบความถูกต้องของข้อมูล ก่อนบันทึก",
+        icon: "error",
+      });
+    },
+
+    async addProduct() {
+      // console.log("itemProduct", this.itemProduct);
+
+      await this.$axios
+        .post("/products", {
+          product_code: this.itemProduct.product_code,
+          product_name: this.itemProduct.product_name,
+          group: this.itemProduct.group.id,
+          sub_group: this.itemProduct.sub_group.id,
+          unit: this.itemProduct.unit.id,
+          supplier: this.itemProduct.supplier.id,
+          product_quantity: this.itemProduct.product_quantity,
+          product_active: true,
+        })
+        .then((res) => {
+          console.log("res", res.data);
+
+          this.$emit("update:itemProduct", res.data);
+          this.$emit("update:editItem", true);
+          this.alertSuccess();
+        })
+        .catch((error) => {
+          console.log("error", error);
+          this.alertError();
+        });
+    },
+
+    async convertDate(itemProduct) {
+      itemProduct.created_at = moment(itemProduct.created_at)
+        .add(543, "year")
+        .format("วันที่สร้างข้อมูล DD/MM/YYYY เวลา HH:mm:ss");
+
+      itemProduct.updated_at = moment(itemProduct.updated_at)
+        .add(543, "year")
+        .format("วันที่แก้ไข(ล่าสุด) DD/MM/YYYY เวลา HH:mm:ss");
+    },
+
+    async updateProduct() {
+      // console.log("itemProduct", this.itemProduct);
+
+      await this.$axios
+        .put("/products/" + this.itemProduct.id, {
+          product_name: this.itemProduct.product_name,
+          group: this.itemProduct.group.id,
+          sub_group: this.itemProduct.sub_group.id,
+          unit: this.itemProduct.unit.id,
+          supplier: this.itemProduct.supplier.id,
+          product_quantity: this.itemProduct.product_quantity,
+          product_active: true,
+        })
+        .then((res) => {
+          console.log("res", res.data);
+
+          this.$emit("update:itemProduct", res.data);
+          this.$emit("update:editItem", true);
+          this.alertSuccess();
+        })
+        .catch((error) => {
+          console.log("error", error);
+          this.alertError();
+        });
     },
   },
 };
