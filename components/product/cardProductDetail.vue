@@ -13,11 +13,11 @@
                 v-model="itemProduct.product_code"
                 required
                 :disabled="editItem"
+                autofocus
               ></v-text-field>
             </v-col>
             <v-col cols="6">
               <v-btn class="mx-1">เปลี่ยนรหัสสต๊อกสินค้า</v-btn>
-              <v-btn class="mx-1">Copy To</v-btn>
             </v-col>
           </v-row>
           <v-row class="">
@@ -107,7 +107,7 @@
             </v-col>
           </v-row>
 
-          <v-row v-show="itemProduct.created_at != null">
+          <v-row v-show="editItem">
             <v-col cols="4">
               <v-chip large label color="primary" text-color="white">
                 {{ itemProduct.created_at }}
@@ -242,6 +242,13 @@ export default {
       });
     },
 
+    async alertDuplicate() {
+      this.$swal({
+        title: "รหัสสินค้าหลักซ้ำ",
+        icon: "error",
+      });
+    },
+
     async addProduct() {
       // console.log("itemProduct", this.itemProduct);
 
@@ -265,7 +272,9 @@ export default {
         })
         .catch((error) => {
           console.log("error", error);
-          this.alertError();
+          this.alertDuplicate();
+          this.$emit("newProduct");
+          this.$emit("update:editItem", false);
         });
     },
 

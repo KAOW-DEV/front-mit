@@ -220,7 +220,7 @@ export default {
             },
             {
               text: "กำหนดรายชื่อพนักงาน",
-              to: "/",
+              to: "/setting/user",
               icon: "mdi-format-list-bulleted-square",
             },
             {

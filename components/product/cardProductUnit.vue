@@ -8,6 +8,7 @@
               :headers="headersItemsProductUnit"
               :items="itemsProductUnit"
               class="elevation-1"
+              hide-default-footer
               @click:row="getItem"
             >
               <template v-slot:item.index="{ item, index }">
@@ -95,6 +96,18 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row v-if="product_unit_internal_code">
+              <v-col cols="4">
+                <v-chip large label color="primary" text-color="white">
+                  {{ created_at }}
+                </v-chip>
+              </v-col>
+              <v-col cols="4">
+                <v-chip large label color="warning">
+                  {{ updated_at }}
+                </v-chip>
+              </v-col>
+            </v-row>
           </v-col>
           <v-col cols="3">
             <v-row>
@@ -105,6 +118,7 @@
                   dense
                   outlined
                   readonly
+                  hide-details=""
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -114,132 +128,134 @@
                   dense
                   outlined
                   readonly
+                  hide-details=""
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-divider class=""></v-divider>
 
-            <v-row class="mt-3">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 01 (บวกเปอร์เซ็น)"
-                  v-model="product_price_1"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
+            <v-row>
+              <v-col cols="12">
+                <v-divider></v-divider>
               </v-col>
             </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
+            <v-row>
               <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 02 (บวกเปอร์เซ็น)"
-                  v-model="product_price_2"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 01 (บวกเปอร์เซ็น)"
+                      v-model="product_price_1"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 02 (บวกเปอร์เซ็น)"
+                      v-model="product_price_2"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 03 (บวกเปอร์เซ็น)"
+                      v-model="product_price_3"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 04 (บวกเปอร์เซ็น)"
+                      v-model="product_price_4"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 05 (บวกเปอร์เซ็น)"
+                      v-model="product_price_5"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="6">
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 06 (บวกเปอร์เซ็น)"
+                      v-model="product_price_6"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 07 (บวกเปอร์เซ็น)"
+                      v-model="product_price_7"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 08 (บวกเปอร์เซ็น)"
+                      v-model="product_price_8"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 09 (บวกเปอร์เซ็น)"
+                      v-model="product_price_9"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="ราคาขาย 10 (บวกเปอร์เซ็น)"
+                      v-model="product_price_10"
+                      dense
+                      outlined
+                      readonly
+                      hide-details=""
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 03 (บวกเปอร์เซ็น)"
-                  v-model="product_price_3"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
+
+            <v-row>
+              <v-col cols="12">
+                <v-divider></v-divider>
               </v-col>
             </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 04 (บวกเปอร์เซ็น)"
-                  v-model="product_price_4"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 05 (บวกเปอร์เซ็น)"
-                  v-model="product_price_5"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 06 (บวกเปอร์เซ็น)"
-                  v-model="product_price_6"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 07 (บวกเปอร์เซ็น)"
-                  v-model="product_price_7"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 08 (บวกเปอร์เซ็น)"
-                  v-model="product_price_8"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 09 (บวกเปอร์เซ็น)"
-                  v-model="product_price_9"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
-              <v-col cols="6"> </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="ราคาขาย 10 (บวกเปอร์เซ็น)"
-                  v-model="product_price_10"
-                  dense
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="mt-n10">
+
+            <v-row>
               <v-col cols="6"> </v-col>
               <v-col cols="6">
                 <v-text-field
@@ -248,6 +264,7 @@
                   dense
                   outlined
                   readonly
+                  hide-details=""
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -298,11 +315,27 @@ export default {
           sortable: false,
           value: "index",
         },
-        { text: "รหัสภายใน", value: "product_unit_internal_code" },
-        { text: "รหัสบาร์โค้ด", value: "product_unit_barcode" },
-        { text: "รายละเอียด(ย่อ)", value: "product_unit_name" },
-        { text: "รายละเอียดบรรจุ", value: "product_unit_description" },
-        { text: "หน่วยนับ", value: "unit.unit_name" },
+        {
+          text: "รหัสภายใน",
+          value: "product_unit_internal_code",
+          sortable: false,
+        },
+        {
+          text: "รหัสบาร์โค้ด",
+          value: "product_unit_barcode",
+          sortable: false,
+        },
+        {
+          text: "รายละเอียด(ย่อ)",
+          value: "product_unit_name",
+          sortable: false,
+        },
+        {
+          text: "รายละเอียดบรรจุ",
+          value: "product_unit_description",
+          sortable: false,
+        },
+        { text: "หน่วยนับ", value: "unit.unit_name", sortable: false },
       ],
 
       itemsProductUnit: [],
@@ -356,6 +389,9 @@ export default {
       product_price_10: null,
       product_price_low_limit: null,
 
+      created_at: null,
+      updated_at: null,
+
       dialogAddProductUnit: false,
       dialogEditProductUnit: false,
     };
@@ -404,6 +440,17 @@ export default {
       this.unit = item.unit.unit_name;
 
       this.getItemProductPrice(item);
+      this.convertDate();
+    },
+
+    async convertDate() {
+      this.created_at = moment(this.itemProductUnit.created_at)
+        .add(543, "year")
+        .format("วันที่สร้างข้อมูล DD/MM/YYYY เวลา HH:mm:ss");
+
+      this.updated_at = moment(this.itemProductUnit.updated_at)
+        .add(543, "year")
+        .format("วันที่แก้ไข(ล่าสุด) DD/MM/YYYY เวลา HH:mm:ss");
     },
 
     async getItemProductPrice(item) {
@@ -503,26 +550,42 @@ export default {
     },
 
     async checkDelete() {
+      console.log("itemsProductUnit", this.itemsProductUnit);
+
       if (this.product_unit_internal_code != null) {
-        this.$swal({
-          title: "ต้องการลบข้อมูล ใช่หรือไม่",
-          icon: "error",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "ใช่",
-          cancelButtonText: "ไม่ใช่",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            console.log("itemProductUnit", this.itemProductUnit);
-            console.log("itemProductPrice", this.itemProductPrice);
-            await this.deleteProductUnit();
-            await this.deleteProductPrice();
-            await this.alertSuccess();
-            await this.getData();
-          }
-        });
+        let index = this.itemsProductUnit.indexOf(this.itemProductUnit);
+        console.log("index", index);
+        if (index == this.itemsProductUnit.length - 1) {
+          this.$swal({
+            title: "ต้องการลบข้อมูล ใช่หรือไม่",
+            icon: "error",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "ใช่",
+            cancelButtonText: "ไม่ใช่",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              console.log("itemProductUnit", this.itemProductUnit);
+              console.log("itemProductPrice", this.itemProductPrice);
+              await this.deleteProductUnit();
+              await this.deleteProductPrice();
+              await this.alertSuccess();
+              await this.getData();
+            }
+          });
+        } else {
+          this.alertNotDelete();
+        }
       }
+    },
+
+    async alertNotDelete() {
+      this.$swal({
+        title: "ลบไม่ได้",
+        text: "กรุณาลบข้อมูลจากหน่วยใหญ่ก่อน",
+        icon: "error",
+      });
     },
 
     async deleteProductUnit() {

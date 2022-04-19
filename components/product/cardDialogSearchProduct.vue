@@ -8,18 +8,16 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card-text>
-        <v-data-table
-          :headers="headersItemsProduct"
-          :items="itemsProduct"
-          class="elevation-1"
-          @dblclick:row="getItem"
-        >
-          <template v-slot:item.index="{ item, index }">
-            {{ index + 1 }}
-          </template>
-        </v-data-table>
-      </v-card-text>
+      <v-data-table
+        :headers="headersItemsProduct"
+        :items="itemsProduct"
+        class="elevation-1"
+        @dblclick:row="getItem"
+      >
+        <template v-slot:item.index="{ item, index }">
+          {{ index + 1 }}
+        </template>
+      </v-data-table>
     </v-card>
   </div>
 </template>
@@ -34,6 +32,7 @@ export default {
     "itemsProductUnit",
     "itemProductPrice",
     "itemProductBarcode",
+    "editItem",
   ],
 
   data() {
@@ -58,6 +57,7 @@ export default {
 
       this.$emit("update:itemProduct", item);
       this.$emit("closeDialogSearchProduct");
+      this.$emit("update:editItem", true);
     },
   },
 };

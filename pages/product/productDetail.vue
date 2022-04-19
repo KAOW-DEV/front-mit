@@ -58,6 +58,7 @@
                 <card-product-detail
                   :itemProduct.sync="itemProduct"
                   :editItem.sync="editItem"
+                  @newProduct="newProduct"
                 ></card-product-detail>
               </v-tab-item>
 
@@ -65,7 +66,6 @@
               <v-tab-item value="tab-2">
                 <card-product-unit
                   :itemProduct.sync="itemProduct"
-                  :itemsProductUnit.sync="itemsProductUnit"
                   :editItem.sync="editItem"
                 ></card-product-unit>
               </v-tab-item>
@@ -93,11 +93,12 @@
       </v-row>
     </v-container>
 
-    <v-dialog v-model="dialogSearchProduct" persistent width="80vh">
+    <v-dialog v-model="dialogSearchProduct" persistent width="80%">
       <card-dialog-search-product
         @closeDialogSearchProduct="closeDialogSearchProduct"
         :itemsProduct.sync="itemsProduct"
         :itemProduct.sync="itemProduct"
+        :editItem.sync="editItem"
       ></card-dialog-search-product>
     </v-dialog>
   </div>
@@ -164,6 +165,7 @@ export default {
       this.resetItemProduct();
       this.editItem = false;
       this.productSearch = null;
+      this.tab = "tab-1";
     },
 
     async searchProduct() {
@@ -174,7 +176,6 @@ export default {
             // console.log("product_code", res.data);
             // this.itemsGroup = res.data;
             if (res.data.length > 0) {
-              this.editItem = true;
               this.itemsProduct = res.data;
               this.openDialogSearchProduct();
             } else {
@@ -190,7 +191,6 @@ export default {
             console.log("product_code", res.data);
             // this.itemsGroup = res.data;
             if (res.data.length > 0) {
-              this.editItem = true;
               this.itemsProduct = res.data;
               this.openDialogSearchProduct();
             } else {

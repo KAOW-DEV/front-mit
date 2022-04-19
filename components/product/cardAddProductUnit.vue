@@ -240,6 +240,13 @@
                           min="0"
                         ></v-text-field>
                       </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-divider></v-divider>
+                      </v-col>
+                    </v-row>
+                    <v-row>
                       <v-col cols="12">
                         <v-text-field
                           label="ห้ามขายราคาต่ำกว่า"
@@ -323,6 +330,14 @@ export default {
       });
     },
 
+    async alertDuplicate() {
+      this.$swal({
+        title: "รหัสซ้ำ!",
+        text: "รหัสภายใน หรือ รหัสบาร์โค้ด ซ้ำ!!",
+        icon: "error",
+      });
+    },
+
     async addProductUnit() {
       await this.$axios
         .post("/product-units", {
@@ -343,6 +358,9 @@ export default {
 
           this.addProductPrice(res.data);
           this.$emit("getItemsProductUnit");
+        })
+        .catch((error) => {
+          this.alertDuplicate();
         });
     },
 
