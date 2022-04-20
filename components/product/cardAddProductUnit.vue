@@ -47,6 +47,7 @@
                       outlined
                       hide-details=""
                       required
+                      readonly
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6">
@@ -288,7 +289,12 @@
 
 <script>
 export default {
-  props: ["itemProduct", "itemProductUnit", "itemProductPrice"],
+  props: [
+    "itemProduct",
+    "itemProductUnit",
+    "itemProductPrice",
+    "dialogAddProductUnit",
+  ],
 
   data() {
     return {
@@ -360,7 +366,10 @@ export default {
           this.$emit("getItemsProductUnit");
         })
         .catch((error) => {
+          this.$emit("update:dialogAddProductUnit", true);
           this.alertDuplicate();
+          this.$emit("getItemsProductUnit");
+          this.$emit("resetText");
         });
     },
 

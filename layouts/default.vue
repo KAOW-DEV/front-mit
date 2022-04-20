@@ -123,7 +123,7 @@ export default {
           subLinks: [
             {
               text: "ผู้ผลิต/ผู้ส่งสินค้า",
-              to: "/supplier",
+              to: "/suppliers",
               icon: "mdi-format-list-bulleted-square",
             },
             {

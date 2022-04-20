@@ -7,13 +7,13 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <!-- <v-row>
         <v-col cols="12">
           <v-btn color="success" class="float-end" @click="newProduct"
             >เพิ่มสินค้าใหม่</v-btn
           >
         </v-col>
-      </v-row>
+      </v-row> -->
 
       <v-row>
         <v-col cols="12">
@@ -48,8 +48,7 @@
             <v-tabs v-model="tab" slider-color="yellow" fixed-tabs>
               <v-tab href="#tab-1"> รายละเอียดหลัก </v-tab>
               <v-tab href="#tab-2" :disabled="!editItem"> หน่วยซื้อ/ขาย </v-tab>
-              <v-tab href="#tab-3" :disabled="!editItem"> ราคาขาย </v-tab>
-              <v-tab href="#tab-4" :disabled="!editItem">
+              <v-tab href="#tab-3" :disabled="!editItem">
                 พิมพ์บาร์โค้ดสินค้า
               </v-tab>
 
@@ -72,15 +71,6 @@
 
               <!-- tab-3 -->
               <v-tab-item value="tab-3">
-                <v-container fluid>
-                  <v-row>
-                    <v-col cols="12"> ราคาขาย </v-col>
-                  </v-row>
-                </v-container>
-              </v-tab-item>
-
-              <!-- tab-4 -->
-              <v-tab-item value="tab-4">
                 <v-container fluid>
                   <v-row>
                     <v-col cols="12"> พิมพ์บาร์โค้ดสินค้า </v-col>
@@ -116,7 +106,6 @@ export default {
       items: [
         { tab: "รายละเอียดหลัก", content: "รายละเอียดหลัก" },
         { tab: "หน่วยซื้อ/ขาย", content: "หน่วยซื้อ/ขาย" },
-        { tab: "ราคาขาย", content: "ราคาขาย" },
         { tab: "พิมพ์บาร์โค้ดสินค้า", content: "พิมพ์บาร์โค้ดสินค้า" },
       ],
 
@@ -164,8 +153,19 @@ export default {
     async newProduct() {
       this.resetItemProduct();
       this.editItem = false;
-      this.productSearch = null;
       this.tab = "tab-1";
+
+      if (this.typeSearch == "ค้นหาจากบาร์โค้ด") {
+        this.itemProduct.product_code = this.productSearch;
+        // this.$refs.search.$el.focus();
+      }
+
+      if (this.typeSearch == "ค้นหาจากชื่อ") {
+        this.itemProduct.product_name = this.productSearch;
+        // this.$refs.search.focus();
+      }
+
+      this.productSearch = null;
     },
 
     async searchProduct() {
@@ -179,7 +179,7 @@ export default {
               this.itemsProduct = res.data;
               this.openDialogSearchProduct();
             } else {
-              this.alertAddProduct();
+              this.alertNotBarcode();
             }
           });
       }
@@ -194,7 +194,7 @@ export default {
               this.itemsProduct = res.data;
               this.openDialogSearchProduct();
             } else {
-              this.alertAddProduct();
+              this.alertNotProductName();
             }
           });
       }
@@ -208,9 +208,26 @@ export default {
       this.dialogSearchProduct = false;
     },
 
-    async alertAddProduct() {
+    async alertNotBarcode() {
       this.$swal({
-        title: "ยังไม่มีสินค้านี้ในระบบ",
+        title: "ยังไม่มีบาร์โค้ด \n'" + this.productSearch + "' \nในระบบ",
+        text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.newProduct();
+        }
+      });
+    },
+
+    async alertNotProductName() {
+      this.$swal({
+        title: "ยังไม่มีชื่อสินค้า \n'" + this.productSearch + "' \nในระบบ",
         text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
         icon: "warning",
         showCancelButton: true,

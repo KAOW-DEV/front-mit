@@ -96,16 +96,27 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-row v-if="product_unit_internal_code">
+
+            <v-row>
               <v-col cols="4">
-                <v-chip large label color="primary" text-color="white">
-                  {{ created_at }}
-                </v-chip>
+                <v-text-field
+                  label="วันที่บันทึกข้อมูล"
+                  v-model="recordDate"
+                  dense
+                  outlined
+                  hide-details=""
+                  readonly
+                ></v-text-field>
               </v-col>
               <v-col cols="4">
-                <v-chip large label color="warning">
-                  {{ updated_at }}
-                </v-chip>
+                <v-text-field
+                  label="วันที่แก้ไขข้อมูล(ล่าสุด)"
+                  v-model="revisionDate"
+                  dense
+                  outlined
+                  hide-details=""
+                  readonly
+                ></v-text-field>
               </v-col>
             </v-row>
           </v-col>
@@ -281,6 +292,7 @@
         :itemProduct.sync="itemProduct"
         :itemProductUnit.sync="itemProductUnit"
         :itemProductPrice.sync="itemProductPrice"
+        :dialogAddProductUnit.sync="dialogAddProductUnit"
       ></card-add-product-unit>
     </v-dialog>
 
@@ -292,6 +304,7 @@
         :itemProduct.sync="itemProduct"
         :itemProductUnit.sync="itemProductUnit"
         :itemProductPrice.sync="itemProductPrice"
+        :dialogEditProductUnit.sync="dialogEditProductUnit"
       ></card-edit-product-unit>
     </v-dialog>
   </div>
@@ -394,6 +407,9 @@ export default {
 
       dialogAddProductUnit: false,
       dialogEditProductUnit: false,
+
+      recordDate: null,
+      revisionDate: null,
     };
   },
 
@@ -440,17 +456,18 @@ export default {
       this.unit = item.unit.unit_name;
 
       this.getItemProductPrice(item);
-      this.convertDate();
+
+      this.getDate();
     },
 
-    async convertDate() {
-      this.created_at = moment(this.itemProductUnit.created_at)
+    async getDate() {
+      this.recordDate = moment(this.itemProductUnit.created_at)
         .add(543, "year")
-        .format("วันที่สร้างข้อมูล DD/MM/YYYY เวลา HH:mm:ss");
+        .format("DD/MM/YYYY HH:mm:ss");
 
-      this.updated_at = moment(this.itemProductUnit.updated_at)
+      this.revisionDate = moment(this.itemProductUnit.updated_at)
         .add(543, "year")
-        .format("วันที่แก้ไข(ล่าสุด) DD/MM/YYYY เวลา HH:mm:ss");
+        .format("DD/MM/YYYY HH:mm:ss");
     },
 
     async getItemProductPrice(item) {
@@ -496,6 +513,9 @@ export default {
       this.product_price_9 = null;
       this.product_price_10 = null;
       this.product_price_low_limit = null;
+
+      this.recordDate = null;
+      this.revisionDate = null;
     },
 
     async openDialogAddProductUnit() {
@@ -503,6 +523,7 @@ export default {
       this.resetItemProductUnit();
       this.resetItemProductPrice();
       this.resetText();
+      this.itemProductUnit.product_unit_name = this.itemProduct.product_name;
     },
     async closeDialogAddProductUnit() {
       this.dialogAddProductUnit = false;
@@ -512,6 +533,7 @@ export default {
       if (this.product_unit_internal_code != null) {
         this.dialogEditProductUnit = true;
       }
+      this.itemProductUnit.product_unit_name = this.itemProduct.product_name;
     },
     async closeDialogEditProductUnit() {
       this.dialogEditProductUnit = false;

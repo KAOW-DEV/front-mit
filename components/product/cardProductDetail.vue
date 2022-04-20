@@ -20,7 +20,7 @@
               <v-btn class="mx-1">เปลี่ยนรหัสสต๊อกสินค้า</v-btn>
             </v-col>
           </v-row>
-          <v-row class="">
+          <v-row>
             <v-col cols="6">
               <v-text-field
                 label="ชื่อรายละเอียดสินค้า"
@@ -28,10 +28,11 @@
                 outlined
                 hide-details=""
                 v-model="itemProduct.product_name"
+                required
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row class="">
+          <v-row>
             <v-col cols="4">
               <v-autocomplete
                 label="ประเภทสินค้า"
@@ -63,7 +64,7 @@
               ></v-autocomplete>
             </v-col>
           </v-row>
-          <v-row class="">
+          <v-row>
             <v-col cols="4">
               <v-autocomplete
                 label="หน่วยนับ"
@@ -93,7 +94,7 @@
               ></v-autocomplete>
             </v-col>
           </v-row>
-          <v-row class="">
+          <v-row>
             <v-col cols="4">
               <v-text-field
                 label="ยอดคงเหลือ"
@@ -109,14 +110,24 @@
 
           <v-row v-show="editItem">
             <v-col cols="4">
-              <v-chip large label color="primary" text-color="white">
-                {{ itemProduct.created_at }}
-              </v-chip>
+              <v-text-field
+                label="วันที่บันทึกข้อมูล"
+                v-model="recordDate"
+                dense
+                outlined
+                hide-details=""
+                readonly
+              ></v-text-field>
             </v-col>
             <v-col cols="4">
-              <v-chip large label color="warning">
-                {{ itemProduct.updated_at }}
-              </v-chip>
+              <v-text-field
+                label="วันที่แก้ไขข้อมูล(ล่าสุด)"
+                v-model="revisionDate"
+                dense
+                outlined
+                hide-details=""
+                readonly
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -146,6 +157,9 @@ export default {
       itemsSubGroup: [],
       itemsUnit: [],
       itemsSupplier: [],
+
+      recordDate: null,
+      revisionDate: null,
     };
   },
 
@@ -163,6 +177,7 @@ export default {
       }
     },
   },
+
   methods: {
     async getData() {
       this.getItemsGroup();
@@ -244,7 +259,7 @@ export default {
 
     async alertDuplicate() {
       this.$swal({
-        title: "รหัสสินค้าหลักซ้ำ",
+        title: "รหัสสินค้า/ชื่อสินค้า หลักซ้ำ",
         icon: "error",
       });
     },
@@ -273,19 +288,20 @@ export default {
         .catch((error) => {
           console.log("error", error);
           this.alertDuplicate();
-          this.$emit("newProduct");
-          this.$emit("update:editItem", false);
+          return;
+          // this.$emit("newProduct");
+          // this.$emit("update:editItem", false);
         });
     },
 
     async convertDate(itemProduct) {
-      itemProduct.created_at = moment(itemProduct.created_at)
+      this.recordDate = moment(itemProduct.created_at)
         .add(543, "year")
-        .format("วันที่สร้างข้อมูล DD/MM/YYYY เวลา HH:mm:ss");
+        .format("DD/MM/YYYY HH:mm:ss");
 
-      itemProduct.updated_at = moment(itemProduct.updated_at)
+      this.revisionDate = moment(itemProduct.updated_at)
         .add(543, "year")
-        .format("วันที่แก้ไข(ล่าสุด) DD/MM/YYYY เวลา HH:mm:ss");
+        .format("DD/MM/YYYY HH:mm:ss");
     },
 
     async updateProduct() {
