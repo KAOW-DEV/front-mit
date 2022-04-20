@@ -205,17 +205,12 @@ export default {
           subLinks: [
             {
               text: "กำหนดประเภท",
-              to: "/",
-              icon: "mdi-format-list-bulleted-square",
-            },
-            {
-              text: "กำหนดยี่ห้อ",
-              to: "/",
+              to: "/setting/group",
               icon: "mdi-format-list-bulleted-square",
             },
             {
               text: "กำหนดหน่วยนับ",
-              to: "/",
+              to: "/setting/unit",
               icon: "mdi-format-list-bulleted-square",
             },
             {
@@ -225,7 +220,7 @@ export default {
             },
             {
               text: "กำหนดประเภทผู้จำหน่าย",
-              to: "/",
+              to: "/setting/vendorType",
               icon: "mdi-format-list-bulleted-square",
             },
           ],
