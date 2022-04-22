@@ -1,13 +1,14 @@
 <template>
   <div>
     <v-card>
-      <v-toolbar color="success" dark
-        >ค้นหาสินค้า
+      <v-card-title primary-title>
+        ค้นหาสินค้า
         <v-spacer></v-spacer>
         <v-btn icon @click="$emit('closeDialogSearchProduct')">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-      </v-toolbar>
+      </v-card-title>
+      <v-divider></v-divider>
       <v-data-table
         :headers="headersItemsProduct"
         :items="itemsProduct"

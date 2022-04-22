@@ -34,6 +34,7 @@
                   dense
                   return-object
                   hide-details=""
+                  required
                 ></v-autocomplete>
               </v-col>
               <v-col cols="6">

@@ -3,12 +3,12 @@
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <h1 class="red--text">กำหนดรายชื่อพนักงาน</h1>
+          <h1 class="red--text text-center">กำหนดรายชื่อพนักงาน</h1>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-btn color="success" class="float-end" @click="openDialogAddUser"
+          <v-btn class="float-end" @click="openDialogAddUser"
             >เพิ่มข้อมูล</v-btn
           >
         </v-col>
@@ -16,15 +16,16 @@
       <v-row>
         <v-col cols="12">
           <v-card>
-            <v-toolbar color="success" dark>
+            <v-card-title primary-title>
               ข้อมูลรายชื่อพนักงาน
               <v-spacer></v-spacer>
               <v-text-field
                 label="ค้นหา"
                 v-model="searchUser"
                 hide-details=""
-              ></v-text-field
-            ></v-toolbar>
+              ></v-text-field>
+            </v-card-title>
+            <v-divider></v-divider>
             <v-data-table
               :headers="headersUser"
               :items="itemsUser"

@@ -2,13 +2,14 @@
   <div>
     <form @submit.prevent="checkSave">
       <v-card>
-        <v-toolbar color="success" dark>
+        <v-card-title primary-title>
           <v-icon>mdi-plus</v-icon> เพิ่มข้อมูลพนักงาน
           <v-spacer></v-spacer>
           <v-btn icon dark>
             <v-icon @click="$emit('closeDialogAddUser')">mdi-close</v-icon>
           </v-btn>
-        </v-toolbar>
+        </v-card-title>
+        <v-divider></v-divider>
         <v-card-text>
           <v-row>
             <v-col cols="12">
@@ -68,7 +69,8 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-toolbar>
+        <v-divider></v-divider>
+        <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="mx-3" color="success" type="submit">บันทึก</v-btn>
           <v-btn
@@ -79,7 +81,7 @@
             >ยกเลิก</v-btn
           >
           <v-spacer></v-spacer>
-        </v-toolbar>
+        </v-card-actions>
       </v-card>
     </form>
   </div>

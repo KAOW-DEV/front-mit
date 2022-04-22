@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <h2 class="red--text">รายละเอียดสินค้า</h2>
+          <h2 class="red--text text-center">รายละเอียดสินค้า</h2>
         </v-col>
       </v-row>
 

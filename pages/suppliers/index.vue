@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <h2 class="red--text">ผู้ผลิต/ผู้ส่งสินค้า</h2>
+          <h2 class="red--text text-center">ผู้ผลิต/ผู้ส่งสินค้า</h2>
         </v-col>
       </v-row>
 
@@ -19,6 +19,8 @@
         <v-col cols="12">
           <v-card>
             <v-card-title primary-title>
+              รายชื่อผู้ผลิต
+              <v-spacer></v-spacer>
               <v-text-field
                 v-model="searchSupplier"
                 append-icon="mdi-magnify"
@@ -26,6 +28,7 @@
                 hide-details=""
               ></v-text-field>
             </v-card-title>
+            <v-divider></v-divider>
             <v-data-table
               :headers="headersItemsSupplier"
               :items="itemsSupplier"

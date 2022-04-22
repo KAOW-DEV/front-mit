@@ -128,7 +128,7 @@ export default {
             },
             {
               text: "ใบรับเข้า",
-              to: "/",
+              to: "/received",
               icon: "mdi-format-list-bulleted-square",
             },
             {
@@ -221,6 +221,11 @@ export default {
             {
               text: "กำหนดประเภทผู้จำหน่าย",
               to: "/setting/vendorType",
+              icon: "mdi-format-list-bulleted-square",
+            },
+            {
+              text: "กำหนดสาขา",
+              to: "/setting/branch",
               icon: "mdi-format-list-bulleted-square",
             },
           ],
