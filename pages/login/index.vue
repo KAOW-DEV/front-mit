@@ -22,12 +22,14 @@
                       item-text="branch_name"
                       item-value="id"
                       v-model="itemBranch"
+                      id="itemBranch"
                       return-object
                       placeholder="เลือกสาขา"
                       prepend-icon="mdi-source-branch"
                       outlined
                       hide-details=""
                       required
+                      @change="autoFocusEmail"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12">
@@ -38,7 +40,9 @@
                       :disabled="text_field_disbled"
                       required
                       v-model="email"
+                      id="email"
                       hide-details=""
+                      @keyup.enter="autoFocusPassword"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
@@ -53,6 +57,7 @@
                       @click:append="() => (value = !value)"
                       :type="value ? 'password' : 'text'"
                       v-model="password"
+                      id="password"
                       hide-details=""
                     ></v-text-field>
                   </v-col>
@@ -103,6 +108,14 @@ export default {
   },
 
   methods: {
+    async autoFocusEmail() {
+      document.getElementById("email").focus();
+    },
+
+    async autoFocusPassword() {
+      document.getElementById("password").focus();
+    },
+
     async getItemsBranch() {
       await this.$axios
         .get("/branches")

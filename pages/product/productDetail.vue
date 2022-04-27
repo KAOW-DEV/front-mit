@@ -88,7 +88,7 @@
         @closeDialogSearchProduct="closeDialogSearchProduct"
         :itemsProduct.sync="itemsProduct"
         :itemProduct.sync="itemProduct"
-        :editItem.sync="editItem"
+        :editItem.sync="editItem"       
       ></card-dialog-search-product>
     </v-dialog>
   </div>
@@ -171,7 +171,7 @@ export default {
     async searchProduct() {
       if (this.typeSearch == "ค้นหาจากบาร์โค้ด") {
         await this.$axios
-          .get("/products?product_code=" + this.productSearch)
+          .get("/products?product_code=" + this.productSearch + "&_limit=-1")
           .then((res) => {
             // console.log("product_code", res.data);
             // this.itemsGroup = res.data;
@@ -186,7 +186,11 @@ export default {
 
       if (this.typeSearch == "ค้นหาจากชื่อ") {
         await this.$axios
-          .get("/products?product_name_containss=" + this.productSearch)
+          .get(
+            "/products?product_name_containss=" +
+              this.productSearch +
+              "&_limit=-1"
+          )
           .then((res) => {
             console.log("product_code", res.data);
             // this.itemsGroup = res.data;
