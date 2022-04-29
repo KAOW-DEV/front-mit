@@ -11,6 +11,7 @@
           v-model="searchProduct"
           outlined
           hide-details=""
+          autofocus
         ></v-text-field>
         <v-divider vertical class="mx-3"></v-divider>
         <v-btn icon @click="$emit('closeDialogSearchProduct')">

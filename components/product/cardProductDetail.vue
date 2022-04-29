@@ -13,7 +13,6 @@
                 v-model="itemProduct.product_code"
                 required
                 :disabled="editItem"
-                autofocus
               ></v-text-field>
             </v-col>
             <v-col cols="6">

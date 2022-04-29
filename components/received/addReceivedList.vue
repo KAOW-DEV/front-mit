@@ -4,7 +4,7 @@
       <v-card-title primary-title>
         เพิ่มรายการสินค้า
         <v-spacer></v-spacer>
-        <v-btn icon @click="$emit('closeDialogReceivedList')">
+        <v-btn color="red" icon @click="$emit('closeDialogReceivedList')">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -15,21 +15,22 @@
             <v-col cols="6">
               <v-text-field
                 label="รหัสบาร์โค้ดสินค้า"
+                id="product_barcode"
+                append-icon="mdi-magnify"
                 v-model="itemReceivedList.product_barcode"
                 dense
                 outlined
                 hide-details=""
-                autofocus
-                @keyup="getBarcode"
-                @keyup.enter="searchProduct"
+                @keyup="searchProduct"
+                @focus="selectSearch"
               >
-                <template slot="append-outer">
+                <!-- <template slot="append-outer">
                   <div>
-                    <v-btn color="success" class="mt-n2">
+                    <v-btn color="success" class="mt-n2" @click="searchProduct">
                       <v-icon>mdi-magnify</v-icon>
                     </v-btn>
                   </div>
-                </template>
+                </template> -->
               </v-text-field>
             </v-col>
             <v-col cols="6">
@@ -60,15 +61,18 @@
           </v-row>
           <v-row>
             <v-col cols="6">
-              <v-text-field
+              <v-autocomplete
                 label="หน่วยนับ"
                 v-model="itemReceivedList.unit"
+                :items="itemsUnit"
+                item-text="unit_name"
+                item-value="id"
+                return-object
                 dense
                 outlined
                 readonly
                 hide-details=""
-              >
-              </v-text-field>
+              ></v-autocomplete>
             </v-col>
 
             <v-col cols="6">
@@ -102,6 +106,7 @@
             <v-col cols="6">
               <v-text-field
                 label="ราคาที่รับเข้าตามบิล/หน่วย"
+                id="price"
                 append-icon="mdi-pencil"
                 v-model="itemReceivedList.price"
                 dense
@@ -334,10 +339,17 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="dialogSearchProduct" persistent width="80%">
+    <v-dialog
+      v-model="dialogSearchProduct"
+      persistent
+      width="80%"
+      @keyup.esc="closeDialogSearchProduct"
+    >
       <search-product
         @closeDialogSearchProduct="closeDialogSearchProduct"
-        :itemProduct.sync="itemProduct"
+        :itemsProduct.sync="itemsProduct"
+        :itemReceivedList.sync="itemReceivedList"
+        :dialogSearchProduct.sync="dialogSearchProduct"
       ></search-product>
     </v-dialog>
   </div>
@@ -352,17 +364,109 @@ export default {
   data() {
     return {
       dialogSearchProduct: false,
-      itemProduct: {},
+
+      itemsProduct: [],
+      itemsUnit: [],
     };
   },
 
+  watch: {
+    dialogSearchProduct(val) {
+      if (val == false) {
+        if (this.itemReceivedList.product_internal_code != "") {
+          document.getElementById("price").focus();
+          // document.getElementById("price").select();
+        } else {
+          document.getElementById("product_barcode").select();
+        }
+      }
+    },
+  },
+
+  created() {
+    this.getItemsUnit();
+  },
+
   methods: {
-    async getBarcode(e) {
-      console.log("e.keycode", e.keycode);
+    async selectSearch(e) {
+      console.log("selectSearch", e);
+      document.getElementById("product_barcode").select();
     },
 
-    async searchProduct() {
-      this.dialogSearchProduct = true;
+    async getItemsUnit() {
+      await this.$axios.get("/units").then((res) => {
+        // console.log("itemsGroup", res.data);
+        this.itemsUnit = res.data;
+      });
+    },
+
+    async searchProduct(e) {
+      if (this.itemReceivedList.product_barcode == null) {
+        document.getElementById("product_barcode").focus();
+        return;
+      }
+
+      console.log("e", e);
+
+      if (e.keyCode == 13) {
+        this.getItemsProduct();
+        return false;
+      } else if (e.ctrlKey == true) {
+        this.getItemsProduct();
+        e.preventDefault();
+        return false;
+      }
+
+      // if (this.itemReceivedList.product_barcode == null) {
+      //   document.getElementById("product_barcode").focus();
+      // } else {
+      //   this.getItemsProduct();
+      // }
+    },
+
+    async getItemsProduct() {
+      await this.$axios
+        .get(
+          "/product-units?product_unit_name_containss=" +
+            this.itemReceivedList.product_barcode +
+            "&_sort=product_unit_name:ASC&_limit=-1"
+        )
+        .then((res) => {
+          console.log("getItemsProduct", res.data);
+          if (res.data.length > 0) {
+            this.itemsProduct = res.data;
+            this.dialogSearchProduct = true;
+          } else {
+            this.getItemsProductByBarcode();
+          }
+        });
+    },
+
+    async getItemsProductByBarcode() {
+      await this.$axios
+        .get(
+          "/product-units?product_unit_barcode=" +
+            this.itemReceivedList.product_barcode +
+            "&_sort=product_unit_name:ASC&_limit=-1"
+        )
+        .then((res) => {
+          console.log("getItemsProductByBarcode", res.data);
+          if (res.data.length > 0) {
+            this.itemsProduct = res.data;
+            this.dialogSearchProduct = true;
+          } else {
+            this.alertNotProduct();
+          }
+        });
+    },
+
+    async alertNotProduct() {
+      this.$swal.fire({
+        icon: "warning",
+        title: "ไม่พบข้อมูลสินค้า",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
     async closeDialogSearchProduct() {

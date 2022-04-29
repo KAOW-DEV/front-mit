@@ -102,7 +102,7 @@ export default {
           subLinks: [
             {
               text: "รายละเอียดสินค้า",
-              to: "/product/productDetail",
+              to: "/product",
               icon: "mdi-format-list-bulleted-square",
             },
             {

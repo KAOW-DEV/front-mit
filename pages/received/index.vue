@@ -26,8 +26,7 @@
                 <h1 class="red--text">ใบรับเข้า</h1>
                 <v-spacer></v-spacer>
                 <v-btn large color="success" @click="newPage">
-                  <v-icon>mdi-newspaper-plus</v-icon>
-                  สร้างหน้าใหม่
+                  F1-สร้างหน้าใหม่
                 </v-btn>
               </v-card-title>
               <v-divider></v-divider>
@@ -39,6 +38,7 @@
                         <v-col cols="6">
                           <v-autocomplete
                             label="รับเข้าคลังสินค้า"
+                            append-icon="mdi-pencil"
                             :items="itemsBranch"
                             item-text="branch_name"
                             item-value="id"
@@ -65,6 +65,7 @@
                         <v-col cols="12">
                           <v-autocomplete
                             label="ชื่อ/บริษัทฯ"
+                            append-icon="mdi-pencil"
                             id="supplier"
                             :items="itemsSupplier"
                             item-text="supplier_name"
@@ -75,7 +76,6 @@
                             outlined
                             hide-details=""
                             required
-                            autofocus
                             @change="autoInput"
                           ></v-autocomplete>
                         </v-col>
@@ -147,6 +147,7 @@
                               <v-text-field
                                 v-model="itemReceived.received_date"
                                 label="วันที่รับสินค้า"
+                                append-icon="mdi-pencil"
                                 readonly
                                 v-bind="attrs"
                                 v-on="on"
@@ -185,6 +186,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ใบสั่งซื้อเลขที่"
+                            append-icon="mdi-pencil"
                             id="po_number"
                             v-model="itemReceived.po_number"
                             dense
@@ -200,6 +202,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ใบส่งสินค้าเลขที่"
+                            append-icon="mdi-pencil"
                             id="delivery_number"
                             v-model="itemReceived.delivery_number"
                             dense
@@ -222,6 +225,7 @@
                               <v-text-field
                                 v-model="itemReceived.delivery_date"
                                 label="วันที่ส่งสินค้า"
+                                append-icon="mdi-pencil"
                                 id="delivery_date"
                                 readonly
                                 v-bind="attrs"
@@ -261,6 +265,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="เครดิตเทอม (วัน)"
+                            append-icon="mdi-pencil"
                             id="received_credit_term"
                             v-model="itemReceived.received_credit_term"
                             dense
@@ -587,7 +592,20 @@ export default {
 
       dialogaddReceivedList: false,
       dialogeditReceivedList: false,
+
+      yearMonth: moment().add(543, "year").format("YYMM"),
+      number: null,
+
+      receivedNumberLast: null,
     };
+  },
+
+  mounted() {
+    window.addEventListener("keydown", (e) => {
+      if (e.keyCode >= 112 || e.keyCode <= 123) {
+        this.getEventKeyPress(e);
+      }
+    });
   },
 
   created() {
@@ -595,6 +613,15 @@ export default {
   },
 
   methods: {
+    async getEventKeyPress(e) {
+      console.log("getEventKeyPress", e.keyCode);
+
+      if (e.key == "F1") {
+        this.newPage();
+      }
+      e.preventDefault();
+    },
+
     async autoFocusAddReceivedList() {
       document.getElementById("addReceivedList").focus();
     },
@@ -606,6 +633,7 @@ export default {
     async autoFocusPoNumber() {
       document.getElementById("po_number").focus();
     },
+
     async autoFocusDeliveryDate() {
       document.getElementById("delivery_date").focus();
       this.menu2 = true;
@@ -614,6 +642,27 @@ export default {
     async getData() {
       this.getItemsSupplier();
       this.getItemsBranch();
+    },
+
+    async genReceivedNumber() {
+      this.$axios.get("/receiveds?_sort=id:DESC&_limit=1").then((res) => {
+        this.receivedNumberLast = res.data[0].received_number;
+        // console.log("receivedNumberLast", this.receivedNumberLast);
+
+        var ym = this.receivedNumberLast.substring(0, 4);
+        var no = this.receivedNumberLast.substring(4);
+
+        if (ym == this.yearMonth) {
+          let str = String(parseInt(no) + 1);
+          this.number = str.padStart(4, "0");
+        } else {
+          let str = "1";
+          this.number = str.padStart(4, "0");
+        }
+
+        this.itemReceived.received_number = this.yearMonth + this.number;
+        // console.log("receivedNumber", this.itemReceived.received_number);
+      });
     },
 
     async getItemsSupplier() {
@@ -660,6 +709,7 @@ export default {
       this.resetItemReceived();
       this.itemsReceivedList = [];
       document.getElementById("supplier").focus();
+      this.genReceivedNumber();
     },
 
     async resetItemReceived() {
@@ -693,7 +743,39 @@ export default {
       };
     },
 
+    async resetItemReceivedList() {
+      this.itemReceivedList = {
+        id: 0,
+        received: null,
+        product_unit: null,
+        product_internal_code: null,
+        product_barcode: null,
+        product_name: null,
+        unit: null,
+        product_cost_vat: 0,
+        product_cost_no_vat: 0,
+        price: 0,
+        reduct_percen_1: 0,
+        reduct_percen_2: 0,
+        reduct_percen_3: 0,
+        reduct_percen_4: 0,
+        reduct_percen_5: 0,
+        reduct_price_1: 0,
+        reduct_price_2: 0,
+        reduct_price_3: 0,
+        reduct_price_4: 0,
+        reduct_price_5: 0,
+        reduct_percen_sum: 0,
+        reduct_price_sum: 0,
+        price_reduce: 0,
+        price_after_reduce: 0,
+        quantity: 0,
+        price_sum: 0,
+      };
+    },
+
     async addReceivedList() {
+      this.resetItemReceivedList();
       this.dialogaddReceivedList = true;
     },
 

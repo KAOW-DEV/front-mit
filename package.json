@@ -12,6 +12,7 @@
     "@nuxtjs/auth": "4.9.1",
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.15.1",
+    "keycode": "^2.2.1",
     "moment": "^2.29.1",
     "nuxt": "^2.2.0",
     "vue-sweetalert2": "^5.0.2",

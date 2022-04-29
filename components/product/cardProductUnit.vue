@@ -291,7 +291,6 @@
         @resetText="resetText"
         :itemProduct.sync="itemProduct"
         :itemProductUnit.sync="itemProductUnit"
-        :itemProductPrice.sync="itemProductPrice"
         :dialogAddProductUnit.sync="dialogAddProductUnit"
       ></card-add-product-unit>
     </v-dialog>
@@ -303,7 +302,6 @@
         @resetText="resetText"
         :itemProduct.sync="itemProduct"
         :itemProductUnit.sync="itemProductUnit"
-        :itemProductPrice.sync="itemProductPrice"
         :dialogEditProductUnit.sync="dialogEditProductUnit"
       ></card-edit-product-unit>
     </v-dialog>
@@ -362,23 +360,22 @@ export default {
         unit: {},
         product_unit_quantity_number: 0,
         product: {},
-      },
-
-      itemProductPrice: {
-        id: 0,
-        product_price_middle: 0,
-        product_price_discount: 0,
-        product_price_1: 0,
-        product_price_2: 0,
-        product_price_3: 0,
-        product_price_4: 0,
-        product_price_5: 0,
-        product_price_6: 0,
-        product_price_7: 0,
-        product_price_8: 0,
-        product_price_9: 0,
-        product_price_10: 0,
-        product_price_low_limit: 0,
+        product_price: {
+          id: 0,
+          product_price_middle: 0,
+          product_price_discount: 0,
+          product_price_1: 0,
+          product_price_2: 0,
+          product_price_3: 0,
+          product_price_4: 0,
+          product_price_5: 0,
+          product_price_6: 0,
+          product_price_7: 0,
+          product_price_8: 0,
+          product_price_9: 0,
+          product_price_10: 0,
+          product_price_low_limit: 0,
+        },
       },
 
       product_unit_internal_code: null,
@@ -410,6 +407,9 @@ export default {
 
       recordDate: null,
       revisionDate: null,
+
+      usedStatus: null,
+      lengthStatus: null,
     };
   },
 
@@ -444,7 +444,6 @@ export default {
     },
 
     async getItem(event, { item }) {
-      console.log("item", item);
       this.itemProductUnit = item;
       console.log("itemProductUnit", this.itemProductUnit);
 
@@ -455,7 +454,19 @@ export default {
       this.product_unit_quantity_number = item.product_unit_quantity_number;
       this.unit = item.unit.unit_name;
 
-      this.getItemProductPrice(item);
+      this.product_price_middle = item.product_price.product_price_middle;
+      this.product_price_discount = item.product_price.product_price_discount;
+      this.product_price_1 = item.product_price.product_price_1;
+      this.product_price_2 = item.product_price.product_price_2;
+      this.product_price_3 = item.product_price.product_price_3;
+      this.product_price_4 = item.product_price.product_price_4;
+      this.product_price_5 = item.product_price.product_price_5;
+      this.product_price_6 = item.product_price.product_price_6;
+      this.product_price_7 = item.product_price.product_price_7;
+      this.product_price_8 = item.product_price.product_price_8;
+      this.product_price_9 = item.product_price.product_price_9;
+      this.product_price_10 = item.product_price.product_price_10;
+      this.product_price_low_limit = item.product_price.product_price_low_limit;
 
       this.getDate();
     },
@@ -468,28 +479,6 @@ export default {
       this.revisionDate = moment(this.itemProductUnit.updated_at)
         .add(543, "year")
         .format("DD/MM/YYYY HH:mm:ss");
-    },
-
-    async getItemProductPrice(item) {
-      await this.$axios
-        .get("/product-prices?product_unit=" + item.id)
-        .then((res) => {
-          this.product_price_middle = res.data[0].product_price_middle;
-          this.product_price_discount = res.data[0].product_price_discount;
-          this.product_price_1 = res.data[0].product_price_1;
-          this.product_price_2 = res.data[0].product_price_2;
-          this.product_price_3 = res.data[0].product_price_3;
-          this.product_price_4 = res.data[0].product_price_4;
-          this.product_price_5 = res.data[0].product_price_5;
-          this.product_price_6 = res.data[0].product_price_6;
-          this.product_price_7 = res.data[0].product_price_7;
-          this.product_price_8 = res.data[0].product_price_8;
-          this.product_price_9 = res.data[0].product_price_9;
-          this.product_price_10 = res.data[0].product_price_10;
-          this.product_price_low_limit = res.data[0].product_price_low_limit;
-
-          this.itemProductPrice = res.data[0];
-        });
     },
 
     async resetText() {
@@ -521,7 +510,7 @@ export default {
     async openDialogAddProductUnit() {
       this.dialogAddProductUnit = true;
       this.resetItemProductUnit();
-      this.resetItemProductPrice();
+
       this.resetText();
       this.itemProductUnit.product_unit_name = this.itemProduct.product_name;
     },
@@ -549,25 +538,22 @@ export default {
         unit: {},
         product_unit_quantity_number: 0,
         product: {},
-      };
-    },
-
-    async resetItemProductPrice() {
-      this.itemProductPrice = {
-        id: 0,
-        product_price_middle: 0,
-        product_price_discount: 0,
-        product_price_1: 0,
-        product_price_2: 0,
-        product_price_3: 0,
-        product_price_4: 0,
-        product_price_5: 0,
-        product_price_6: 0,
-        product_price_7: 0,
-        product_price_8: 0,
-        product_price_9: 0,
-        product_price_10: 0,
-        product_price_low_limit: 0,
+        product_price: {
+          id: 0,
+          product_price_middle: 0,
+          product_price_discount: 0,
+          product_price_1: 0,
+          product_price_2: 0,
+          product_price_3: 0,
+          product_price_4: 0,
+          product_price_5: 0,
+          product_price_6: 0,
+          product_price_7: 0,
+          product_price_8: 0,
+          product_price_9: 0,
+          product_price_10: 0,
+          product_price_low_limit: 0,
+        },
       };
     },
 
@@ -575,9 +561,14 @@ export default {
       console.log("itemsProductUnit", this.itemsProductUnit);
 
       if (this.product_unit_internal_code != null) {
-        let index = this.itemsProductUnit.indexOf(this.itemProductUnit);
-        console.log("index", index);
-        if (index == this.itemsProductUnit.length - 1) {
+        await this.checkUsedStatus();
+        await this.checkDeleteLargeUnits();
+
+        if (this.usedStatus == true) {
+          this.alertDataHasBeenUsed();
+        } else if (this.lengthStatus == true) {
+          this.alertRemoveLargeUnitsFirst();
+        } else {
           this.$swal({
             title: "ต้องการลบข้อมูล ใช่หรือไม่",
             icon: "error",
@@ -589,17 +580,56 @@ export default {
           }).then(async (result) => {
             if (result.isConfirmed) {
               console.log("itemProductUnit", this.itemProductUnit);
-              console.log("itemProductPrice", this.itemProductPrice);
-              await this.deleteProductUnit();
               await this.deleteProductPrice();
-              await this.alertSuccess();
+              await this.deleteProductUnit();
+              await this.alertDeleteSuccess();
               await this.getData();
             }
           });
-        } else {
-          this.alertNotDelete();
         }
       }
+    },
+
+    async checkUsedStatus() {
+      this.$axios
+        .get("/received-lists?product_unit=" + this.itemsProductUnit.id)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.usedStatus = true;
+          } else {
+            this.usedStatus = false;
+          }
+        });
+    },
+
+    async checkDeleteLargeUnits() {
+      let index = this.itemsProductUnit.indexOf(this.itemProductUnit);
+      console.log("index", index);
+      if (index == this.itemsProductUnit.length - 1) {
+        this.lengthStatus = false;
+      } else {
+        this.lengthStatus = true;
+      }
+    },
+
+    async alertDataHasBeenUsed() {
+      this.$swal.fire({
+        title: "ไม่สามารถลบได้",
+        text: "ข้อมูลสินค้านี้ มีการใช้งานในระบบแล้ว",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertRemoveLargeUnitsFirst() {
+      this.$swal.fire({
+        title: "ไม่สามารถลบได้",
+        text: "กรุณาลบข้อมูลจากหน่วยใหญ่ก่อน",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
     async alertNotDelete() {
@@ -610,6 +640,14 @@ export default {
       });
     },
 
+    async deleteProductPrice() {
+      await this.$axios
+        .delete("/product-prices/" + this.itemProductUnit.product_price.id)
+        .then((res) => {
+          // console.log("itemsProductUnit", res.data);
+        });
+    },
+
     async deleteProductUnit() {
       await this.$axios
         .delete("/product-units/" + this.itemProductUnit.id)
@@ -618,17 +656,18 @@ export default {
         });
     },
 
-    async deleteProductPrice() {
-      await this.$axios
-        .delete("/product-prices/" + this.itemProductPrice.id)
-        .then((res) => {
-          // console.log("itemsProductUnit", res.data);
-        });
-    },
-
     async alertSuccess() {
       this.$swal({
         title: "บันทึกข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertDeleteSuccess() {
+      this.$swal({
+        title: "ลบข้อมูลเรียบร้อยแล้ว",
         icon: "success",
         showConfirmButton: false,
         timer: 1500,
