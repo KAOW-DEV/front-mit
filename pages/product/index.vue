@@ -3,52 +3,38 @@
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <h2 class="red--text text-center">รายละเอียดสินค้า</h2>
-        </v-col>
-      </v-row>
-
-      <!-- <v-row>
-        <v-col cols="12">
-          <v-btn color="success" class="float-end" @click="newProduct"
-            >เพิ่มสินค้าใหม่</v-btn
-          >
-        </v-col>
-      </v-row> -->
-
-      <v-row>
-        <v-col cols="12">
           <v-card>
-            <v-toolbar class="elevation-0">
+            <v-card-title primary-title>
               <v-text-field
-                label="รหัสสินค้า"
-                id="productSearch"
-                v-model="productSearch"
-                dense
+                label="ค้นหา"
+                id="searchProduct"
+                ref="searchProduct"
+                placeholder="ค้นหาจาก บาร์โค้ด / ชื่อสินค้า"
+                v-model="searchProduct"
                 outlined
                 hide-details=""
-                autofocus
-                class="mr-2"
-                required
-                @keydown="searchProduct"
+                @keyup.enter="search"
+                @focus="focusSearchProduct"
               ></v-text-field>
-              <v-btn
-                class="mx-1"
-                type="submit"
-                @click="getItemsProductByBarcode"
-                >F1-ค้นหาจากบาร์โค้ด</v-btn
-              >
-              <v-btn class="mx-1" type="submit" @click="getItemsProductByName"
-                >F2-ค้นหาจากชื่อ</v-btn
-              >
-            </v-toolbar>
+              <v-divider vertical class="mx-3"></v-divider>
+              <v-btn color="primary" x-large @click="search">
+                <v-icon>mdi-magnify</v-icon>
+              </v-btn>
+            </v-card-title>
           </v-card>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
-          <v-card>
-            <v-tabs v-model="tab" slider-color="yellow" fixed-tabs>
+          <v-card color="red">
+            <v-tabs
+              v-model="tab"
+              fixed-tabs
+              background-color="success"
+              dark
+              slider-color="yellow"
+            >
               <v-tab href="#tab-1"> รายละเอียดหลัก </v-tab>
               <v-tab href="#tab-2" :disabled="!editItem"> หน่วยซื้อ/ขาย </v-tab>
               <v-tab href="#tab-3" :disabled="!editItem">
@@ -57,29 +43,22 @@
 
               <!-- tab-1 -->
               <v-tab-item value="tab-1">
-                <card-product-detail
+                <product
                   :itemProduct.sync="itemProduct"
                   :editItem.sync="editItem"
-                  @newProduct="newProduct"
-                ></card-product-detail>
+                ></product>
               </v-tab-item>
 
               <!-- tab-2 -->
               <v-tab-item value="tab-2">
-                <card-product-unit
+                <product-unit
                   :itemProduct.sync="itemProduct"
                   :editItem.sync="editItem"
-                ></card-product-unit>
+                ></product-unit>
               </v-tab-item>
 
               <!-- tab-3 -->
-              <v-tab-item value="tab-3">
-                <v-container fluid>
-                  <v-row>
-                    <v-col cols="12"> พิมพ์บาร์โค้ดสินค้า </v-col>
-                  </v-row>
-                </v-container>
-              </v-tab-item>
+              <v-tab-item value="tab-3"> </v-tab-item>
             </v-tabs>
           </v-card>
         </v-col>
@@ -87,185 +66,151 @@
     </v-container>
 
     <v-dialog v-model="dialogSearchProduct" persistent width="80%">
-      <card-dialog-search-product
-        @closeDialogSearchProduct="closeDialogSearchProduct"
+      <search-product
         :itemsProduct.sync="itemsProduct"
         :itemProduct.sync="itemProduct"
+        :searchProduct.sync="searchProduct"
         :editItem.sync="editItem"
-      ></card-dialog-search-product>
+        @closeDialogSearchProduct="closeDialogSearchProduct"
+      ></search-product>
     </v-dialog>
   </div>
 </template>
 
 <script>
-import moment from "moment";
-import CardDialogSearchProduct from "~/components/product/cardDialogSearchProduct.vue";
-import cardProductDetail from "~/components/product/cardProductDetail.vue";
-import CardProductUnit from "~/components/product/cardProductUnit.vue";
-
+import SearchProduct from "~/components/product_2/searchProduct.vue";
+import Product from "~/components/product_2/product.vue";
+import ProductUnit from "~/components/product_2/productUnit.vue";
 export default {
-  components: { cardProductDetail, CardDialogSearchProduct, CardProductUnit },
-
+  components: { Product, SearchProduct, ProductUnit },
   data() {
     return {
-      tab: "tab-1",
-      items: [
-        { tab: "รายละเอียดหลัก", content: "รายละเอียดหลัก" },
-        { tab: "หน่วยซื้อ/ขาย", content: "หน่วยซื้อ/ขาย" },
-        { tab: "พิมพ์บาร์โค้ดสินค้า", content: "พิมพ์บาร์โค้ดสินค้า" },
-      ],
-
       itemProduct: {
         id: 0,
         product_code: null,
         product_name: null,
-        group: {},
-        sub_group: {},
-        unit: {},
+        group: null,
+        sub_group: null,
+        unit: null,
         supplier: null,
         product_quantity: 0,
         product_active: true,
+        product_cost: 0,
+        dateCreate: null,
+        dateUpdate: null,
       },
 
-      itemsProductUnit: [],
-
-      itemProductBarcode: [],
-
+      searchProduct: null,
+      tab: "tab-1",
       editItem: false,
-
-      productSearch: null,
-      dialogSearchProduct: false,
-
       itemsProduct: [],
+      dialogSearchProduct: false,
     };
   },
 
   methods: {
+    async search() {
+      console.log("searchProduct", this.searchProduct);
+
+      // document.getElementById("searchProduct").focus();
+      // document.getElementById("searchProduct").select();
+
+      if (this.searchProduct != null) {
+        this.$axios
+          .get("/product-units?product_unit_barcode=" + this.searchProduct)
+          .then((res) => {
+            // console.log("search", res.data);
+            if (res.data.length > 0) {
+              this.itemProduct = res.data[0].product;
+              this.editItem = true;
+            } else {
+              this.$axios
+                .get(
+                  "/product-units?product_unit_name_contains=" +
+                    this.searchProduct +
+                    "&_sort=product_unit_name:ASC&_limit=-1"
+                )
+                .then((res) => {
+                  if (res.data.length > 0) {
+                    // console.log("itemsProduct", res.data);
+                    this.itemsProduct = res.data;
+                    this.dialogSearchProduct = true;
+                    this.editItem = true;
+                  } else {
+                    this.alertNotProduct();
+                  }
+                });
+            }
+          });
+      }
+    },
+
+    async focusSearchProduct() {
+      document.getElementById("searchProduct").select();
+    },
+
+    // alert
+    async alertNotProduct() {
+      this.$swal({
+        title: "ไม่พบข้อมูลสินค้าในระบบ",
+        text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.addProduct();
+        }
+      });
+    },
+
+    // add
+    async addProduct() {
+      this.editItem = false;
+      this.resetItemProduct();
+      this.tab = "tab-1";
+    },
+
     async resetItemProduct() {
       this.itemProduct = {
         id: 0,
         product_code: null,
         product_name: null,
-        group: {},
-        sub_group: {},
-        unit: {},
+        group: null,
+        sub_group: null,
+        unit: null,
         supplier: null,
         product_quantity: 0,
         product_active: true,
+        product_cost: 0,
+        dateCreate: null,
+        dateUpdate: null,
       };
-    },
-
-    async newProduct() {
-      this.resetItemProduct();
-      this.editItem = false;
-      this.tab = "tab-1";
-
-      this.productSearch = null;
-    },
-
-    async searchProduct(e) {
-      if (e.keyCode == 112) {
-        this.getItemsProductByBarcode();
-        e.preventDefault();
-        return false;
-      } else if (e.keyCode == 113) {
-        this.getItemsProductByName();
-        e.preventDefault();
-        return false;
-      }
-    },
-
-    async getItemsProductByBarcode() {
-      this.itemsProduct = [];
-      if (this.productSearch == null) {
-        document.getElementById("productSearch").focus();
-      } else {
-        await this.$axios
-          .get(
-            "/product-units?product_unit_barcode=" +
-              this.productSearch +
-              "&_limit=-1"
-          )
-          .then((res) => {
-            console.log("product_code", res.data);
-            // this.itemsGroup = res.data;
-            if (res.data.length > 0) {
-              this.itemsProduct.push(res.data[0].product);
-
-              this.openDialogSearchProduct();
-            } else {
-              this.alertNotBarcode();
-            }
-          });
-      }
-    },
-
-    async getItemsProductByName() {
-      if (this.productSearch == null) {
-        document.getElementById("productSearch").focus();
-      } else {
-        await this.$axios
-          .get(
-            "/products?product_name_containss=" +
-              this.productSearch +
-              "&_limit=-1"
-          )
-          .then((res) => {
-            console.log("product_code", res.data);
-            // this.itemsGroup = res.data;
-            if (res.data.length > 0) {
-              this.itemsProduct = res.data;
-              this.openDialogSearchProduct();
-            } else {
-              this.alertNotProductName();
-            }
-          });
-      }
-    },
-
-    async openDialogSearchProduct() {
-      this.dialogSearchProduct = true;
     },
 
     async closeDialogSearchProduct() {
       this.dialogSearchProduct = false;
     },
-
-    async alertNotBarcode() {
-      this.$swal({
-        title: "ยังไม่มีบาร์โค้ด \n'" + this.productSearch + "' \nในระบบ",
-        text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ใช่",
-        cancelButtonText: "ไม่ใช่",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.newProduct();
-        }
-      });
-    },
-
-    async alertNotProductName() {
-      this.$swal({
-        title: "ยังไม่มีชื่อสินค้า \n'" + this.productSearch + "' \nในระบบ",
-        text: "ต้องการเพิ่มสินค้าใหม่ ใช่หรือไม่",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ใช่",
-        cancelButtonText: "ไม่ใช่",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.newProduct();
-        }
-      });
-    },
   },
+
+  created() {},
+
+  mounted() {
+    this.$refs.searchProduct.focus();
+
+    console.log("1");
+    window.addEventListener("keydown", (e) => {
+      if (e.keyCode == 74) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  },
+
+  updated() {},
 };
 </script>
-
 <style lang="scss" scoped></style>

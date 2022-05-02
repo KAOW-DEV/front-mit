@@ -1,44 +1,35 @@
 <template>
   <v-app dark>
-    <v-app-bar color="white" app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-    </v-app-bar>
-    <!-- <v-navigation-drawer v-model="drawer" app style="height: 100%"> -->
-    <!-- <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+    <v-app-bar app color="white" class="elevation-1">
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+        <!-- <v-icon large>mdi-arrow-left-right-bold</v-icon> -->
+        <v-icon large color="error" v-if="drawer">mdi-chevron-left-box</v-icon>
+        <v-icon large color="error" v-if="!drawer"
+          >mdi-chevron-right-box</v-icon
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-list>
-        <v-list-item>
-          <v-btn block large color="red" dark @click="logout">
-            <v-icon left>mdi-logout</v-icon>ออกจากระบบ
-          </v-btn>
-        </v-list-item>
-      </v-list> -->
-    <!-- </v-navigation-drawer> -->
+      </v-app-bar-nav-icon>
+
+      <v-divider vertical class="mx-3"></v-divider>
+      <v-toolbar-title>
+        {{ menuItemName }}
+        <span v-if="menuItemNameSub">
+          <v-icon>mdi-chevron-double-right</v-icon> {{ menuItemNameSub }}</span
+        >
+      </v-toolbar-title>
+    </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app style="height: 100%">
       <v-list nav dense>
         <div v-for="(link, i) in links" :key="i">
-          <v-list-item v-if="!link.subLinks" :to="link.to" class="v-list-item">
+          <v-list-item
+            v-if="!link.subLinks"
+            :to="link.to"
+            class="v-list-item"
+            @click="getMenuItemName(link)"
+          >
             <v-list-item-icon>
               <v-icon>{{ link.icon }}</v-icon>
             </v-list-item-icon>
-
             <v-list-item-title v-text="link.text" />
           </v-list-item>
 
@@ -57,6 +48,7 @@
               :to="sublink.to"
               :key="sublink.text"
               dense
+              @click="getMenuItemNameSub(link, sublink)"
             >
               <v-list-item-icon>
                 <v-icon>{{ sublink.icon }}</v-icon>
@@ -64,6 +56,7 @@
               <v-list-item-title>{{ sublink.text }}</v-list-item-title>
             </v-list-item>
           </v-list-group>
+          <v-divider inset></v-divider>
         </div>
       </v-list>
       <template v-slot:append>
@@ -74,7 +67,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <!-- <v-container> -->
+      <!-- <v-container fluid> -->
       <Nuxt />
       <!-- </v-container> -->
     </v-main>
@@ -87,8 +80,10 @@ export default {
   data() {
     return {
       drawer: true,
+      menuItemName: null,
+      menuItemNameSub: null,
 
-      title: "ระบบสต๊อกสินค้า",
+      title: "ระบบสต๊อกสินค้า ร้านมิตรเกษตรการไฟฟ้า",
 
       links: [
         {
@@ -192,7 +187,7 @@ export default {
         {
           icon: "mdi-folder",
           text: "ใบเสนอราคา",
-          to: "/",
+          to: "/quotation",
         },
         {
           icon: "mdi-folder-swap",
@@ -235,6 +230,19 @@ export default {
   },
 
   methods: {
+    async getMenuItemName(item) {
+      // console.log("getMenuItemName", item);
+      this.menuItemName = item.text;
+      this.menuItemNameSub = null;
+    },
+
+    async getMenuItemNameSub(item, itemSub) {
+      // console.log("getMenuItemName", item);
+      // console.log("getMenuItemNameSub", itemSub);
+      this.menuItemName = item.text;
+      this.menuItemNameSub = itemSub.text;
+    },
+
     async logout() {
       this.$swal({
         title: "ออกจากระบบ",
