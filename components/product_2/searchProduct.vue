@@ -43,10 +43,7 @@
 </template>
 
 <script>
-// import getGroup from "./getGroup.vue";
-// import GetSubGroup from "./getSubGroup.vue";
 export default {
-  //   components: { getGroup, GetSubGroup },
   props: ["itemsProduct", "itemProduct", "searchProduct", "editItem"],
   data() {
     return {
@@ -57,20 +54,15 @@ export default {
           sortable: false,
           value: "index",
         },
-        { text: "ชื่อ/รายละเอียดสินค้า", value: "product_unit_name" },
+        { text: "ชื่อ/รายละเอียดสินค้า", value: "product_name" },
 
         { text: "หน่วยนับ", value: "unit.unit_name" },
-        { text: "ทุนล่าสุด/หน่วย", value: "product.product_cost" },
-        { text: "รหัสสินค้าภายใน", value: "product_unit_internal_code" },
-        { text: "รหัสบาร์โค้ด", value: "product_unit_barcode" },
+        { text: "ทุนล่าสุด/หน่วย", value: "product_cost" },
+        { text: "รหัสสินค้าหลัก", value: "product_code" },
       ],
 
       search: null,
     };
-  },
-
-  mounted() {
-    this.getData();
   },
 
   methods: {
@@ -80,11 +72,21 @@ export default {
 
     async getItem(e, { item }) {
       console.log("item", item);
-      this.$emit("update:itemProduct", item.product);
+      this.$emit("update:itemProduct", item);
       this.$emit("update:editItem", true);
       this.$emit("closeDialogSearchProduct");
     },
   },
+
+  watch: {
+    itemsProduct(val) {
+      if (val) {
+        this.getData();
+      }
+    },
+  },
+
+  mounted() {},
 };
 </script>
 

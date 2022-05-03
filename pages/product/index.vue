@@ -14,7 +14,7 @@
                 outlined
                 hide-details=""
                 @keyup.enter="search"
-                @focus="focusSearchProduct"
+                @click="focusSearchProduct"
               ></v-text-field>
               <v-divider vertical class="mx-3"></v-divider>
               <v-btn color="primary" x-large @click="search">
@@ -46,6 +46,7 @@
                 <product
                   :itemProduct.sync="itemProduct"
                   :editItem.sync="editItem"
+                  @getItemProductById="getItemProductById"
                 ></product>
               </v-tab-item>
 
@@ -74,6 +75,14 @@
         @closeDialogSearchProduct="closeDialogSearchProduct"
       ></search-product>
     </v-dialog>
+
+    <v-dialog v-model="dialogInsertProduct" persistent width="50%">
+      <insert-product
+        :itemProduct.sync="itemProduct"
+        :editItem.sync="editItem"
+        @closeDialogInsertProduct="closeDialogInsertProduct"
+      ></insert-product>
+    </v-dialog>
   </div>
 </template>
 
@@ -81,8 +90,9 @@
 import SearchProduct from "~/components/product_2/searchProduct.vue";
 import Product from "~/components/product_2/product.vue";
 import ProductUnit from "~/components/product_2/productUnit.vue";
+import InsertProduct from "~/components/product_2/insertProduct.vue";
 export default {
-  components: { Product, SearchProduct, ProductUnit },
+  components: { Product, SearchProduct, ProductUnit, InsertProduct },
   data() {
     return {
       itemProduct: {
@@ -105,15 +115,13 @@ export default {
       editItem: false,
       itemsProduct: [],
       dialogSearchProduct: false,
+      dialogInsertProduct: false,
     };
   },
 
   methods: {
     async search() {
       console.log("searchProduct", this.searchProduct);
-
-      // document.getElementById("searchProduct").focus();
-      // document.getElementById("searchProduct").select();
 
       if (this.searchProduct != null) {
         this.$axios
@@ -126,16 +134,15 @@ export default {
             } else {
               this.$axios
                 .get(
-                  "/product-units?product_unit_name_contains=" +
+                  "/products?product_name_containss=" +
                     this.searchProduct +
-                    "&_sort=product_unit_name:ASC&_limit=-1"
+                    "&_sort=product_name:ASC&_limit=-1"
                 )
                 .then((res) => {
                   if (res.data.length > 0) {
-                    // console.log("itemsProduct", res.data);
+                    console.log("searchByName", res.data);
                     this.itemsProduct = res.data;
                     this.dialogSearchProduct = true;
-                    this.editItem = true;
                   } else {
                     this.alertNotProduct();
                   }
@@ -161,6 +168,8 @@ export default {
         confirmButtonText: "ใช่",
         cancelButtonText: "ไม่ใช่",
       }).then((result) => {
+        // console.log("result", result);
+
         if (result.isConfirmed) {
           this.addProduct();
         }
@@ -171,6 +180,7 @@ export default {
     async addProduct() {
       this.editItem = false;
       this.resetItemProduct();
+      this.dialogInsertProduct = true;
       this.tab = "tab-1";
     },
 
@@ -194,6 +204,16 @@ export default {
     async closeDialogSearchProduct() {
       this.dialogSearchProduct = false;
     },
+
+    async closeDialogInsertProduct() {
+      this.dialogInsertProduct = false;
+    },
+
+    async getItemProductById() {
+      this.$axios.get("/products/" + this.itemProduct.id).then((res) => {
+        this.itemProduct = res.data;
+      });
+    },
   },
 
   created() {},
@@ -210,7 +230,9 @@ export default {
     });
   },
 
-  updated() {},
+  updated() {
+    this.$refs.searchProduct.focus();
+  },
 };
 </script>
 <style lang="scss" scoped></style>
