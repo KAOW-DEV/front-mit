@@ -8,25 +8,17 @@
           >mdi-chevron-right-box</v-icon
         >
       </v-app-bar-nav-icon>
-
       <v-divider vertical class="mx-3"></v-divider>
-      <v-toolbar-title>
-        {{ menuItemName }}
-        <span v-if="menuItemNameSub">
-          <v-icon>mdi-chevron-double-right</v-icon> {{ menuItemNameSub }}</span
-        >
-      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-alert color="warning" text border="left" dense class="my-auto">
+        ผู้ใช้งาน : {{ $auth.state.user.user_name }}
+      </v-alert>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app style="height: 100%">
       <v-list nav dense>
         <div v-for="(link, i) in links" :key="i">
-          <v-list-item
-            v-if="!link.subLinks"
-            :to="link.to"
-            class="v-list-item"
-            @click="getMenuItemName(link)"
-          >
+          <v-list-item v-if="!link.subLinks" :to="link.to" class="v-list-item">
             <v-list-item-icon>
               <v-icon>{{ link.icon }}</v-icon>
             </v-list-item-icon>
@@ -48,7 +40,6 @@
               :to="sublink.to"
               :key="sublink.text"
               dense
-              @click="getMenuItemNameSub(link, sublink)"
             >
               <v-list-item-icon>
                 <v-icon>{{ sublink.icon }}</v-icon>
@@ -67,9 +58,9 @@
     </v-navigation-drawer>
 
     <v-main>
-      <!-- <v-container fluid> -->
-      <Nuxt />
-      <!-- </v-container> -->
+      <v-container fluid>
+        <Nuxt />
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -80,8 +71,6 @@ export default {
   data() {
     return {
       drawer: true,
-      menuItemName: null,
-      menuItemNameSub: null,
 
       title: "ระบบสต๊อกสินค้า ร้านมิตรเกษตรการไฟฟ้า",
 
@@ -230,19 +219,6 @@ export default {
   },
 
   methods: {
-    async getMenuItemName(item) {
-      // console.log("getMenuItemName", item);
-      this.menuItemName = item.text;
-      this.menuItemNameSub = null;
-    },
-
-    async getMenuItemNameSub(item, itemSub) {
-      // console.log("getMenuItemName", item);
-      // console.log("getMenuItemNameSub", itemSub);
-      this.menuItemName = item.text;
-      this.menuItemNameSub = itemSub.text;
-    },
-
     async logout() {
       this.$swal({
         title: "ออกจากระบบ",

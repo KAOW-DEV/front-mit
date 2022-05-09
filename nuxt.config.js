@@ -65,6 +65,16 @@ export default {
     "@nuxtjs/axios",
     "@nuxtjs/auth",
     "vue-sweetalert2/nuxt",
+    ['v-currency-field/nuxt', {
+      locale: 'TH',
+      decimalLength: 2,
+      autoDecimalMode: true,
+      min: null,
+      max: null,
+      defaultValue: 0,
+      valueAsInteger: false,
+      allowNegative: true
+    }]
   ],
 
   auth: {

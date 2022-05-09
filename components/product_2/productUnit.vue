@@ -467,6 +467,9 @@ export default {
 
       dialogInsertProductUnit: false,
       dialogUpdateProductUnit: false,
+
+      usedStatus: false,
+      lengthStatus: false,
     };
   },
 
@@ -564,6 +567,7 @@ export default {
 
     async closeDialogUpdateProductUnit() {
       this.dialogUpdateProductUnit = false;
+      this.getItemsProductUnitByProductId();
     },
 
     async alertChangeList() {
@@ -575,7 +579,122 @@ export default {
       });
     },
 
-    async deleteProductUnit() {},
+    async deleteProductUnit() {
+      if (this.editItemProductUnit == true) {
+        await this.checkUsedStatus();
+        await this.checkDeleteLargeUnits();
+
+        if (this.usedStatus == true) {
+          this.alertDataHasBeenUsed();
+        } else if (this.lengthStatus == true) {
+          this.alertRemoveLargeUnitsFirst();
+        } else {
+          this.$swal({
+            title: "ต้องการลบข้อมูล ใช่หรือไม่",
+            icon: "error",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "ใช่",
+            cancelButtonText: "ไม่ใช่",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              console.log("itemProductUnit", this.itemProductUnit);
+              await this.destroyProductPrice();
+              await this.destroyProductUnit();
+              await this.getItemsProductUnitByProductId();
+              await this.alertDeleteSuccess();
+            }
+          });
+        }
+      } else {
+        this.alertChangeList();
+      }
+    },
+
+    async checkUsedStatus() {
+      this.$axios
+        .get("/received-lists?product_unit=" + this.itemsProductUnit.id)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.usedStatus = true;
+          } else {
+            this.usedStatus = false;
+          }
+        });
+    },
+
+    async checkDeleteLargeUnits() {
+      let index = this.itemsProductUnit.indexOf(this.itemProductUnit);
+      console.log("index", index);
+      if (index == this.itemsProductUnit.length - 1) {
+        this.lengthStatus = false;
+      } else {
+        this.lengthStatus = true;
+      }
+    },
+
+    async alertDataHasBeenUsed() {
+      this.$swal.fire({
+        title: "ไม่สามารถลบได้",
+        text: "ข้อมูลสินค้านี้ มีการใช้งานในระบบแล้ว",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertRemoveLargeUnitsFirst() {
+      this.$swal.fire({
+        title: "ไม่สามารถลบได้",
+        text: "กรุณาลบข้อมูลจากหน่วยใหญ่ก่อน",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async destroyProductPrice() {
+      await this.$axios
+        .delete("/product-prices/" + this.itemProductUnit.product_price.id)
+        .then((res) => {
+          // console.log("itemsProductUnit", res.data);
+        });
+    },
+
+    async destroyProductUnit() {
+      await this.$axios
+        .delete("/product-units/" + this.itemProductUnit.id)
+        .then((res) => {
+          // console.log("itemsProductUnit", res.data);
+        });
+    },
+
+    async alertSuccess() {
+      this.$swal({
+        title: "บันทึกข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertDeleteSuccess() {
+      this.$swal({
+        title: "ลบข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async alertError() {
+      this.$swal({
+        title: "เกิดข้อผิดพลาด",
+        text: "ตรวจสอบความถูกต้องของข้อมูล ก่อนบันทึก",
+        icon: "error",
+      });
+    },
   },
 };
 </script>

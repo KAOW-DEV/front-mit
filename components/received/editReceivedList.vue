@@ -2,9 +2,9 @@
   <div>
     <v-card>
       <v-card-title primary-title>
-        เพิ่ม รายละเอียดการรับเข้าสินค้า
+        แก้ไข รายละเอียดการรับเข้าสินค้า
         <v-spacer></v-spacer>
-        <v-btn icon color="error" @click="$emit('closeDialogAddReceivedList')">
+        <v-btn icon color="error" @click="$emit('closeDialogEditReceivedList')">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -22,7 +22,7 @@
               outlined
               hide-details=""
               @focus="$event.target.select()"
-              @keydown.stop.enter="searchProductUnit"
+              @keydown.enter="searchProductUnit"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -503,9 +503,7 @@ export default {
       return itemsPriductUnit;
     },
 
-    async getItemProduct(e) {
-      console.log("e", e);
-
+    async getItemProduct() {
       this.resetTextInput();
 
       this.itemReceivedList.product_unit = this.itemProductUnit;
@@ -522,20 +520,18 @@ export default {
 
       this.itemReceivedList.unit = this.itemProductUnit.unit.unit_name;
 
-      this.itemReceivedList.product_cost_vat = Number(
-        await this.getOriginalCost()
-      ).toFixed(2);
+      this.itemReceivedList.product_cost_vat = await this.getOriginalCost();
 
       this.itemReceivedList.product_cost_no_vat = Number(
         parseFloat(this.itemReceivedList.product_cost_vat) -
           parseFloat(this.itemReceivedList.product_cost_vat * 0.07)
-      ).toFixed(2);
+      ).toString(2);
 
       this.itemReceivedList.price = Number(
         this.itemReceivedList.product_cost_vat
       ).toFixed(2);
-      this.$refs.price.focus();
 
+      this.$refs.price.focus();
       console.log("itemReceivedList", this.itemReceivedList);
     },
 
@@ -726,59 +722,23 @@ export default {
         this.alertInputQuantity();
         this.$refs.quantity.focus();
       } else {
-        let item = await this.checkDuplicateProduct();
-        // console.log("item", item);
-
-        if (item) {
-          let index = this.itemsReceivedList.indexOf(item);
-          // console.log("index", index);
-
-          let quantityOld = this.itemsReceivedList[index].quantity;
-          // console.log("quantityOld", quantityOld);
-
-          let quantity = this.itemReceivedList.quantity;
-          // console.log("quantity", quantity);
-
-          this.itemReceivedList.quantity = Number(
-            parseInt(quantityOld) + parseInt(quantity)
-          ).toFixed();
-
-          this.itemReceivedList.price_sum = Number(
-            parseFloat(this.itemReceivedList.price_after_reduce) *
-              parseFloat(this.itemReceivedList.quantity)
-          ).toFixed(2);
-
-          this.itemsReceivedList.splice(index, 1, this.itemReceivedList);
-          this.$emit("update:itemsReceivedList", this.itemsReceivedList);
-          this.$emit("ressetItemReceivedList");
-
-          console.log("itemReceivedList", this.itemReceivedList);
-          console.log("itemsReceivedList", this.itemsReceivedList);
-        } else {
-          this.itemsReceivedList.push(this.itemReceivedList);
-          this.$emit("update:itemsReceivedList", this.itemsReceivedList);
-          this.$emit("ressetItemReceivedList");
-        }
+        // let index = this.itemsReceivedList.indexOf(this.itemReceivedList);
+        // this.itemsReceivedList.splice(index, this.itemReceivedList);
+        this.$emit("ressetItemReceivedList");
+        this.$emit("closeDialogEditReceivedList");
       }
     },
 
-    async checkDuplicateProduct() {
-      if (this.itemsReceivedList.length > 0) {
-        // grab the Array item which matchs the id "2"
-        let productUnitId = this.itemProductUnit.id;
-        // console.log("productUnitId", productUnitId);
-        let item = this.itemsReceivedList.find(
-          (item) => item.product_unit.id === productUnitId
-        );
-        return item;
-      }
+    async getData() {
+      this.search = this.itemReceivedList.product_barcode;
     },
   },
 
   watch: {
     itemReceivedList(val) {
       if (val) {
-        this.$refs.search.focus();
+        this.getData();
+        this.$refs.price.focus();
       }
     },
 
@@ -789,9 +749,12 @@ export default {
     },
   },
 
-  created() {},
+  created() {
+    this.getData();
+  },
 
   mounted() {
+    this.$refs.price.focus();
     window.addEventListener("keydown", (e) => {
       if (e.keyCode == 74) {
         e.preventDefault();
