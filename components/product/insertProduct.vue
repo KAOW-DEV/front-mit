@@ -72,7 +72,6 @@
                 dense
                 outlined
                 hide-details=""
-                required
                 :readonly="itemProduct.group == null"
               ></v-autocomplete>
             </v-col>
@@ -106,7 +105,6 @@
                 dense
                 outlined
                 hide-details=""
-                required
               ></v-autocomplete>
             </v-col>
           </v-row>
@@ -207,10 +205,10 @@ export default {
         .post("/products", {
           product_code: this.itemProduct.product_code,
           product_name: this.itemProduct.product_name,
-          group: this.itemProduct.group.id,
-          sub_group: this.itemProduct.sub_group.id,
-          unit: this.itemProduct.unit.id,
-          supplier: this.itemProduct.supplier.id,
+          group: this.itemProduct.group,
+          sub_group: this.itemProduct.sub_group,
+          unit: this.itemProduct.unit,
+          supplier: this.itemProduct.supplier,
           product_quantity: this.itemProduct.product_quantity,
           product_active: true,
         })

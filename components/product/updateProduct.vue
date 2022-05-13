@@ -71,7 +71,6 @@
                 dense
                 outlined
                 hide-details=""
-                required
                 :readonly="itemProduct.group == null"
               ></v-autocomplete>
             </v-col>
@@ -105,7 +104,6 @@
                 dense
                 outlined
                 hide-details=""
-                required
               ></v-autocomplete>
             </v-col>
           </v-row>

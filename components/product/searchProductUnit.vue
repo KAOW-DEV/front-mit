@@ -66,6 +66,8 @@ export default {
 
     async getItem(e, { item }) {
       console.log("item", item);
+      console.log("e", e);
+
       this.$emit("update:item", item);
       this.$emit("closeDialog");
     },

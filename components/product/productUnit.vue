@@ -158,9 +158,7 @@
                   <v-col cols="6">
                     <v-text-field
                       label="ราคาจากส่วนกลาง"
-                      v-model="
-                        itemProductUnit.product_price.product_price_middle
-                      "
+                      v-model="itemProductUnit.price_middle"
                       type="number"
                       min="1"
                       dense
@@ -172,9 +170,7 @@
                   <v-col cols="6">
                     <v-text-field
                       label="เปอร์เซ็นส่วนลด"
-                      v-model="
-                        itemProductUnit.product_price.product_price_discount
-                      "
+                      v-model="itemProductUnit.percen_discount"
                       type="number"
                       min="1"
                       dense
@@ -196,9 +192,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-01"
-                          v-model="
-                            itemProductUnit.product_price.product_price_1
-                          "
+                          v-model="itemProductUnit.price_1"
                           type="number"
                           min="1"
                           dense
@@ -210,9 +204,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-02"
-                          v-model="
-                            itemProductUnit.product_price.product_price_2
-                          "
+                          v-model="itemProductUnit.price_2"
                           type="number"
                           min="1"
                           dense
@@ -224,9 +216,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-03"
-                          v-model="
-                            itemProductUnit.product_price.product_price_3
-                          "
+                          v-model="itemProductUnit.price_3"
                           type="number"
                           min="1"
                           dense
@@ -238,9 +228,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-04"
-                          v-model="
-                            itemProductUnit.product_price.product_price_4
-                          "
+                          v-model="itemProductUnit.price_4"
                           type="number"
                           min="1"
                           dense
@@ -252,9 +240,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-05"
-                          v-model="
-                            itemProductUnit.product_price.product_price_5
-                          "
+                          v-model="itemProductUnit.price_5"
                           type="number"
                           min="1"
                           dense
@@ -270,9 +256,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-06"
-                          v-model="
-                            itemProductUnit.product_price.product_price_6
-                          "
+                          v-model="itemProductUnit.price_6"
                           type="number"
                           min="1"
                           dense
@@ -284,9 +268,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-07"
-                          v-model="
-                            itemProductUnit.product_price.product_price_7
-                          "
+                          v-model="itemProductUnit.price_7"
                           type="number"
                           min="1"
                           dense
@@ -298,9 +280,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-08"
-                          v-model="
-                            itemProductUnit.product_price.product_price_8
-                          "
+                          v-model="itemProductUnit.price_8"
                           type="number"
                           min="1"
                           dense
@@ -312,9 +292,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-09"
-                          v-model="
-                            itemProductUnit.product_price.product_price_9
-                          "
+                          v-model="itemProductUnit.price_9"
                           type="number"
                           min="1"
                           dense
@@ -326,9 +304,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="ราคาขาย-10"
-                          v-model="
-                            itemProductUnit.product_price.product_price_10
-                          "
+                          v-model="itemProductUnit.price_10"
                           type="number"
                           min="1"
                           dense
@@ -351,9 +327,7 @@
                   <v-col cols="6">
                     <v-text-field
                       label="ห้ามขายราคาต่ำกว่า"
-                      v-model="
-                        itemProductUnit.product_price.product_price_low_limit
-                      "
+                      v-model="itemProductUnit.percen_low_limit"
                       type="number"
                       min="1"
                       dense
@@ -442,25 +416,22 @@ export default {
         product_unit_barcode: null,
         product_unit_name: this.itemProduct.product_name,
         product_unit_description: null,
-        unit: {},
+        unit: null,
         product_unit_quantity_number: 0,
-        product: {},
-        product_price: {
-          id: 0,
-          product_price_middle: 0,
-          product_price_discount: 0,
-          product_price_1: 0,
-          product_price_2: 0,
-          product_price_3: 0,
-          product_price_4: 0,
-          product_price_5: 0,
-          product_price_6: 0,
-          product_price_7: 0,
-          product_price_8: 0,
-          product_price_9: 0,
-          product_price_10: 0,
-          product_price_low_limit: 0,
-        },
+        product: null,
+        price_middle: 0,
+        percen_discount: 0,
+        percen_low_limit: 0,
+        price_1: 0,
+        price_2: 0,
+        price_3: 0,
+        price_4: 0,
+        price_5: 0,
+        price_6: 0,
+        price_7: 0,
+        price_8: 0,
+        price_9: 0,
+        price_10: 0,
       },
 
       editItemProductUnit: false,
@@ -491,6 +462,7 @@ export default {
         .get(
           "/product-units?product=" +
             this.itemProduct.id +
+            "&product_unit_active=true" +
             "&_sort=product_unit_quantity_number:ASC"
         )
         .then((res) => {
@@ -525,25 +497,22 @@ export default {
         product_unit_barcode: null,
         product_unit_name: this.itemProduct.product_name,
         product_unit_description: null,
-        unit: {},
+        unit: null,
         product_unit_quantity_number: 0,
-        product: {},
-        product_price: {
-          id: 0,
-          product_price_middle: 0,
-          product_price_discount: 0,
-          product_price_1: 0,
-          product_price_2: 0,
-          product_price_3: 0,
-          product_price_4: 0,
-          product_price_5: 0,
-          product_price_6: 0,
-          product_price_7: 0,
-          product_price_8: 0,
-          product_price_9: 0,
-          product_price_10: 0,
-          product_price_low_limit: 0,
-        },
+        product: null,
+        price_middle: 0,
+        percen_discount: 0,
+        percen_low_limit: 0,
+        price_1: 0,
+        price_2: 0,
+        price_3: 0,
+        price_4: 0,
+        price_5: 0,
+        price_6: 0,
+        price_7: 0,
+        price_8: 0,
+        price_9: 0,
+        price_10: 0,
       };
       this.editItemProductUnit = false;
     },
@@ -600,10 +569,8 @@ export default {
           }).then(async (result) => {
             if (result.isConfirmed) {
               console.log("itemProductUnit", this.itemProductUnit);
-              await this.destroyProductPrice();
+
               await this.destroyProductUnit();
-              await this.getItemsProductUnitByProductId();
-              await this.alertDeleteSuccess();
             }
           });
         }
@@ -654,19 +621,14 @@ export default {
       });
     },
 
-    async destroyProductPrice() {
-      await this.$axios
-        .delete("/product-prices/" + this.itemProductUnit.product_price.id)
-        .then((res) => {
-          // console.log("itemsProductUnit", res.data);
-        });
-    },
-
     async destroyProductUnit() {
       await this.$axios
-        .delete("/product-units/" + this.itemProductUnit.id)
+        .put("/product-units/" + this.itemProductUnit.id, {
+          product_unit_active: false,
+        })
         .then((res) => {
-          // console.log("itemsProductUnit", res.data);
+          this.getItemsProductUnitByProductId();
+          this.alertDeleteSuccess();
         });
     },
 

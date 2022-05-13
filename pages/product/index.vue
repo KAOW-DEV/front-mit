@@ -87,10 +87,10 @@
 </template>
 
 <script>
-import SearchProduct from "~/components/product_2/searchProduct.vue";
-import Product from "~/components/product_2/product.vue";
-import ProductUnit from "~/components/product_2/productUnit.vue";
-import InsertProduct from "~/components/product_2/insertProduct.vue";
+import SearchProduct from "~/components/product/searchProduct.vue";
+import Product from "~/components/product/product.vue";
+import ProductUnit from "~/components/product/productUnit.vue";
+import InsertProduct from "~/components/product/insertProduct.vue";
 export default {
   components: { Product, SearchProduct, ProductUnit, InsertProduct },
   data() {

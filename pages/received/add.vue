@@ -7,7 +7,10 @@
     <form @submit.prevent="checkSave">
       <v-card>
         <v-card-title primary-title>
-          <v-btn color="primary">
+          <v-btn
+            color="primary"
+            :to="{ name: 'received', params: { id: itemReceived.id } }"
+          >
             <v-icon>mdi-table</v-icon>
           </v-btn>
 
@@ -51,6 +54,7 @@
                       large
                       class="mt-n1 text-center"
                       color="red"
+                      @click="calculator"
                     ></v-switch>
                     <v-spacer></v-spacer>
                   </v-card-actions>
@@ -280,7 +284,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" :disabled="selectItemDel">
+          <v-btn color="error" :disabled="selectItemDel" @click="delMultiItem">
             <v-icon>mdi-delete</v-icon>
             ลบรายการที่เลือก
           </v-btn>
@@ -312,30 +316,13 @@
             {{ index + 1 }}
           </template>
           <template v-slot:item.price_after_reduce="{ item }">
-            <v-currency-field
-              :value="item.price_after_reduce"
-              dense
-              readonly
-              locale="th"
-              prefix="฿"
-            />
+            <v-currency-field :value="item.price_after_reduce" dense readonly />
           </template>
           <template v-slot:item.quantity="{ item }">
             <v-currency-field :value="item.quantity" dense readonly />
           </template>
           <template v-slot:item.price_sum="{ item }">
-            <v-currency-field
-              :value="item.price_sum"
-              dense
-              readonly
-              locale="th"
-              prefix="฿"
-            />
-          </template>
-          <template v-slot:item.deleteItem="{ item, index }">
-            <v-btn color="error">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+            <v-currency-field :value="item.price_sum" dense readonly />
           </template>
         </v-data-table>
         <v-divider></v-divider>
@@ -441,34 +428,34 @@
               ></v-text-field>
             </v-col>
             <v-col cols="1">
-              <v-text-field
+              <v-currency-field
                 label="ราคารวมไม่มีภาษี"
                 v-model="itemReceived.price_sum_no_vat"
                 dense
                 outlined
                 hide-details=""
                 readonly
-              ></v-text-field>
+              ></v-currency-field>
             </v-col>
             <v-col cols="1">
-              <v-text-field
+              <v-currency-field
                 label="VAT 7%"
                 v-model="itemReceived.price_vat"
                 dense
                 outlined
                 hide-details=""
                 readonly
-              ></v-text-field>
+              ></v-currency-field>
             </v-col>
             <v-col cols="1">
-              <v-text-field
+              <v-currency-field
                 label="ราคาสุทธิรวมภาษี"
                 v-model="itemReceived.price_sum_net"
                 dense
                 outlined
                 hide-details=""
                 readonly
-              ></v-text-field>
+              ></v-currency-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -754,16 +741,17 @@ export default {
 
     async closeDialogAddReceivedList() {
       this.dialogAddReceivedList = false;
+      this.calculator();
     },
 
     async closeDialogEditReceivedList() {
       this.dialogEditReceivedList = false;
-
       this.ressetItemReceivedList();
+      this.calculator();
     },
 
     async getItem(event, { item }) {
-      console.log("item", item);
+      // console.log("item", item);
       this.itemReceivedList = item;
       this.editReceivedList();
     },
@@ -772,21 +760,72 @@ export default {
       this.dialogEditReceivedList = true;
     },
 
-    async checkSave() {},
-
     async calculator() {
       let vat = this.itemReceived.type_vat;
-      let q = this.itemReceived.quantity_total;
-      let psnv = this.itemReceived.price_sum_no_vat;
-      let pv = this.itemReceived.price_vat;
-      let psn = this.itemReceived.price_sum_net;
+
+      let q = 0;
+      let psnv = 0;
+      let pv = 0;
+      let psn = 0;
 
       if (vat) {
         for (const item of this.itemsReceivedList) {
-          console.log("item", item);
+          console.log("calculator", item);
+          q = parseInt(q) + parseInt(item.quantity);
+          psn += parseFloat(item.price_sum);
         }
+        pv = parseFloat(psn) * parseFloat(0.07);
+        psnv = parseFloat(psn) - parseFloat(pv);
       } else {
+        for (const item of this.itemsReceivedList) {
+          console.log("calculator", item);
+          q = parseInt(q) + parseInt(item.quantity);
+          psnv += parseFloat(item.price_sum);
+        }
+
+        pv = parseFloat(psnv) * parseFloat(0.07);
+        psn = parseFloat(psnv) + parseFloat(pv);
       }
+
+      this.itemReceived.quantity_total = Number(q).toFixed(); //จำนวนที่รับเข้ารวม
+      this.itemReceived.price_sum_no_vat = Number(psnv).toFixed(2); //ราคารวมไม่มีภาษี
+      this.itemReceived.price_vat = Number(pv).toFixed(2); //VAT 7%
+      this.itemReceived.price_sum_net = Number(psn).toFixed(2); //ราคาสุทธิรวมภาษี
+    },
+
+    async delMultiItem() {
+      // console.log("itemsSelect", this.itemsSelect);
+      for (const item of this.itemsSelect) {
+        let index = this.itemsReceivedList.indexOf(item);
+        this.itemsReceivedList.splice(index, 1);
+      }
+      this.itemsSelect = [];
+    },
+
+    async checkSave() {
+      console.log("itemReceived", this.itemReceived);
+      console.log("itemsReceivedList", this.itemsReceivedList);
+      this.$swal({
+        title: "ต้องการบันทึกข้อมูล ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+        focusConfirm: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.insertReceived();
+        }
+      });
+    },
+
+    async insertReceived() {
+      this.$axios.post("/receiveds/insertReceived", {
+        itemReceived: this.itemReceived,
+        itemsReceivedList: this.itemsReceivedList,
+      });
     },
   },
 
@@ -809,7 +848,6 @@ export default {
   created() {
     this.getItemsBranch();
     this.getItemsSupplier();
-    // console.log("param", this.$route.params);
   },
 
   mounted() {

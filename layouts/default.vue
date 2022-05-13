@@ -10,8 +10,11 @@
       </v-app-bar-nav-icon>
       <v-divider vertical class="mx-3"></v-divider>
       <v-spacer></v-spacer>
-      <v-alert color="warning" text border="left" dense class="my-auto">
+      <v-alert color="error" text dense class="my-auto mr-2">
         ผู้ใช้งาน : {{ $auth.state.user.user_name }}
+      </v-alert>
+      <v-alert color="warning" text dense class="my-auto">
+        ล็อคอิน : {{ loginBranch.branch_name }}
       </v-alert>
     </v-app-bar>
 
@@ -71,6 +74,7 @@ export default {
   data() {
     return {
       drawer: true,
+      loginBranch: this.$auth.$storage.getUniversal("itemBranch"),
 
       title: "ระบบสต๊อกสินค้า ร้านมิตรเกษตรการไฟฟ้า",
 
@@ -112,7 +116,7 @@ export default {
             },
             {
               text: "ใบรับเข้า",
-              to: "/received",
+              to: "/received/add",
               icon: "mdi-format-list-bulleted-square",
             },
             {

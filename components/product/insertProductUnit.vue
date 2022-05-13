@@ -3,12 +3,12 @@
     <form @submit.prevent="checkSave">
       <v-card>
         <v-card-title primary-title>
-          แก้ไขหน่วยซื้อ/ขาย
+          เพิ่มหน่วยซื้อ/ขาย
           <v-spacer></v-spacer>
           <v-btn
             icon
             color="error"
-            @click="$emit('closeDialogUpdateProductUnit')"
+            @click="$emit('closeDialogInsertProductUnit')"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -61,6 +61,7 @@
                         hide-details=""
                         required
                         @focus="$event.target.select()"
+                        :readonly="!editItemUnit"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6">
@@ -77,6 +78,7 @@
                         hide-details=""
                         required
                         @focus="$event.target.select()"
+                        :readonly="!editItemUnit"
                       ></v-autocomplete>
                     </v-col>
                   </v-row>
@@ -95,9 +97,7 @@
                     <v-col cols="6">
                       <v-text-field
                         label="ราคาจากส่วนกลาง"
-                        v-model="
-                          itemProductUnit.product_price.product_price_middle
-                        "
+                        v-model="itemProductUnit.price_middle"
                         type="number"
                         min="1"
                         dense
@@ -105,16 +105,16 @@
                         hide-details=""
                         required
                         @focus="$event.target.select()"
+                        @keydown.stop.enter="$refs.percen_discount.focus()"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6">
                       <v-text-field
                         label="เปอร์เซ็นส่วนลด"
-                        v-model="
-                          itemProductUnit.product_price.product_price_discount
-                        "
+                        ref="percen_discount"
+                        v-model="itemProductUnit.percen_discount"
                         type="number"
-                        min="1"
+                        min="0"
                         dense
                         outlined
                         hide-details=""
@@ -135,9 +135,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-01"
-                            v-model="
-                              itemProductUnit.product_price.product_price_1
-                            "
+                            v-model="itemProductUnit.price_1"
                             type="number"
                             min="1"
                             dense
@@ -150,9 +148,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-02"
-                            v-model="
-                              itemProductUnit.product_price.product_price_2
-                            "
+                            v-model="itemProductUnit.price_2"
                             type="number"
                             min="1"
                             dense
@@ -165,9 +161,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-03"
-                            v-model="
-                              itemProductUnit.product_price.product_price_3
-                            "
+                            v-model="itemProductUnit.price_3"
                             type="number"
                             min="1"
                             dense
@@ -180,9 +174,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-04"
-                            v-model="
-                              itemProductUnit.product_price.product_price_4
-                            "
+                            v-model="itemProductUnit.price_4"
                             type="number"
                             min="1"
                             dense
@@ -195,9 +187,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-05"
-                            v-model="
-                              itemProductUnit.product_price.product_price_5
-                            "
+                            v-model="itemProductUnit.price_5"
                             type="number"
                             min="1"
                             dense
@@ -214,9 +204,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-06"
-                            v-model="
-                              itemProductUnit.product_price.product_price_6
-                            "
+                            v-model="itemProductUnit.price_6"
                             type="number"
                             min="1"
                             dense
@@ -229,9 +217,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-07"
-                            v-model="
-                              itemProductUnit.product_price.product_price_7
-                            "
+                            v-model="itemProductUnit.price_7"
                             type="number"
                             min="1"
                             dense
@@ -244,9 +230,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-08"
-                            v-model="
-                              itemProductUnit.product_price.product_price_8
-                            "
+                            v-model="itemProductUnit.price_8"
                             type="number"
                             min="1"
                             dense
@@ -259,9 +243,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-09"
-                            v-model="
-                              itemProductUnit.product_price.product_price_9
-                            "
+                            v-model="itemProductUnit.price_9"
                             type="number"
                             min="1"
                             dense
@@ -274,9 +256,7 @@
                         <v-col cols="12">
                           <v-text-field
                             label="ราคาขาย-10"
-                            v-model="
-                              itemProductUnit.product_price.product_price_10
-                            "
+                            v-model="itemProductUnit.price_10"
                             type="number"
                             min="1"
                             dense
@@ -300,9 +280,7 @@
                     <v-col cols="6">
                       <v-text-field
                         label="ห้ามขายราคาต่ำกว่า"
-                        v-model="
-                          itemProductUnit.product_price.product_price_low_limit
-                        "
+                        v-model="itemProductUnit.percen_low_limit"
                         type="number"
                         min="1"
                         dense
@@ -331,21 +309,47 @@
 
 <script>
 export default {
-  props: [
-    "itemProduct",
-    "itemProductUnit",
-    "dialogUpdateProductUnit",
-    "editItemProductUnit",
-  ],
+  props: ["itemProduct", "itemProductUnit"],
   data() {
     return {
       itemsUnit: [],
       internalcodeDuplicate: null,
       barcodeDuplicate: null,
+
+      editItemUnit: false,
     };
   },
 
+  watch: {
+    itemProductUnit(val) {
+      if (val) {
+        this.checkEditItemUnit();
+      }
+    },
+  },
+
   methods: {
+    async checkEditItemUnit() {
+      await this.$axios
+        .get("/product-units?product=" + this.itemProduct.id)
+        .then((res) => {
+          console.log("checkFirtItemProductUnit", res.data);
+
+          if (res.data.length > 0) {
+            this.editItemUnit = true;
+          } else {
+            this.itemProductUnit.product_unit_quantity_number = 1;
+            this.itemProductUnit.unit = this.itemProduct.unit;
+            this.editItemUnit = false;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+
+      // console.log("editItemUnit", this.editItemUnit);
+    },
+
     async getItemsUnit() {
       this.$axios
         .get("/units")
@@ -358,54 +362,94 @@ export default {
         });
     },
 
-    async checkSave() {
-      console.log("itemProduct", this.itemProduct);
-      console.log("itemProductUnit", this.itemProductUnit);
+    async checkInternalcodeDuplicate() {
+      let check = await this.$axios
+        .get(
+          "/product-units?product_unit_internal_code=" +
+            this.itemProductUnit.product_unit_internal_code
+        )
+        .then((res) => {
+          // console.log("checkInternalcodeDuplicate", res.data);
+          if (res.data.length > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        });
 
+      return check;
+    },
+
+    async checkBarcodeDuplicate() {
+      let check = await this.$axios
+        .get(
+          "/product-units?product_unit_barcode=" +
+            this.itemProductUnit.product_unit_barcode
+        )
+        .then((res) => {
+          // console.log("checkBarcodeDuplicate", res.data);
+          if (res.data.length > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+
+      return check;
+    },
+
+    async alertInternalcodeDuplicate() {
       this.$swal({
-        title: "ต้องการบันทึกข้อมูล ใช่หรือไม่",
+        title: "รหัสภายใน ซ้ำ!",
         icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ใช่",
-        cancelButtonText: "ไม่ใช่",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.$emit("closeDialogUpdateProductUnit");
-          this.updateProductPrice();
-        }
+        showConfirmButton: false,
+        timer: 1500,
       });
     },
 
-    async updateProductPrice() {
-      await this.$axios
-        .put("/product-prices/" + this.itemProductUnit.product_price.id, {
-          product_price_middle:
-            this.itemProductUnit.product_price.product_price_middle,
-          product_price_discount:
-            this.itemProductUnit.product_price.product_price_discount,
-          product_price_1: this.itemProductUnit.product_price.product_price_1,
-          product_price_2: this.itemProductUnit.product_price.product_price_2,
-          product_price_3: this.itemProductUnit.product_price.product_price_3,
-          product_price_4: this.itemProductUnit.product_price.product_price_4,
-          product_price_5: this.itemProductUnit.product_price.product_price_5,
-          product_price_6: this.itemProductUnit.product_price.product_price_6,
-          product_price_7: this.itemProductUnit.product_price.product_price_7,
-          product_price_8: this.itemProductUnit.product_price.product_price_8,
-          product_price_9: this.itemProductUnit.product_price.product_price_9,
-          product_price_10: this.itemProductUnit.product_price.product_price_10,
-          product_price_low_limit:
-            this.itemProductUnit.product_price.product_price_low_limit,
-        })
-        .then((res) => {
-          this.updateProductUnit();
-        });
+    async alertBarcodeDuplicate() {
+      this.$swal({
+        title: "รหัสบาร์โค้ด ซ้ำ!",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
-    async updateProductUnit() {
+    async checkSave() {
+      // console.log("itemProduct", this.itemProduct);
+      // console.log("itemProductUnit", this.itemProductUnit);
+
+      let internalcodeDuplicate = await this.checkInternalcodeDuplicate();
+      let barcodeDuplicate = await this.checkBarcodeDuplicate();
+
+      if (internalcodeDuplicate == true) {
+        this.alertInternalcodeDuplicate();
+        return;
+      } else if (barcodeDuplicate == true) {
+        this.alertBarcodeDuplicate();
+        return;
+      } else {
+        this.$swal({
+          title: "ต้องการบันทึกข้อมูล ใช่หรือไม่",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "ใช่",
+          cancelButtonText: "ไม่ใช่",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.$emit("closeDialogInsertProductUnit");
+            this.insertProductUnit();
+          }
+        });
+      }
+    },
+
+    async insertProductUnit() {
       await this.$axios
-        .put("/product-units/" + this.itemProductUnit.id, {
+        .post("/product-units", {
           product_unit_internal_code:
             this.itemProductUnit.product_unit_internal_code,
           product_unit_barcode: this.itemProductUnit.product_unit_barcode,
@@ -415,6 +459,20 @@ export default {
           unit: this.itemProductUnit.unit,
           product_unit_quantity_number:
             this.itemProductUnit.product_unit_quantity_number,
+          product: this.itemProduct.id,
+          price_middle: this.itemProductUnit.price_middle,
+          percen_discount: this.itemProductUnit.percen_discount,
+          percen_low_limit: this.itemProductUnit.percen_low_limit,
+          price_1: this.itemProductUnit.price_1,
+          price_2: this.itemProductUnit.price_2,
+          price_3: this.itemProductUnit.price_3,
+          price_4: this.itemProductUnit.price_4,
+          price_5: this.itemProductUnit.price_5,
+          price_6: this.itemProductUnit.price_6,
+          price_7: this.itemProductUnit.price_7,
+          price_8: this.itemProductUnit.price_8,
+          price_9: this.itemProductUnit.price_9,
+          price_10: this.itemProductUnit.price_10,
         })
         .then((res) => {
           console.log("itemProductUnit", res.data);
@@ -424,18 +482,7 @@ export default {
         })
         .catch((error) => {
           console.log("error", error);
-          this.alertDuplicate();
-          this.$emit("update:dialogUpdateProductUnit", true);
-          this.$emit("getItemsProductUnitByProductId");
         });
-    },
-
-    async alertDuplicate() {
-      this.$swal({
-        title: "รหัสซ้ำ",
-        text: "รหัสภายใน / รหัสบาร์โค้ด ซ้ำ!!",
-        icon: "error",
-      });
     },
 
     async alertSuccess() {
@@ -458,6 +505,7 @@ export default {
 
   created() {
     this.getItemsUnit();
+    this.checkEditItemUnit();
   },
 
   mounted() {
@@ -468,4 +516,5 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>
