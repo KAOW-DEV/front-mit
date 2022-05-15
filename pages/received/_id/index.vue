@@ -19,6 +19,10 @@
           <v-icon>mdi-database-plus</v-icon>
           สร้างใบรับเข้า (F1)
         </v-btn>
+        <v-btn color="error" class="float-end" @click="confirmDeleteReceived">
+          <v-icon>mdi-delete</v-icon>
+          ลบใบรับเข้า
+        </v-btn>
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -51,6 +55,7 @@
                     class="mt-n1 text-center"
                     color="red"
                     @click="calculator"
+                    :disabled="!editItem"
                   ></v-switch>
                   <v-spacer></v-spacer>
                 </v-card-actions>
@@ -78,6 +83,7 @@
                       (menu2 = true),
                       autoInputItemSupplier()
                   "
+                  :disabled="!editItem"
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12">
@@ -140,6 +146,7 @@
                       dense
                       outlined
                       hide-details=""
+                      :disabled="!editItem"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -169,7 +176,7 @@
                   v-model="itemReceived.received_number"
                   dense
                   outlined
-                  disabled
+                  readonly
                   hide-details=""
                 ></v-text-field>
               </v-col>
@@ -199,6 +206,7 @@
                       dense
                       outlined
                       hide-details=""
+                      :disabled="!editItem"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -239,6 +247,7 @@
                   hide-details=""
                   @focus="$event.target.select()"
                   @keydown.enter="$refs.po_number.focus()"
+                  :disabled="!editItem"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -257,6 +266,7 @@
                   hide-details=""
                   @focus="$event.target.select()"
                   @keydown.enter="$refs.received_credit_term.focus()"
+                  :disabled="!editItem"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -272,6 +282,7 @@
                   min="0"
                   @focus="$event.target.select()"
                   @keydown.enter="$refs.btnAddItemReceivedList.$el.focus()"
+                  :disabled="!editItem"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -280,7 +291,11 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
-        <v-btn color="error" :disabled="selectItemDel" @click="delMultiItem">
+        <v-btn
+          color="error"
+          :disabled="selectItemDel || !editItem"
+          @click="delMultiItem"
+        >
           <v-icon>mdi-delete</v-icon>
           ลบรายการที่เลือก
         </v-btn>
@@ -290,6 +305,7 @@
           color="primary"
           @click="addItemReceivedList"
           @keydown.enter="addItemReceivedList"
+          :disabled="!editItem"
         >
           <v-icon>mdi-plus</v-icon>
           เพิ่มรายการ (F2)
@@ -305,8 +321,8 @@
         item-key="product_name"
         fixed-header
         dense
-        show-select
         disable-sort
+        :show-select="editItem"
         @dblclick:row="getItem"
       >
         <template v-slot:item.index="{ item, index }">
@@ -459,9 +475,18 @@
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-btn color="success" @click="checkSave">
+        <v-spacer></v-spacer>
+        <v-btn color="success" @click="checkSave" v-if="editItem">
           <v-icon>mdi-content-save</v-icon>
           บันทึก
+        </v-btn>
+        <v-btn color="primary" @click="confirmRestore" v-if="editItem">
+          <v-icon>mdi-restore</v-icon>
+          คืนค่า
+        </v-btn>
+        <v-btn color="warning" @click="editItem = true" v-if="!editItem">
+          <v-icon>mdi-pencil</v-icon>
+          แก้ไข
         </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
@@ -698,7 +723,7 @@ export default {
       await this.$swal
         .fire({
           title: "ต้องการสร้างใบรับเข้าใหม่ \n ใช่หรือไม่",
-          text: "รายการสินค้าจะถูกเคลียร์",
+
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -708,10 +733,7 @@ export default {
         })
         .then(async (result) => {
           if (result.isConfirmed) {
-            this.ressetItemReceived();
-            this.itemsReceivedList = [];
-            this.editItemReceived = false;
-            await this.$refs.supplier.focus();
+            this.$router.push("/received/add");
           }
         });
     },
@@ -744,8 +766,10 @@ export default {
 
     async getItem(event, { item }) {
       // console.log("item", item);
-      this.itemReceivedList = item;
-      this.editReceivedList();
+      if (this.editItem == true) {
+        this.itemReceivedList = item;
+        this.editReceivedList();
+      }
     },
 
     async editReceivedList() {
@@ -861,62 +885,25 @@ export default {
         }).then((result) => {
           if (result.isConfirmed) {
             this.overlay = true;
-            this.insertReceived();
+            this.updateReceived();
           }
         });
       }
     },
 
-    async genReceivedNumber() {
-      let yearMonth = moment().add(543, "year").format("YYMM");
-      let number = null;
-
-      let received_number = await this.$axios
-        .get("/receiveds?_sort=id:DESC&_limit=1")
-        .then((res) => {
-          if (res.data.length > 0) {
-            let receivedNumberLast = res.data[0].received_number;
-            // console.log("receivedNumberLast", receivedNumberLast);
-
-            let ym = receivedNumberLast.substring(0, 4);
-            let no = receivedNumberLast.substring(4);
-
-            if (ym == yearMonth) {
-              let str = String(parseInt(no) + 1);
-              number = str.padStart(4, "0");
-            } else {
-              let str = "1";
-              number = str.padStart(4, "0");
-            }
-
-            let genNumber = yearMonth + number;
-            // console.log("received_number", received_number);
-            return genNumber;
-          } else {
-            let str = "1";
-            number = str.padStart(4, "0");
-            let genNumber = yearMonth + number;
-            return genNumber;
-          }
-        });
-
-      return received_number;
-    },
-
-    async insertReceived() {
-      this.itemReceived.received_number = await this.genReceivedNumber();
-      console.log("received_number", this.itemReceived.received_number);
-
+    async updateReceived() {
       await this.$axios
-        .post("/receiveds/insertReceived", {
+        .post("/receiveds/updateReceived", {
           itemReceived: this.itemReceived,
           itemsReceivedList: this.itemsReceivedList,
         })
         .then((res) => {
           console.log("res", res.data);
+          this.editItem = false;
+          this.getItemReceived();
+          this.getItemsReceivedList();
           this.overlay = false;
           this.alertSuccess();
-          this.$router.push("/received/" + res.data.id);
         })
         .catch((err) => {
           this.alertError();
@@ -934,12 +921,99 @@ export default {
       });
     },
 
+    async alertDeleteSuccess() {
+      this.$swal({
+        title: "ลบข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
     async alertError() {
       this.$swal({
         title: "เกิดข้อผิดพลาด",
         text: "ตรวจสอบความถูกต้องของข้อมูล ก่อนบันทึก",
         icon: "error",
       });
+    },
+
+    async getItemReceived() {
+      await this.$axios
+        .get("/receiveds/" + this.$route.params.id)
+        .then((res) => {
+          this.itemReceived = res.data;
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    },
+
+    async getItemsReceivedList() {
+      await this.$axios
+        .get("/received-lists?received=" + this.$route.params.id)
+        .then((res) => {
+          this.itemsReceivedList = res.data;
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    },
+
+    async confirmRestore() {
+      await this.$swal
+        .fire({
+          title: "ต้องการคืนค่าเดิม \n ใช่หรือไม่",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "ใช่",
+          cancelButtonText: "ไม่ใช่",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.editItem = false;
+            this.getItemReceived();
+            this.getItemsReceivedList();
+            this.itemsSelect = [];
+          }
+        });
+    },
+
+    async confirmDeleteReceived() {
+      this.$swal({
+        title: "ต้องการลบใบรับเข้า ใช่หรือไม่",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+        focusConfirm: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.overlay = true;
+          this.deleteReceived();
+        }
+      });
+    },
+
+    async deleteReceived() {
+      await this.$axios
+        .post("/receiveds/deleteReceived", {
+          itemReceived: this.itemReceived,
+        })
+        .then((res) => {
+          console.log("res", res.data);
+          this.overlay = false;
+          this.alertDeleteSuccess();
+          this.$router.push("/received/add");
+        })
+        .catch((err) => {
+          this.alertError();
+          console.log("err", err);
+        });
     },
   },
 
@@ -962,6 +1036,8 @@ export default {
   created() {
     this.getItemsBranch();
     this.getItemsSupplier();
+    this.getItemReceived();
+    this.getItemsReceivedList();
   },
 
   mounted() {

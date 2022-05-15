@@ -663,7 +663,12 @@ export default {
           parseFloat(pr_5)
       ).toFixed(2);
 
-      pc_sum = Number(parseFloat(pr_sum * 100) / parseFloat(p)).toFixed(2);
+      pc_sum = Number(
+        (parseFloat(pr_sum) * parseFloat(100)) / parseFloat(p)
+      ).toFixed(2);
+      if (pc_sum == "NaN") {
+        pc_sum = 0;
+      }
 
       if (pr) {
         if (pr_sum > 0) {
