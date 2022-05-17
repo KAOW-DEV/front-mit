@@ -807,6 +807,7 @@ export default {
           ).toFixed(2);
 
           this.itemsReceivedList.splice(index, 1, this.itemReceivedList);
+          this.alertPushSuccess();
           this.$emit("update:itemsReceivedList", this.itemsReceivedList);
           this.$emit("ressetItemReceivedList");
 
@@ -814,10 +815,23 @@ export default {
           // console.log("itemsReceivedList", this.itemsReceivedList);
         } else {
           this.itemsReceivedList.push(this.itemReceivedList);
+          this.alertPushSuccess();
           this.$emit("update:itemsReceivedList", this.itemsReceivedList);
           this.$emit("ressetItemReceivedList");
         }
       }
+    },
+
+    async alertPushSuccess() {
+      await this.$refs.search.focus();
+
+      await this.$swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "เพิ่มรายการ เรียบร้อยแล้ว",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
     async checkDuplicateProduct() {

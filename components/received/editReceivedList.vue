@@ -778,11 +778,22 @@ export default {
       // console.log("checkQuantity", checkQuantity);
 
       if (checkQuantity) {
+        this.alertEditSuccess();
         this.$emit("ressetItemReceivedList");
         this.$emit("closeDialogEditReceivedList");
       } else {
         this.$refs.quantity.focus();
       }
+    },
+
+    async alertEditSuccess() {
+      this.$swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "แก้ไขรายการ เรียบร้อยแล้ว",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
     async getData() {

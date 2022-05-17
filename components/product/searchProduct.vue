@@ -73,6 +73,7 @@ export default {
     async getItem(e, { item }) {
       console.log("item", item);
       this.$emit("update:itemProduct", item);
+      this.$emit("update:searchProduct", item.product_name);
       this.$emit("update:editItem", true);
       this.$emit("closeDialogSearchProduct");
     },

@@ -4,20 +4,22 @@
       <v-progress-circular indeterminate size="100"></v-progress-circular>
     </v-overlay>
 
+    <v-alert color="success" text class="text-center" dense>
+      <h1>ใบรับเข้า</h1>
+    </v-alert>
+
     <v-card>
       <v-card-title primary-title>
-        <v-btn color="primary">
-          <v-icon>mdi-table</v-icon>
-        </v-btn>
-
         <v-spacer></v-spacer>
-        <v-alert color="success" text class="text-center" dense>
-          <h1>ใบรับเข้า</h1>
-        </v-alert>
+
         <v-spacer></v-spacer>
         <v-btn color="success" class="float-end" @click="addItemReceived">
           <v-icon>mdi-database-plus</v-icon>
           สร้างใบรับเข้า (F1)
+        </v-btn>
+        <v-btn color="primary" to="/received">
+          <v-icon>mdi-table</v-icon>
+          ตารางรายการ (F2)
         </v-btn>
         <v-btn color="error" class="float-end" @click="confirmDeleteReceived">
           <v-icon>mdi-delete</v-icon>
@@ -290,7 +292,7 @@
         </v-row>
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-actions>
+      <v-card-title>
         <v-btn
           color="error"
           :disabled="selectItemDel || !editItem"
@@ -308,9 +310,9 @@
           :disabled="!editItem"
         >
           <v-icon>mdi-plus</v-icon>
-          เพิ่มรายการ (F2)
+          เพิ่มรายการ (F5)
         </v-btn>
-      </v-card-actions>
+      </v-card-title>
 
       <v-divider></v-divider>
 
@@ -474,22 +476,22 @@
       </v-card-text>
       <v-divider></v-divider>
 
-      <v-card-actions>
+      <v-card-title>
         <v-spacer></v-spacer>
         <v-btn color="success" @click="checkSave" v-if="editItem">
           <v-icon>mdi-content-save</v-icon>
-          บันทึก
+          บันทึก (F10)
         </v-btn>
         <v-btn color="primary" @click="confirmRestore" v-if="editItem">
           <v-icon>mdi-restore</v-icon>
-          คืนค่า
+          คืนค่า (F8)
         </v-btn>
         <v-btn color="warning" @click="editItem = true" v-if="!editItem">
           <v-icon>mdi-pencil</v-icon>
-          แก้ไข
+          แก้ไข (F9)
         </v-btn>
         <v-spacer></v-spacer>
-      </v-card-actions>
+      </v-card-title>
     </v-card>
 
     <v-dialog v-model="dialogAddReceivedList" persistent width="40%">
@@ -625,7 +627,7 @@ export default {
       await this.$axios
         .get("/branches")
         .then((res) => {
-          console.log("itemsBranch", res.data);
+          // console.log("itemsBranch", res.data);
           this.itemsBranch = res.data;
         })
         .catch((error) => {
@@ -682,6 +684,8 @@ export default {
         price_vat: 0,
         price_sum_net: 0,
       };
+
+      this.$refs.supplier.focus();
     },
 
     async ressetItemsReceivedList() {
@@ -742,7 +746,6 @@ export default {
       if (this.itemsReceivedList.length > 0) {
         this.alertConfirmAddReceived();
       } else {
-        this.$refs.supplier.focus();
         this.ressetItemReceived();
         this.editItemReceived = false;
       }
@@ -755,13 +758,13 @@ export default {
 
     async closeDialogAddReceivedList() {
       this.dialogAddReceivedList = false;
-      this.calculator();
+      await this.calculator();
     },
 
     async closeDialogEditReceivedList() {
       this.dialogEditReceivedList = false;
-      this.ressetItemReceivedList();
-      this.calculator();
+      await this.ressetItemReceivedList();
+      await this.calculator();
     },
 
     async getItem(event, { item }) {
@@ -786,7 +789,7 @@ export default {
 
       if (vat) {
         for (const item of this.itemsReceivedList) {
-          console.log("calculator", item);
+          // console.log("calculator", item);
           q = parseInt(q) + parseInt(item.quantity);
           psn += parseFloat(item.price_sum);
         }
@@ -794,7 +797,7 @@ export default {
         psnv = parseFloat(psn) - parseFloat(pv);
       } else {
         for (const item of this.itemsReceivedList) {
-          console.log("calculator", item);
+          // console.log("calculator", item);
           q = parseInt(q) + parseInt(item.quantity);
           psnv += parseFloat(item.price_sum);
         }
@@ -860,8 +863,8 @@ export default {
       chkItemList = await this.checkItemList();
       chkSupplier = await this.checkItemSupplier();
 
-      console.log("chkItemList", chkItemList);
-      console.log("chkSupplier", chkSupplier);
+      // console.log("chkItemList", chkItemList);
+      // console.log("chkSupplier", chkSupplier);
 
       if (!chkSupplier) {
         this.alertNotSupplier();
@@ -898,7 +901,7 @@ export default {
           itemsReceivedList: this.itemsReceivedList,
         })
         .then((res) => {
-          console.log("res", res.data);
+          // console.log("res", res.data);
           this.editItem = false;
           this.getItemReceived();
           this.getItemsReceivedList();
@@ -942,6 +945,7 @@ export default {
       await this.$axios
         .get("/receiveds/" + this.$route.params.id)
         .then((res) => {
+          console.log("getItemReceived", res.data);
           this.itemReceived = res.data;
         })
         .catch((err) => {
@@ -1005,7 +1009,7 @@ export default {
           itemReceived: this.itemReceived,
         })
         .then((res) => {
-          console.log("res", res.data);
+          // console.log("res", res.data);
           this.overlay = false;
           this.alertDeleteSuccess();
           this.$router.push("/received/add");
@@ -1014,6 +1018,35 @@ export default {
           this.alertError();
           console.log("err", err);
         });
+    },
+
+    async reloadPage(e) {
+      // console.log("eAdd", e);
+      if (e.keyCode == 112) {
+        e.preventDefault();
+        this.addItemReceived();
+      } else if (e.keyCode == 113) {
+        e.preventDefault();
+        this.$router.push("/received");
+      } else if (e.keyCode == 116) {
+        e.preventDefault();
+        this.addItemReceivedList();
+      } else if (e.keyCode == 119) {
+        e.preventDefault();
+        this.confirmRestore();
+      } else if (e.keyCode == 120) {
+        e.preventDefault();
+        this.editItem = true;
+      } else if (e.keyCode == 121) {
+        e.preventDefault();
+        this.checkSave();
+      } else if (e.keyCode == 27) {
+        e.preventDefault();
+        this.closeDialogAddReceivedList();
+        this.closeDialogEditReceivedList();
+      } else if (e.keyCode == 74) {
+        e.preventDefault();
+      }
     },
   },
 
@@ -1038,20 +1071,11 @@ export default {
     this.getItemsSupplier();
     this.getItemReceived();
     this.getItemsReceivedList();
+    window.addEventListener("keydown", this.reloadPage);
   },
 
-  mounted() {
-    this.$refs.supplier.focus();
-
-    window.addEventListener("keydown", (e) => {
-      if (e.keyCode == 112) {
-        e.preventDefault();
-        this.addItemReceived();
-      } else if (e.keyCode == 113) {
-        e.preventDefault();
-        this.addItemReceivedList();
-      }
-    });
+  destroyed() {
+    window.removeEventListener("keydown", this.reloadPage);
   },
 };
 </script>

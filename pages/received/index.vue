@@ -4,828 +4,619 @@
       <v-progress-circular indeterminate size="100"></v-progress-circular>
     </v-overlay>
 
-    <form @submit.prevent="checkSave">
-      <v-card>
-        <v-card-title primary-title>
-          <v-btn color="primary">
-            <v-icon>mdi-table</v-icon>
-          </v-btn>
+    <v-alert color="success" text class="text-center" dense>
+      <h1>ใบรับเข้า</h1>
+    </v-alert>
+    <v-card>
+      <v-card-title primary-title>
+        <v-spacer></v-spacer>
 
-          <v-spacer></v-spacer>
-          <v-alert color="success" text class="text-center" dense>
-            <h1>ใบรับเข้า</h1>
-          </v-alert>
-          <v-spacer></v-spacer>
-          <v-btn color="success" class="float-end" @click="addItemReceived">
-            <v-icon>mdi-database-plus</v-icon>
-            สร้างใบรับเข้า (F1)
-          </v-btn>
-        </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-row>
-            <v-col cols="1">
-              <v-row>
-                <v-col cols="12">
-                  <v-autocomplete
-                    label="รับเข้าคลังสินค้า"
-                    :items="itemsBranch"
-                    item-text="branch_name"
-                    item-value="id"
-                    v-model="itemReceived.branch"
-                    return-object
-                    dense
-                    outlined
-                    hide-details=""
-                    required
-                    readonly
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-switch
-                      label="VAT"
-                      v-model="itemReceived.type_vat"
+        <v-spacer></v-spacer>
+        <v-btn color="success" class="float-end" @click="addItemReceived">
+          <v-icon>mdi-database-plus</v-icon>
+          สร้างใบรับเข้า (F1)
+        </v-btn>
+      </v-card-title>
+      <v-divider></v-divider>
+
+      <v-card-text>
+        <v-row>
+          <v-col cols="6">
+            <v-row>
+              <v-col cols="6">
+                <v-menu
+                  ref="menu1"
+                  v-model="menu1"
+                  :close-on-content-click="false"
+                  :return-value.sync="receivedDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="receivedDate"
+                      label="วันที่ใบรับเข้า"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                      outlined
                       hide-details=""
-                      large
-                      class="mt-n1 text-center"
-                      color="red"
-                    ></v-switch>
+                      clearable
+                      @click:clear="receivedDate = null"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="receivedDate"
+                    no-title
+                    scrollable
+                    locale="th"
+                    @click:date="$refs.menu1.save(receivedDate)"
+                  >
                     <v-spacer></v-spacer>
-                  </v-card-actions>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="3">
-              <v-row>
-                <v-col cols="12">
-                  <v-autocomplete
-                    label="ชื่อ/บริษัทฯ"
-                    append-icon="mdi-pencil"
-                    ref="supplier"
-                    :items="itemsSupplier"
-                    item-text="supplier_name"
-                    item-value="id"
-                    v-model="itemReceived.supplier"
-                    return-object
-                    dense
-                    outlined
-                    hide-details=""
-                    required
-                    @change="
-                      $refs.delivery_date.focus(),
-                        (menu2 = true),
-                        autoInputItemSupplier()
-                    "
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ที่อยู่"
-                    v-model="itemReceived.supplier_address"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="2">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ผู้ติดต่อ"
-                    v-model="itemReceived.supplier_description"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="โทรศัพท์"
-                    v-model="itemReceived.supplier_phone"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="3"></v-col>
-            <v-col cols="1">
-              <v-row>
-                <v-col cols="12">
-                  <v-menu
-                    ref="menu1"
-                    v-model="menu1"
-                    :close-on-content-click="false"
-                    :return-value.sync="itemReceived.received_date"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="itemReceived.received_date"
-                        label="วันที่รับสินค้า"
-                        append-icon="mdi-pencil"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                        dense
-                        outlined
-                        hide-details=""
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="itemReceived.received_date"
-                      no-title
-                      scrollable
-                      locale="th"
-                      @click:date="$refs.menu1.save(itemReceived.received_date)"
+                    <v-btn text color="primary" @click="menu1 = false">
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.menu1.save(receivedDate)"
                     >
-                      <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menu1 = false">
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="$refs.menu1.save(itemReceived.received_date)"
-                      >
-                        OK
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ใบรับสินค้าเลขที่"
-                    v-model="itemReceived.received_number"
-                    dense
-                    outlined
-                    disabled
-                    hide-details=""
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="1">
-              <v-row>
-                <v-col cols="12">
-                  <v-menu
-                    ref="menu2"
-                    v-model="menu2"
-                    :close-on-content-click="false"
-                    :return-value.sync="itemReceived.delivery_date"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+
+              <v-col cols="6">
+                <v-text-field
+                  label="เลขที่ใบรับเข้า"
+                  v-model="receivedNumber"
+                  outlined
+                  dense
+                  hide-details=""
+                  clearable
+                  @click:clear="receivedNumber = null"
+                >
+                </v-text-field>
+              </v-col>
+
+              <v-col cols="6">
+                <v-menu
+                  ref="menu2"
+                  v-model="menu2"
+                  :close-on-content-click="false"
+                  :return-value.sync="deliveryDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="deliveryDate"
+                      label="วันที่ใบรับเข้า"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                      outlined
+                      hide-details=""
+                      clearable
+                      @click:clear="deliveryDate = null"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="deliveryDate"
+                    no-title
+                    scrollable
+                    locale="th"
+                    @click:date="$refs.menu2.save(deliveryDate)"
                   >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="itemReceived.delivery_date"
-                        label="วันที่ส่งสินค้า"
-                        append-icon="mdi-pencil"
-                        ref="delivery_date"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                        dense
-                        outlined
-                        hide-details=""
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="itemReceived.delivery_date"
-                      no-title
-                      scrollable
-                      locale="th"
-                      @click:date="
-                        $refs.menu2.save(itemReceived.delivery_date),
-                          $refs.delivery_number.focus()
-                      "
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu2 = false">
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.menu2.save(deliveryDate)"
                     >
-                      <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menu2 = false">
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="
-                          $refs.menu2.save(itemReceived.delivery_date),
-                            $refs.delivery_number.focus()
-                        "
-                      >
-                        OK
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ใบส่งสินค้าเลขที่"
-                    append-icon="mdi-pencil"
-                    ref="delivery_number"
-                    v-model="itemReceived.delivery_number"
-                    dense
-                    outlined
-                    hide-details=""
-                    @focus="$event.target.select()"
-                    @keydown.enter="$refs.po_number.focus()"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
 
-            <v-col cols="1">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ใบสั่งซื้อเลขที่"
-                    append-icon="mdi-pencil"
-                    ref="po_number"
-                    v-model="itemReceived.po_number"
-                    dense
-                    outlined
-                    hide-details=""
-                    @focus="$event.target.select()"
-                    @keydown.enter="$refs.received_credit_term.focus()"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="เครดิตเทอม (วัน)"
-                    append-icon="mdi-pencil"
-                    ref="received_credit_term"
-                    v-model="itemReceived.received_credit_term"
-                    dense
-                    outlined
-                    hide-details=""
-                    type="number"
-                    min="0"
-                    @focus="$event.target.select()"
-                    @keydown.enter="$refs.btnAddItemReceivedList.$el.focus()"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-btn color="error" :disabled="selectItemDel">
-            <v-icon>mdi-delete</v-icon>
-            ลบรายการที่เลือก
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            ref="btnAddItemReceivedList"
-            color="primary"
-            @click="addItemReceivedList"
-            @keydown.enter="addItemReceivedList"
-          >
-            <v-icon>mdi-plus</v-icon>
-            เพิ่มรายการ (F2)
-          </v-btn>
-        </v-card-actions>
+              <v-col cols="6">
+                <v-text-field
+                  label="เลขที่ใบส่งของ"
+                  v-model="deliveryNumber"
+                  outlined
+                  dense
+                  hide-details=""
+                  clearable
+                  @click:clear="deliveryNumber = null"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="6">
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  label="ชื่อผู้ผลิต"
+                  v-model="searchSupplier"
+                  append-icon="mdi-magnify"
+                  outlined
+                  dense
+                  hide-details=""
+                  clearable
+                  :readonly="itemSupplier != null"
+                  @click:clear="itemSupplier = null"
+                  @focus="$event.target.select()"
+                  @keydown.stop.enter="searchItemSupplier($event)"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="ชื่อสินค้า"
+                  v-model="searchProduct"
+                  append-icon="mdi-magnify"
+                  outlined
+                  dense
+                  hide-details=""
+                  clearable
+                  :readonly="itemProduct != null"
+                  @click:clear="itemProduct = null"
+                  @focus="$event.target.select()"
+                  @keydown.stop.enter="searchItemProduct($event)"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" large @click="searchReceived"> ค้นหา </v-btn>
+        <v-btn color="error" large @click="resetItemSearch"> เคลียร์ค่า </v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+      <v-divider></v-divider>
+      <v-data-table
+        :headers="headersItemsReceived"
+        :items="itemsReceived"
+        fixed-header
+        disable-sort
+        @dblclick:row="getItem"
+      >
+        <template v-slot:item.index="{ item, index }">
+          {{ index + 1 }}
+        </template>
+        <template v-slot:item.price_sum_net="{ item }">
+          <v-currency-field :value="item.price_sum_net" dense readonly />
+        </template>
+      </v-data-table>
+    </v-card>
 
-        <v-divider></v-divider>
-
-        <v-data-table
-          v-model="itemsSelect"
-          :headers="headersItemsReceivedList"
-          :items="itemsReceivedList"
-          item-key="product_name"
-          fixed-header
-          dense
-          show-select
-          @dblclick:row="getItem"
-        >
-          <template v-slot:item.index="{ item, index }">
-            {{ index + 1 }}
-          </template>
-          <template v-slot:item.price_after_reduce="{ item }">
-            <v-currency-field
-              :value="item.price_after_reduce"
-              dense
-              readonly
-              locale="th"
-              prefix="฿"
-            />
-          </template>
-          <template v-slot:item.quantity="{ item }">
-            <v-currency-field :value="item.quantity" dense readonly />
-          </template>
-          <template v-slot:item.price_sum="{ item }">
-            <v-currency-field
-              :value="item.price_sum"
-              dense
-              readonly
-              locale="th"
-              prefix="฿"
-            />
-          </template>
-          <template v-slot:item.deleteItem="{ item, index }">
-            <v-btn color="error">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-row>
-            <v-col cols="2">
-              <v-text-field
-                label="ผู้จัดทำ"
-                v-model="itemReceived.users_permissions_user.user_name"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              ></v-text-field>
-            </v-col>
-            <v-col cols="2"></v-col>
-            <v-col cols="3">
-              <v-row class="text-end">
-                <v-col cols="2" class="text-center">
-                  <v-alert color="error" text dense class="text-center">
-                    ลด(%)
-                  </v-alert>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    v-model="itemReceived.reduce_percen_1"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    v-model="itemReceived.reduce_percen_2"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    v-model="itemReceived.reduce_percen_3"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    v-model="itemReceived.reduce_percen_4"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    v-model="itemReceived.reduce_percen_5"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="1">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ลด(%) (รวม)"
-                    v-model="itemReceived.reduce_percen_sum"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="ลดเงิน"
-                    v-model="itemReceived.reduce_money"
-                    dense
-                    outlined
-                    hide-details=""
-                    readonly
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="1">
-              <v-text-field
-                label="จำนวนที่รับเข้ารวม"
-                v-model="itemReceived.quantity_total"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              ></v-text-field>
-            </v-col>
-            <v-col cols="1">
-              <v-text-field
-                label="ราคารวมไม่มีภาษี"
-                v-model="itemReceived.price_sum_no_vat"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              ></v-text-field>
-            </v-col>
-            <v-col cols="1">
-              <v-text-field
-                label="VAT 7%"
-                v-model="itemReceived.price_vat"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              ></v-text-field>
-            </v-col>
-            <v-col cols="1">
-              <v-text-field
-                label="ราคาสุทธิรวมภาษี"
-                v-model="itemReceived.price_sum_net"
-                dense
-                outlined
-                hide-details=""
-                readonly
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-btn color="success" type="submit">
-            <v-icon>mdi-content-save</v-icon>
-            บันทึก
-          </v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </form>
-
-    <v-dialog v-model="dialogAddReceivedList" persistent width="40%">
-      <add-received-list
-        :itemReceivedList.sync="itemReceivedList"
-        :itemsReceivedList.sync="itemsReceivedList"
-        :dialogAddReceivedList.sync="dialogAddReceivedList"
-        @closeDialogAddReceivedList="closeDialogAddReceivedList"
-        @ressetItemReceivedList="ressetItemReceivedList"
-      ></add-received-list>
+    <!-- searchProduct -->
+    <v-dialog v-model="dialogSearchProduct" persistent width="80%">
+      <search-product
+        :itemsProduct.sync="itemsProduct"
+        :itemProduct.sync="itemProduct"
+        :searchProduct.sync="searchProduct"
+        @closeDialogSearchProduct="closeDialogSearchProduct"
+      ></search-product>
     </v-dialog>
 
-    <v-dialog v-model="dialogEditReceivedList" persistent width="40%">
-      <edit-received-list
-        :itemReceivedList.sync="itemReceivedList"
-        :itemsReceivedList.sync="itemsReceivedList"
-        :dialogEditReceivedList.sync="dialogEditReceivedList"
-        @closeDialogEditReceivedList="closeDialogEditReceivedList"
-        @ressetItemReceivedList="ressetItemReceivedList"
-      ></edit-received-list>
+    <!-- searchSupplier -->
+    <v-dialog v-model="dialogSearchSupplier" persistent width="80%">
+      <search-supplier
+        :itemsSupplier.sync="itemsSupplier"
+        :itemSupplier.sync="itemSupplier"
+        :searchSupplier.sync="searchSupplier"
+        @closeDialogSearchSupplier="closeDialogSearchSupplier"
+      ></search-supplier>
     </v-dialog>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import addReceivedList from "~/components/received/addReceivedList.vue";
-import editReceivedList from "~/components/received/editReceivedList.vue";
-
 moment.locale("th");
+
+import searchProduct from "~/components/product/searchProduct.vue";
+import searchSupplier from "~/components/suppliers/searchSupplier.vue";
+
 export default {
-  components: { addReceivedList, editReceivedList },
+  components: { searchProduct, searchSupplier },
   data() {
     return {
       overlay: false,
-      editItem: false,
+      dialogSearchProduct: false,
+      dialogSearchSupplier: false,
 
-      itemsBranch: [],
+      headersItemsReceived: [
+        {
+          text: "ลำดับ",
+          value: "index",
+          sortable: false,
+        },
+        {
+          text: "วันที่รับเข้า",
+          value: "received_date",
+        },
+        {
+          text: "เลขที่ใบรับเข้า",
+          value: "received_number",
+        },
+        {
+          text: "ผู้ผลิต",
+          value: "supplier_name",
+        },
+        {
+          text: "วันที่ส่งของ",
+          value: "delivery_date",
+        },
+        {
+          text: "เลขที่ใบส่งของ",
+          value: "delivery_number",
+        },
+        {
+          text: "จำนวน",
+          value: "quantity_total",
+        },
+        {
+          text: "ยอดรวมสุทธิ",
+          value: "price_sum_net",
+        },
+        {
+          text: "VAT",
+          value: "type_vat",
+        },
+      ],
+      itemsReceived: [],
+
+      itemsProduct: [],
+      itemProduct: null,
+
       itemsSupplier: [],
+      itemSupplier: null,
 
-      itemReceived: {
-        id: 0,
-        supplier: null,
-        branch: this.$auth.$storage.getUniversal("itemBranch"),
-        supplier_name: null,
-        supplier_address: null,
-        supplier_phone: null,
-        supplier_description: null,
-        type_vat: true,
-        received_number: null,
-        received_date: moment().format("YYYY-MM-DD"),
-        delivery_number: null,
-        delivery_date: null,
-        po_number: null,
-        received_credit_term: 30,
-        users_permissions_user: this.$auth.$state.user,
-        quantity_total: 0,
-        reduce_percen_1: 0,
-        reduce_percen_2: 0,
-        reduce_percen_3: 0,
-        reduce_percen_4: 0,
-        reduce_percen_5: 0,
-        reduce_percen_sum: 0,
-        reduce_money: 0,
-        price_sum_no_vat: 0,
-        price_vat: 0,
-        price_sum_net: 0,
-      },
+      searchProduct: null,
+      searchSupplier: null,
+
+      receivedNumber: null,
+      receivedDate: null,
+      deliveryDate: null,
+      deliveryNumber: null,
 
       menu1: false,
       menu2: false,
-
-      yearMonth: moment().add(543, "year").format("YYMM"),
-      number: null,
-      receivedNumberLast: null,
-
-      // receivedList
-      headersItemsReceivedList: [
-        {
-          text: "ลำดับ",
-          align: "start",
-          sortable: false,
-          value: "index",
-        },
-        { text: "รหัสสินค้าภายใน", value: "product_internal_code" },
-        { text: "รหัสบาร์โค้ด", value: "product_barcode" },
-        { text: "สินค้า/รายละเอียด", value: "product_name" },
-        { text: "หน่วยนับ", value: "unit" },
-        { text: "ราคาต่อหน่วย", value: "price_after_reduce" },
-        { text: "จำนวน", value: "quantity" },
-        { text: "จำนวนเงินรวม", value: "price_sum" },
-        { text: "", align: "center", value: "deleteItem" },
-      ],
-
-      itemsReceivedList: [],
-
-      itemReceivedList: {
-        id: 0,
-        received: null,
-        product_unit: null,
-        product_internal_code: null,
-        product_barcode: null,
-        product_name: null,
-        unit: null,
-        product_cost_vat: 0,
-        product_cost_no_vat: 0,
-        price: 0,
-        reduct_percen_1: 0,
-        reduct_percen_2: 0,
-        reduct_percen_3: 0,
-        reduct_percen_4: 0,
-        reduct_percen_5: 0,
-        reduct_price_1: 0,
-        reduct_price_2: 0,
-        reduct_price_3: 0,
-        reduct_price_4: 0,
-        reduct_price_5: 0,
-        reduct_percen_sum: 0,
-        reduct_price_sum: 0,
-        price_reduce: 0,
-        price_after_reduce: 0,
-        quantity: 0,
-        price_sum: 0,
-      },
-
-      dialogAddReceivedList: false,
-      dialogEditReceivedList: false,
-
-      itemsSelect: [],
-      itemsDelete: [],
-      selectItemDel: true,
     };
   },
 
   methods: {
-    async getItemsBranch() {
-      await this.$axios
-        .get("/branches")
-        .then((res) => {
-          console.log("itemsBranch", res.data);
-          this.itemsBranch = res.data;
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
+    // searchReceived
+    async searchReceived() {
+      let f1 = this.receivedDate;
+      let f2 = this.receivedNumber;
+      let f3 = this.deliveryDate;
+      let f4 = this.deliveryNumber;
+      let f5 = this.itemSupplier;
+      let f6 = this.itemProduct;
+
+      let s1 = "";
+      let s2 = "";
+      let s3 = "";
+      let s4 = "";
+      let s5 = "";
+      let txtCondition = "";
+
+      if (f6) {
+        let items = await this.findItemProduct();
+
+        if (items.length > 0) {
+          let itemsReceived = items.filter((item) => {
+            let itemFilter = {};
+
+            if (f1) {
+              itemFilter["received_date"] = f1;
+            }
+
+            if (f2) {
+              itemFilter["received_number"] = f2;
+            }
+
+            if (f3) {
+              itemFilter["delivery_date"] = f3;
+            }
+            if (f4) {
+              itemFilter["delivery_number"] = f4;
+            }
+
+            if (f5) {
+              itemFilter["supplier"] = f5.id;
+            }
+
+            // console.log("itemFilter", itemFilter);
+
+            for (var key in itemFilter) {
+              if (item[key] === undefined || item[key] != itemFilter[key])
+                return false;
+            }
+            // console.log("item", item);
+            return true;
+          });
+
+          this.itemsReceived = itemsReceived;
+        } else {
+          this.alertNotData();
+        }
+      }
+
+      if (f6 == null) {
+        if (f1) {
+          s1 = "received_date=" + f1 + "&";
+          txtCondition += s1;
+        }
+
+        if (f2) {
+          s2 = "received_number=" + f2 + "&";
+          txtCondition += s2;
+        }
+
+        if (f3) {
+          s3 = "delivery_date=" + f3 + "&";
+          txtCondition += s3;
+        }
+
+        if (f4) {
+          s4 = "delivery_number=" + f4 + "&";
+          txtCondition += s4;
+        }
+
+        if (f5) {
+          s5 = "supplier=" + f5.id;
+          txtCondition += s5;
+        } else {
+          txtCondition = String(txtCondition).substr(
+            0,
+            txtCondition.length - 1
+          );
+        }
+
+        // console.log("txtCondition", txtCondition);
+
+        if (f1 || f2 || f3 || f4 || f5) {
+          let itemsReceived = await this.$axios
+            .get("/receiveds?" + txtCondition + "&_sort=id:DESC")
+            .then((res) => {
+              // console.log("res", res.data);
+              return res.data;
+            })
+            .catch((err) => {
+              console.log("err", err);
+            });
+
+          if (itemsReceived.length > 0) {
+            this.itemsReceived = itemsReceived;
+            // console.log("itemsReceived", itemsReceived);
+          } else {
+            this.alertNotData();
+          }
+        }
+      }
     },
 
-    async getItemsSupplier() {
-      await this.$axios
-        .get("/suppliers")
+    async findItemProduct() {
+      let itemsReceived = await this.$axios
+        .get(
+          "/received-lists?product=" + this.itemProduct.id + "&_sort=id:DESC"
+        )
         .then((res) => {
-          this.itemsSupplier = res.data;
+          // console.log("itemsReceived", res.data);
+          return res.data;
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+
+      // formatItemsReceived
+      let items = [];
+
+      if (itemsReceived.length > 0) {
+        for (const item of itemsReceived) {
+          items.push(item.received);
+        }
+
+        // console.log("items", items);
+      }
+
+      return items;
+    },
+
+    async alertNotData() {
+      this.$swal({
+        title: "ไม่พบข้อมูล",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    // product
+    async searchItemProduct(e) {
+      // console.log("e", e);
+      console.log("searchProduct", this.searchProduct);
+      e.preventDefault();
+
+      let itemProduct = await this.searchProductByBarcode();
+      console.log("itemProduct", itemProduct);
+
+      if (itemProduct) {
+        this.itemProduct = itemProduct.product;
+        this.searchProduct = itemProduct.product.product_name;
+      } else {
+        let itemsProduct = await this.searchProductByName();
+        console.log("itemsProduct", itemsProduct);
+        if (itemsProduct.length > 0) {
+          this.itemsProduct = itemsProduct;
+          this.dialogSearchProduct = true;
+        } else {
+          this.alertNotProduct();
+        }
+      }
+    },
+
+    async searchProductByBarcode() {
+      if (this.searchProduct != null) {
+        let itemProduct = await this.$axios
+          .get("/product-units?product_unit_barcode=" + this.searchProduct)
+          .then((res) => {
+            console.log("searchProductByBarcode", res.data);
+            return res.data[0];
+          });
+        return itemProduct;
+      }
+    },
+
+    async searchProductByName() {
+      if (this.searchProduct != null) {
+        let itemsProduct = await this.$axios
+          .get(
+            "/products?product_name_containss=" +
+              this.searchProduct +
+              "&_sort=product_name:ASC&_limit=-1"
+          )
+          .then((res) => {
+            if (res.data.length > 0) {
+              console.log("searchProductByName", res.data);
+              return res.data;
+            } else {
+              this.alertNotProduct();
+            }
+          });
+
+        return itemsProduct;
+      }
+    },
+
+    async alertNotProduct() {
+      this.$swal({
+        title: "ไม่พบข้อมูลสินค้าในระบบ",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    async getItemsReceived() {
+      await this.$axios
+        .get("/receiveds?" + "_sort=id:DESC")
+        .then((res) => {
+          this.itemsReceived = res.data;
         })
         .catch((err) => {
           console.log("err", err);
         });
     },
 
-    async autoInputItemSupplier() {
-      this.itemReceived.supplier_address =
-        this.itemReceived.supplier.supplier_address;
-      this.itemReceived.supplier_phone =
-        this.itemReceived.supplier.supplier_phone;
-      this.itemReceived.supplier_description =
-        this.itemReceived.supplier.supplier_description;
-    },
+    // supplier
+    async searchItemSupplier(e) {
+      e.preventDefault();
+      if (searchProduct) {
+        let itemsSupplier = await this.$axios
+          .get(
+            "/suppliers?supplier_name_containss=" +
+              this.searchSupplier +
+              "&_sort=supplier_name:ASC&_limit=-1" +
+              "&supplier_actived=true"
+          )
+          .then((res) => {
+            return res.data;
+          });
 
-    async ressetItemReceived() {
-      this.itemReceived = {
-        id: 0,
-        supplier: null,
-        branch: this.$auth.$storage.getUniversal("itemBranch"),
-        supplier_name: null,
-        supplier_address: null,
-        supplier_phone: null,
-        supplier_description: null,
-        type_vat: true,
-        received_number: null,
-        received_date: moment().format("YYYY-MM-DD"),
-        delivery_number: null,
-        delivery_date: null,
-        po_number: null,
-        received_credit_term: 30,
-        users_permissions_user: this.$auth.$state.user,
-        quantity_total: 0,
-        reduce_percen_1: 0,
-        reduce_percen_2: 0,
-        reduce_percen_3: 0,
-        reduce_percen_4: 0,
-        reduce_percen_5: 0,
-        reduce_percen_sum: 0,
-        reduce_money: 0,
-        price_sum_no_vat: 0,
-        price_vat: 0,
-        price_sum_net: 0,
-      };
-    },
-
-    async ressetItemsReceivedList() {
-      this.itemsReceivedList = [];
-    },
-
-    async ressetItemReceivedList() {
-      this.itemReceivedList = {
-        id: 0,
-        received: null,
-        product_unit: null,
-        product_internal_code: null,
-        product_barcode: null,
-        product_name: null,
-        unit: null,
-        product_cost_vat: 0,
-        product_cost_no_vat: 0,
-        price: 0,
-        reduct_percen_1: 0,
-        reduct_percen_2: 0,
-        reduct_percen_3: 0,
-        reduct_percen_4: 0,
-        reduct_percen_5: 0,
-        reduct_price_1: 0,
-        reduct_price_2: 0,
-        reduct_price_3: 0,
-        reduct_price_4: 0,
-        reduct_price_5: 0,
-        reduct_percen_sum: 0,
-        reduct_price_sum: 0,
-        price_reduce: 0,
-        price_after_reduce: 0,
-        quantity: 0,
-        price_sum: 0,
-      };
-    },
-
-    async alertConfirmAddReceived() {
-      await this.$swal
-        .fire({
-          title: "ต้องการสร้างใบรับเข้าใหม่ \n ใช่หรือไม่",
-          text: "รายการสินค้าจะถูกเคลียร์",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "ใช่",
-          cancelButtonText: "ไม่ใช่",
-        })
-        .then(async (result) => {
-          if (result.isConfirmed) {
-            this.ressetItemReceived();
-            this.itemsReceivedList = [];
-            this.editItemReceived = false;
-            await this.$refs.supplier.focus();
-          }
-        });
-    },
-
-    async addItemReceived() {
-      if (this.itemsReceivedList.length > 0) {
-        this.alertConfirmAddReceived();
-      } else {
-        this.$refs.supplier.focus();
-        this.ressetItemReceived();
-        this.editItemReceived = false;
+        // checkItemsSupplier
+        if (itemsSupplier.length > 0) {
+          console.log("itemsSupplier", itemsSupplier);
+          this.itemsSupplier = itemsSupplier;
+          this.dialogSearchSupplier = true;
+        } else {
+          this.alertNotSupplier();
+        }
       }
     },
 
-    async addItemReceivedList() {
-      this.dialogAddReceivedList = true;
-      this.ressetItemReceivedList();
+    async alertNotSupplier() {
+      this.$swal({
+        title: "ไม่พบข้อมูลผู้ผลิตในระบบ",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
-    async closeDialogAddReceivedList() {
-      this.dialogAddReceivedList = false;
-    },
+    async resetItemSearch() {
+      this.searchProduct = null;
+      this.searchSupplier = null;
 
-    async closeDialogEditReceivedList() {
-      this.dialogEditReceivedList = false;
+      this.itemsProduct = [];
+      this.itemProduct = null;
 
-      this.ressetItemReceivedList();
+      this.itemsSupplier = [];
+      this.itemSupplier = null;
+      this.receivedNumber = null;
+      this.receivedDate = null;
+      this.deliveryDate = null;
+      this.deliveryNumber = null;
+
+      await this.getItemsReceived();
     },
 
     async getItem(event, { item }) {
       console.log("item", item);
-      this.itemReceivedList = item;
-      this.editReceivedList();
+      this.$router.push("/received/" + item.id);
     },
 
-    async editReceivedList() {
-      this.dialogEditReceivedList = true;
+    async closeDialogSearchProduct() {
+      this.dialogSearchProduct = false;
     },
 
-    async checkSave() {},
-
-    async calculator() {
-      let vat = this.itemReceived.type_vat;
-      let q = this.itemReceived.quantity_total;
-      let psnv = this.itemReceived.price_sum_no_vat;
-      let pv = this.itemReceived.price_vat;
-      let psn = this.itemReceived.price_sum_net;
-
-      if (vat) {
-        for (const item of this.itemsReceivedList) {
-          console.log("item", item);
-        }
-      } else {
-      }
-    },
-  },
-
-  watch: {
-    itemsSelect(val) {
-      if (val.length > 0) {
-        this.selectItemDel = false;
-      } else {
-        this.selectItemDel = true;
-      }
+    async closeDialogSearchSupplier() {
+      this.dialogSearchSupplier = false;
     },
 
-    itemsReceivedList(val) {
-      if (val.length > 0) {
-        this.calculator();
+    async addItemReceived() {
+      await this.$router.push("/received/add");
+    },
+
+    async reloadPage(e) {
+      // console.log("eAdd", e);
+      if (e.keyCode == 112) {
+        e.preventDefault();
+        this.addItemReceived();
+      } else if (e.keyCode == 74) {
+        e.preventDefault();
       }
     },
   },
 
   created() {
-    this.getItemsBranch();
-    this.getItemsSupplier();
-    // console.log("param", this.$route.params);
+    this.getItemsReceived();
+    window.addEventListener("keydown", this.reloadPage);
   },
 
-  mounted() {
-    this.$refs.supplier.focus();
-
-    window.addEventListener("keydown", (e) => {
-      if (e.keyCode == 112) {
-        e.preventDefault();
-        this.addItemReceived();
-      } else if (e.keyCode == 113) {
-        e.preventDefault();
-        this.addItemReceivedList();
-      }
-    });
+  destroyed() {
+    window.removeEventListener("keydown", this.reloadPage);
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>
