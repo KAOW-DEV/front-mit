@@ -4,9 +4,7 @@
       <v-progress-circular indeterminate size="100"></v-progress-circular>
     </v-overlay>
 
-    <v-alert color="success" text class="text-center" dense>
-      <h1>ใบรับเข้า</h1>
-    </v-alert>
+    <received-title></received-title>
 
     <v-card>
       <v-card-title primary-title>
@@ -486,7 +484,12 @@
           <v-icon>mdi-restore</v-icon>
           คืนค่า (F8)
         </v-btn>
-        <v-btn color="warning" @click="editItem = true" v-if="!editItem">
+        <v-btn
+          color="warning"
+          @click="editItem = true"
+          v-if="!editItem"
+          ref="btnEdit"
+        >
           <v-icon>mdi-pencil</v-icon>
           แก้ไข (F9)
         </v-btn>
@@ -520,10 +523,11 @@
 import moment from "moment";
 import addReceivedList from "~/components/received/addReceivedList.vue";
 import editReceivedList from "~/components/received/editReceivedList.vue";
+import ReceivedTitle from "~/components/received/receivedTitle.vue";
 
 moment.locale("th");
 export default {
-  components: { addReceivedList, editReceivedList },
+  components: { addReceivedList, editReceivedList, ReceivedTitle },
   data() {
     return {
       overlay: false,
@@ -1072,6 +1076,9 @@ export default {
     this.getItemReceived();
     this.getItemsReceivedList();
     window.addEventListener("keydown", this.reloadPage);
+    this.$nextTick(() => {
+      this.$refs.btnEdit.$el.focus();
+    });
   },
 
   destroyed() {

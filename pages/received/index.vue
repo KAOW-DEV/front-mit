@@ -4,9 +4,8 @@
       <v-progress-circular indeterminate size="100"></v-progress-circular>
     </v-overlay>
 
-    <v-alert color="success" text class="text-center" dense>
-      <h1>ใบรับเข้า</h1>
-    </v-alert>
+    <received-title></received-title>
+
     <v-card>
       <v-card-title primary-title>
         <v-spacer></v-spacer>
@@ -198,8 +197,15 @@
         <template v-slot:item.index="{ item, index }">
           {{ index + 1 }}
         </template>
+        <template v-slot:item.quantity_total="{ item }">
+          <v-currency-field :value="item.quantity_total" dense readonly />
+        </template>
         <template v-slot:item.price_sum_net="{ item }">
           <v-currency-field :value="item.price_sum_net" dense readonly />
+        </template>
+        <template v-slot:item.type_vat="{ item }">
+          <v-chip v-if="item.type_vat == true" color="success">VAT</v-chip>
+          <v-chip v-else color="error">NO VAT</v-chip>
         </template>
       </v-data-table>
     </v-card>
@@ -231,10 +237,11 @@ import moment from "moment";
 moment.locale("th");
 
 import searchProduct from "~/components/product/searchProduct.vue";
-import searchSupplier from "~/components/suppliers/searchSupplier.vue";
+import searchSupplier from "~/components/supplier/searchSupplier.vue";
+import ReceivedTitle from "~/components/received/receivedTitle.vue";
 
 export default {
-  components: { searchProduct, searchSupplier },
+  components: { searchProduct, searchSupplier, ReceivedTitle },
   data() {
     return {
       overlay: false,
@@ -278,6 +285,7 @@ export default {
         {
           text: "VAT",
           value: "type_vat",
+          align: "center",
         },
       ],
       itemsReceived: [],

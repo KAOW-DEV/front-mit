@@ -111,7 +111,7 @@ export default {
           subLinks: [
             {
               text: "ผู้ผลิต/ผู้ส่งสินค้า",
-              to: "/suppliers",
+              to: "/supplier",
               icon: "mdi-format-list-bulleted-square",
             },
             {
@@ -130,6 +130,11 @@ export default {
           icon: "mdi-folder",
           text: "ใบขาย",
           subLinks: [
+            {
+              text: "ลูกค้า",
+              to: "/customer/add",
+              icon: "mdi-format-list-bulleted-square",
+            },
             {
               text: "ใบส่งสินค้าชั่วคราว",
               to: "/",
@@ -247,7 +252,7 @@ export default {
 
 <style scoped>
 #app {
-  zoom: 80%;
+  zoom: 100%;
 }
 
 #app {

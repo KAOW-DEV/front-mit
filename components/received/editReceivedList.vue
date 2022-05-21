@@ -21,7 +21,6 @@
               outlined
               hide-details=""
               @focus="$event.target.select()"
-              @keydown.enter="searchProductUnit"
               readonly
             ></v-text-field>
           </v-col>
@@ -583,6 +582,12 @@ export default {
       let q = this.itemReceivedList.quantity;
       let p_sum = this.itemReceivedList.price_sum;
 
+      if (p) {
+        par = Number(parseFloat(p) - parseFloat(pr_sum)).toFixed(2);
+      } else {
+        par = 0;
+      }
+
       if (pc_1) {
         pr_1 = Number(p * (pc_1 / 100)).toFixed(2);
       } else {
@@ -657,25 +662,20 @@ export default {
           parseFloat(pr_5)
       ).toFixed(2);
 
-      pc_sum = Number(
-        (parseFloat(pr_sum) * parseFloat(100)) / parseFloat(p)
-      ).toFixed(2);
-      if (pc_sum == "NaN") {
+      if (pr_sum > 0) {
+        pc_sum = Number(
+          (parseFloat(pr_sum) * parseFloat(100)) / parseFloat(p)
+        ).toFixed(2);
+      } else {
         pc_sum = 0;
       }
 
       if (pr) {
-        if (pr_sum > 0) {
-          par = Number(parseFloat(pr_sum) - parseFloat(pr)).toFixed(2);
-        } else {
-          par = Number(parseFloat(p) - parseFloat(pr)).toFixed(2);
-        }
+        par = Number(
+          parseFloat(p) - (parseFloat(pr_sum) + parseFloat(pr))
+        ).toFixed(2);
       } else {
-        if (pr_sum > 0) {
-          par = pr_sum;
-        } else {
-          par = p;
-        }
+        par = Number(parseFloat(p) - parseFloat(pr_sum)).toFixed(2);
       }
 
       if (q) {

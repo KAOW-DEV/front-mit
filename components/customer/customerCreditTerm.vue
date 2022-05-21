@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card>
-      <v-card-title primary-title> Dashboard </v-card-title>
+      <v-card-title primary-title> customerCreditTerm </v-card-title>
     </v-card>
   </div>
 </template>
@@ -14,4 +14,5 @@ export default {
 };
 </script>
 
-
+<style lang="scss" scoped>
+</style>

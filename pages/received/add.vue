@@ -4,9 +4,8 @@
       <v-progress-circular indeterminate size="100"></v-progress-circular>
     </v-overlay>
 
-    <v-alert color="success" text class="text-center" dense>
-      <h1>ใบรับเข้า</h1>
-    </v-alert>
+    <received-title></received-title>
+
     <v-card>
       <v-card-title primary-title>
         <v-spacer></v-spacer>
@@ -62,6 +61,7 @@
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
+                  autofocus
                   label="ชื่อ/บริษัทฯ"
                   append-icon="mdi-pencil"
                   ref="supplier"
@@ -495,10 +495,11 @@
 import moment from "moment";
 import addReceivedList from "~/components/received/addReceivedList.vue";
 import editReceivedList from "~/components/received/editReceivedList.vue";
+import ReceivedTitle from "~/components/received/receivedTitle.vue";
 
 moment.locale("th");
 export default {
-  components: { addReceivedList, editReceivedList },
+  components: { addReceivedList, editReceivedList, ReceivedTitle },
   data() {
     return {
       overlay: false,
