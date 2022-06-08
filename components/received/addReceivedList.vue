@@ -823,18 +823,6 @@ export default {
       }
     },
 
-    async alertPushSuccess() {
-      await this.$refs.search.focus();
-
-      await this.$swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "เพิ่มรายการ เรียบร้อยแล้ว",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    },
-
     async checkDuplicateProduct() {
       if (this.itemsReceivedList.length > 0) {
         // grab the Array item which matchs the id "2"
@@ -845,6 +833,18 @@ export default {
         );
         return item;
       }
+    },
+
+    async alertPushSuccess() {
+      await this.$refs.search.focus();
+
+      await this.$swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "เพิ่มรายการ เรียบร้อยแล้ว",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
   },
 

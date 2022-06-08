@@ -137,7 +137,7 @@ export default {
             },
             {
               text: "ใบส่งสินค้าชั่วคราว",
-              to: "/",
+              to: "/sell/add",
               icon: "mdi-format-list-bulleted-square",
             },
             {

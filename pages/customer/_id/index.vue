@@ -19,11 +19,50 @@
         ข้อมูลลูกค้า
         <v-spacer></v-spacer>
       </v-card-title>
-
       <v-divider></v-divider>
-
       <v-card-text>
         <v-row>
+          <v-col cols="3">
+            <v-alert
+              color="warning"
+              icon="mdi-xml"
+              :value="true"
+              text
+              prominent
+              dense
+            >
+              <h3>รหัสลูกค้า : {{ itemCustomer.code }}</h3>
+            </v-alert>
+          </v-col>
+          <v-col cols="3"></v-col>
+          <v-col cols="3">
+            <v-alert
+              color="success"
+              dark
+              icon="mdi-plus"
+              border="left"
+              prominent
+              dense
+            >
+              <b>วันที่บันทึกข้อมูล</b>
+              <v-divider></v-divider>
+              {{ itemCustomer.dateCreate }}
+            </v-alert>
+          </v-col>
+          <v-col cols="3">
+            <v-alert
+              color="warning"
+              dark
+              icon="mdi-pencil"
+              border="left"
+              prominent
+              dense
+            >
+              <b>วันที่แก้ไขข้อมูล (ล่าสุด)</b>
+              <v-divider></v-divider>
+              {{ itemCustomer.dateUpdate }}
+            </v-alert>
+          </v-col>
           <v-col cols="3">
             <v-autocomplete
               v-model="itemCustomer.prefix"
@@ -36,7 +75,7 @@
               outlined
               dense
               hide-details=""
-              autofocus
+              :disabled="!editItem"
               @change="$refs.name.focus()"
             ></v-autocomplete>
           </v-col>
@@ -48,6 +87,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.account.focus()"
             ></v-text-field>
@@ -60,6 +100,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.tax.focus()"
             ></v-text-field>
@@ -72,6 +113,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.phone.focus()"
             ></v-text-field>
@@ -84,6 +126,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.fax.focus()"
             ></v-text-field>
@@ -96,6 +139,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.address_1.focus()"
             ></v-text-field>
@@ -108,6 +152,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.address_2.focus()"
             ></v-text-field>
@@ -120,6 +165,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.province.focus()"
             ></v-text-field>
@@ -136,6 +182,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @change="getItemsAmphureById()"
             ></v-autocomplete>
           </v-col>
@@ -151,7 +198,8 @@
               outlined
               dense
               hide-details=""
-              :disabled="!itemCustomer.province"
+              :disabled="!editItem"
+              :readonly="!itemCustomer.province"
               @change="getItemsDistrictById()"
             ></v-autocomplete>
           </v-col>
@@ -167,7 +215,8 @@
               outlined
               dense
               hide-details=""
-              :disabled="!itemCustomer.amphure"
+              :disabled="!editItem"
+              :readonly="!itemCustomer.amphure"
               @change="getZipCodeById()"
             ></v-autocomplete>
           </v-col>
@@ -179,7 +228,8 @@
               outlined
               dense
               hide-details=""
-              disabled
+              :disabled="!editItem"
+              readonly
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -190,6 +240,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.home_page.focus()"
             ></v-text-field>
@@ -202,6 +253,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter.prevent="$refs.price_level.focus()"
             ></v-text-field>
@@ -215,6 +267,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
               @change="$refs.customer_type.focus()"
             ></v-autocomplete>
           </v-col>
@@ -230,6 +283,7 @@
               outlined
               dense
               hide-details=""
+              :disabled="!editItem"
             ></v-autocomplete>
           </v-col>
           <v-col cols="3">
@@ -238,6 +292,7 @@
               v-model="itemCustomer.branch_type"
               row
               hide-details=""
+              :disabled="!editItem"
               ref="branch_type"
             >
               <v-radio
@@ -270,14 +325,15 @@
               dense
               outlined
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter="$refs.order_limit.focus()"
             ></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
-      <v-divider></v-divider>
 
+      <v-divider></v-divider>
       <v-card-title primary-title> วงเงินเครดิต </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -291,6 +347,7 @@
               dense
               outlined
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter="$refs.over_due.focus()"
             ></v-text-field>
@@ -304,6 +361,7 @@
               dense
               outlined
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter="$refs.credit_term.focus()"
             ></v-text-field>
@@ -317,6 +375,7 @@
               dense
               outlined
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
               @keydown.enter="$refs.note.focus()"
             ></v-text-field>
@@ -328,6 +387,7 @@
               outline
               hide-details=""
               v-model="itemCustomer.suspend_sales"
+              :disabled="!editItem"
             ></v-switch>
           </v-col>
           <v-col cols="12">
@@ -338,8 +398,9 @@
               dense
               outlined
               hide-details=""
+              :disabled="!editItem"
               @focus="$event.target.select()"
-              @keydown.enter="$refs.btnSave.$el.focus()"
+              @keydown.enter.prevent="$refs.btnSave.$el.focus()"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -348,13 +409,27 @@
 
     <v-row>
       <v-col cols="12">
-        <v-btn color="warning" width="150" @click="resetItemCustomer"
-          >เคลียร์ฟอร์ม (F5)
-        </v-btn>
-
-        <v-btn color="success" width="150" ref="btnSave" @click="checkSave"
+        <v-btn
+          color="success"
+          width="150"
+          ref="btnSave"
+          @click="checkSave"
+          v-if="editItem"
           >บันทึก (F10)
         </v-btn>
+        <v-btn
+          color="warning"
+          width="150"
+          ref="btnEdit"
+          @click="edit"
+          v-if="!editItem"
+          >แก้ไข (F9)
+        </v-btn>
+        <v-btn color="error" width="150" ref="btnRestore" @click="cancel" v-else
+          >ยกเลิก (F8)
+        </v-btn>
+
+        <v-btn v-if="!editItem" color="primary" width="150">พิมพ์ (F12) </v-btn>
       </v-col>
     </v-row>
   </div>
@@ -397,9 +472,9 @@ export default {
         over_due: 0,
         credit_term: 30,
         note: null,
+        suspend_sales: false,
         dateCreate: null,
         dateUpdate: null,
-        suspend_sales: false,
       },
 
       itemsPrefix: [],
@@ -425,6 +500,8 @@ export default {
       ],
 
       itemsCustomerType: [],
+
+      editItem: false,
     };
   },
 
@@ -455,9 +532,9 @@ export default {
         over_due: 0,
         credit_term: 30,
         note: null,
+        suspend_sales: false,
         dateCreate: null,
         dateUpdate: null,
-        suspend_sales: false,
       };
 
       this.$refs.prefix.focus();
@@ -465,6 +542,24 @@ export default {
 
     async goToTable() {
       this.$router.push("/customer");
+    },
+
+    async edit() {
+      this.editItem = true;
+      this.$nextTick(() => {
+        this.$refs.prefix.focus();
+      });
+    },
+
+    async cancel() {
+      await this.getItemCustomer();
+      await this.getItemsAmphure();
+      await this.getItemsDistrict();
+      this.editItem = false;
+
+      this.$nextTick(() => {
+        this.$refs.btnEdit.$el.focus();
+      });
     },
 
     // checkSave
@@ -507,21 +602,16 @@ export default {
           })
           .then((result) => {
             if (result.isConfirmed) {
-              this.insertCustomer();
+              this.updateCustomer();
             }
           });
       }
     },
 
-    // insert
-    async insertCustomer() {
-      let customerCode = await this.genCustomerCode();
-      console.log("customerCode", customerCode);
-      this.itemCustomer.code = customerCode;
-
+    // update
+    async updateCustomer() {
       await this.$axios
-        .post("/customers", {
-          code: this.itemCustomer.code,
+        .put("/customers/" + this.itemCustomer.id, {
           account: this.itemCustomer.account,
           prefix: this.itemCustomer.prefix,
           name: this.itemCustomer.name,
@@ -548,52 +638,17 @@ export default {
         })
         .then((res) => {
           console.log("res", res.data);
-          this.$router.push("/customer/" + res.data.id);
+          this.getData();
           this.alertSuccess();
+          this.editItem = false;
+          this.$nextTick(() => {
+            this.$refs.btnEdit.$el.focus();
+          });
         })
         .catch((err) => {
           console.log("err", err);
           this.alertError();
         });
-    },
-
-    // genCustomerCode
-    async genCustomerCode() {
-      let yearMonth = moment().add(543, "year").format("YYMM");
-      let number = null;
-
-      let customerCode = await this.$axios
-        .get("/customers?_sort=id:DESC&_limit=1")
-        .then((res) => {
-          if (res.data.length > 0) {
-            let codeLast = res.data[0].code;
-            // console.log("codeLast", codeLast);
-
-            let ym = codeLast.substring(2, 6);
-            // console.log("ym", ym);
-            let no = codeLast.substring(6);
-            // console.log("no", no);
-
-            if (ym == yearMonth) {
-              let str = String(parseInt(no) + 1);
-              number = str.padStart(4, "0");
-            } else {
-              let str = "1";
-              number = str.padStart(4, "0");
-            }
-
-            let genCode = "CM" + yearMonth + number;
-            // console.log("received_number", received_number);
-            return genCode;
-          } else {
-            let str = "1";
-            number = str.padStart(4, "0");
-            let genCode = "CM" + yearMonth + number;
-            return genCode;
-          }
-        });
-
-      return customerCode;
     },
 
     // alert
@@ -686,6 +741,42 @@ export default {
         });
     },
 
+    async getItemsAmphure() {
+      if (this.itemCustomer.amphure) {
+        this.itemsAmphure = await this.$axios
+          .get("/amphures?province=" + this.itemCustomer.province.id)
+          .then((res) => {
+            return res.data;
+          })
+          .catch((err) => {
+            console.log("err", err);
+          });
+      } else {
+        this.itemsAmphure = [];
+        this.itemCustomer.amphure = null;
+        this.itemsDistrict = [];
+        this.itemCustomer.district = null;
+        this.itemCustomer.zip_code = null;
+      }
+    },
+
+    async getItemsDistrict() {
+      if (this.itemCustomer.district) {
+        this.itemsDistrict = await this.$axios
+          .get("/districts?amphure=" + this.itemCustomer.amphure.id)
+          .then((res) => {
+            return res.data;
+          })
+          .catch((err) => {
+            console.log("err", err);
+          });
+      } else {
+        this.itemsDistrict = [];
+        this.itemCustomer.district = null;
+        this.itemCustomer.zip_code = null;
+      }
+    },
+
     async getItemsCustomerType() {
       await this.$axios
         .get("/customer-types?_limit=-1")
@@ -716,6 +807,10 @@ export default {
           .catch((err) => {
             console.log("err", err);
           });
+
+        this.$nextTick(() => {
+          this.$refs.amphure.focus();
+        });
       }
     },
 
@@ -735,6 +830,10 @@ export default {
           .catch((err) => {
             console.log("err", err);
           });
+
+        this.$nextTick(() => {
+          this.$refs.district.focus();
+        });
       }
     },
 
@@ -752,9 +851,35 @@ export default {
     },
 
     async getData() {
+      await this.getItemCustomer();
       await this.getItemsPrefix();
       await this.getItemsProvince();
+      await this.getItemsAmphure();
+      await this.getItemsDistrict();
       await this.getItemsCustomerType();
+    },
+
+    async getItemCustomer() {
+      await this.$axios
+        .get("/customers/" + this.$route.params.id)
+        .then((res) => {
+          console.log("getItemCustomer", res.data);
+          this.itemCustomer = res.data;
+          this.convertDate();
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    },
+
+    async convertDate() {
+      this.itemCustomer.dateCreate = moment(this.itemCustomer.created_at)
+        .add(543, "year")
+        .format("DD/MM/YYYY HH:mm:ss");
+
+      this.itemCustomer.dateUpdate = moment(this.itemCustomer.updated_at)
+        .add(543, "year")
+        .format("DD/MM/YYYY HH:mm:ss");
     },
 
     async getEvent(e) {
@@ -772,6 +897,12 @@ export default {
       } else if (e.keyCode == 116) {
         e.preventDefault();
         this.resetItemCustomer();
+      } else if (e.keyCode == 119) {
+        e.preventDefault();
+        this.cancel();
+      } else if (e.keyCode == 120) {
+        e.preventDefault();
+        this.edit();
       } else if (e.keyCode == 121) {
         e.preventDefault();
         this.checkSave();
@@ -781,6 +912,7 @@ export default {
 
   created() {
     this.getData();
+
     window.addEventListener("keydown", this.getEvent);
   },
 
