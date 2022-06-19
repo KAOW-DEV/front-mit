@@ -440,11 +440,15 @@ export default {
       this.item.discount_percen = Number(
         this.itemProduct.percen_discount
       ).toFixed(2);
-      this.item.base_on = Number(this.itemProduct.price_middle).toFixed(2);
-      this.item.adjus_table = Number(
-        (parseFloat(this.itemProduct.percen_discount) / 100) *
-          parseFloat(this.itemProduct.price_middle)
+      this.item.base_on = Number(
+        parseFloat(this.itemProduct.price_middle) -
+          parseFloat(
+            (parseFloat(this.itemProduct.price_middle) *
+              parseFloat(this.itemProduct.percen_discount)) /
+              100
+          )
       ).toFixed(2);
+      this.item.adjus_table = await this.getJusaTable();
       this.item.limit_accept = Number(
         parseFloat(this.itemProduct.price_middle) -
           (parseFloat(this.itemProduct.percen_low_limit) / 100) *
@@ -461,6 +465,92 @@ export default {
     },
 
     async getPrice() {
+      
+      
+      let price = 0;
+
+      if (this.itemCustomer.price_level == "01") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_1) / 100
+            );
+      } else if (this.itemCustomer.price_level == "02") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_2) / 100
+            );
+      } else if (this.itemCustomer.price_level == "03") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_3) / 100
+            );
+      } else if (this.itemCustomer.price_level == "04") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_4) / 100
+            );
+      } else if (this.itemCustomer.price_level == "05") {
+        price = 200 * 14
+        
+         
+      } else if (this.itemCustomer.price_level == "06") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_6) / 100
+            );
+      } else if (this.itemCustomer.price_level == "07") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_7) / 100
+            );
+      } else if (this.itemCustomer.price_level == "08") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_8) / 100
+            );
+      } else if (this.itemCustomer.price_level == "09") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_9) / 100
+            );
+      } else if (this.itemCustomer.price_level == "10") {
+        price =
+          parseFloat(this.itemProduct.price_middle) -
+          parseFloat(this.itemProduct.price_middle) *
+            parseFloat(
+              parseFloat(this.itemProduct.percen_discount) +
+                parseFloat(this.itemProduct.price_10) / 100
+            );
+      }
+
+      return Number(price).toFixed(2);
+    },
+
+    async getJusaTable() {
       let price = 0;
 
       if (this.itemCustomer.price_level == "01") {
@@ -707,5 +797,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

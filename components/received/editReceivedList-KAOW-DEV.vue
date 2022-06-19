@@ -4,25 +4,24 @@
       <v-card-title primary-title>
         แก้ไข รายละเอียดการรับเข้าสินค้า
         <v-spacer></v-spacer>
-        <v-btn icon color="error" @click="$emit('closeDialogEditReceivedList')">
+        <!-- <v-btn icon color="error" @click="$emit('closeDialogEditReceivedList')">
           <v-icon>mdi-close</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-row>
           <v-col cols="6">
             <v-text-field
-              autofocus
               label="รหัสบาร์โค้ด"
-              append-icon="mdi-magnify"
+              append-icon="mdi-eye"
               ref="search"
               v-model="search"
               dense
               outlined
               hide-details=""
               @focus="$event.target.select()"
-              @keydown.enter="searchProductUnit"
+              readonly
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -93,6 +92,7 @@
               hide-details=""
               @focus="$event.target.select()"
               @keydown.enter="$refs.reduct_percen_1.focus(), setValue0()"
+              @keyup="calculatorReduct"
             >
             </v-text-field>
           </v-col>
@@ -328,7 +328,7 @@
                   min="1"
                   hide-details=""
                   @focus="$event.target.select()"
-                  @keydown.enter="$refs.btnSave.$el.focus(), setValue0()"
+                  @keydown.enter="checkQuantityInput($event), setValue0()"
                   @keyup="calculatorReduct"
                 >
                 </v-text-field>
@@ -356,15 +356,15 @@
           width="100"
           ref="btnSave"
           @click="pushItem"
-          @keydown.enter="pushItem($event)"
+          @keydown.stop.enter="pushItem"
           >บันทึก</v-btn
         >
-        <v-btn
+        <!-- <v-btn
           color="error"
           width="100"
           @click="$emit('ressetItemReceivedList'), $refs.search.focus()"
           >เคลียร์ฟอร์ม</v-btn
-        >
+        > -->
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
@@ -382,7 +382,7 @@
 
 <script>
 import { duration } from "moment";
-import searchProductUnit from "../product_2/searchProductUnit.vue";
+import searchProductUnit from "../product/searchProductUnit.vue";
 export default {
   components: { searchProductUnit },
   props: ["itemReceivedList", "itemsReceivedList"],
@@ -504,7 +504,7 @@ export default {
     },
 
     async getItemProduct() {
-      this.resetTextInput();
+      // this.resetTextInput();
 
       this.itemReceivedList.product_unit = this.itemProductUnit;
       this.search = this.itemProductUnit.product_unit_barcode;
@@ -531,8 +531,9 @@ export default {
         this.itemReceivedList.product_cost_vat
       ).toFixed(2);
 
-      this.$refs.price.focus();
-      console.log("itemReceivedList", this.itemReceivedList);
+      this.$nextTick(() => {
+        this.$refs.price.focus();
+      });
     },
 
     async getOriginalCost() {
@@ -559,111 +560,151 @@ export default {
     async calculatorReduct($event) {
       // console.log("e", $event.target);
 
-      if (this.itemReceivedList.reduct_percen_1) {
-        this.itemReceivedList.reduct_price_1 = Number(
-          (this.itemReceivedList.price *
-            this.itemReceivedList.reduct_percen_1) /
-            100
-        ).toFixed(2);
+      let p = this.itemReceivedList.price;
+
+      let pc_1 = this.itemReceivedList.reduct_percen_1;
+      let pc_2 = this.itemReceivedList.reduct_percen_2;
+      let pc_3 = this.itemReceivedList.reduct_percen_3;
+      let pc_4 = this.itemReceivedList.reduct_percen_4;
+      let pc_5 = this.itemReceivedList.reduct_percen_5;
+      let pc_sum = 0;
+
+      let pr_1 = this.itemReceivedList.reduct_price_1;
+      let pr_2 = this.itemReceivedList.reduct_price_2;
+      let pr_3 = this.itemReceivedList.reduct_price_3;
+      let pr_4 = this.itemReceivedList.reduct_price_4;
+      let pr_5 = this.itemReceivedList.reduct_price_5;
+      let pr_sum = 0;
+
+      let pr = this.itemReceivedList.price_reduce;
+      let par = this.itemReceivedList.price_after_reduce;
+
+      let q = this.itemReceivedList.quantity;
+      let p_sum = this.itemReceivedList.price_sum;
+
+      if (p) {
+        par = Number(parseFloat(p) - parseFloat(pr_sum)).toFixed(2);
       } else {
-        this.itemReceivedList.reduct_price_1 = 0;
-        this.itemReceivedList.reduct_percen_2 = 0;
-        this.itemReceivedList.reduct_percen_3 = 0;
-        this.itemReceivedList.reduct_percen_4 = 0;
-        this.itemReceivedList.reduct_percen_5 = 0;
+        par = 0;
       }
 
-      if (this.itemReceivedList.reduct_percen_2) {
-        this.itemReceivedList.reduct_price_2 = Number(
-          (this.itemReceivedList.reduct_price_1 *
-            this.itemReceivedList.reduct_percen_2) /
-            100
-        ).toFixed(2);
+      if (pc_1) {
+        pr_1 = Number(p * (pc_1 / 100)).toFixed(2);
       } else {
-        this.itemReceivedList.reduct_price_2 = 0;
-
-        this.itemReceivedList.reduct_percen_3 = 0;
-        this.itemReceivedList.reduct_percen_4 = 0;
-        this.itemReceivedList.reduct_percen_5 = 0;
+        pr_1 = 0;
+        pr_2 = 0;
+        pr_3 = 0;
+        pr_4 = 0;
+        pr_5 = 0;
+        pc_2 = 0;
+        pc_3 = 0;
+        pc_4 = 0;
+        pc_5 = 0;
       }
 
-      if (this.itemReceivedList.reduct_percen_3) {
-        this.itemReceivedList.reduct_price_3 = Number(
-          (this.itemReceivedList.reduct_price_2 *
-            this.itemReceivedList.reduct_percen_3) /
-            100
+      if (pc_2) {
+        pr_2 = Number(
+          (parseFloat(p) - parseFloat(pr_1)) * parseFloat(pc_2 / 100)
         ).toFixed(2);
       } else {
-        this.itemReceivedList.reduct_price_3 = 0;
-        this.itemReceivedList.reduct_percen_4 = 0;
-        this.itemReceivedList.reduct_percen_5 = 0;
+        pr_2 = 0;
+        pr_3 = 0;
+        pr_4 = 0;
+        pr_5 = 0;
+        pc_3 = 0;
+        pc_4 = 0;
+        pc_5 = 0;
       }
 
-      if (this.itemReceivedList.reduct_percen_4) {
-        this.itemReceivedList.reduct_price_4 = Number(
-          (this.itemReceivedList.reduct_price_3 *
-            this.itemReceivedList.reduct_percen_4) /
-            100
+      if (pc_3) {
+        pr_3 = Number(
+          (parseFloat(p) - (parseFloat(pr_1) + parseFloat(pr_2))) *
+            parseFloat(pc_3 / 100)
         ).toFixed(2);
       } else {
-        this.itemReceivedList.reduct_price_4 = 0;
-        this.itemReceivedList.reduct_percen_5 = 0;
+        pr_3 = 0;
+        pr_4 = 0;
+        pr_5 = 0;
+        pc_4 = 0;
+        pc_5 = 0;
       }
 
-      if (this.itemReceivedList.reduct_percen_5) {
-        this.itemReceivedList.reduct_price_5 = Number(
-          (this.itemReceivedList.reduct_price_4 *
-            this.itemReceivedList.reduct_percen_5) /
-            100
+      if (pc_4) {
+        pr_4 = Number(
+          (parseFloat(p) -
+            (parseFloat(pr_1) + parseFloat(pr_2) + parseFloat(pr_3))) *
+            parseFloat(pc_4 / 100)
         ).toFixed(2);
       } else {
-        this.itemReceivedList.reduct_price_5 = 0;
+        pr_4 = 0;
+        pr_5 = 0;
+        pc_5 = 0;
       }
 
-      this.itemReceivedList.reduct_percen_sum = Number(
-        parseFloat(this.itemReceivedList.reduct_percen_1) +
-          parseFloat(this.itemReceivedList.reduct_percen_2) +
-          parseFloat(this.itemReceivedList.reduct_percen_3) +
-          parseFloat(this.itemReceivedList.reduct_percen_4) +
-          parseFloat(this.itemReceivedList.reduct_percen_5)
+      if (pc_5) {
+        pr_5 = Number(
+          (parseFloat(p) -
+            (parseFloat(pr_1) +
+              parseFloat(pr_2) +
+              parseFloat(pr_3) +
+              parseFloat(pr_4))) *
+            parseFloat(pc_5 / 100)
+        ).toFixed(2);
+      } else {
+        pr_5 = 0;
+      }
+
+      pr_sum = Number(
+        parseFloat(pr_1) +
+          parseFloat(pr_2) +
+          parseFloat(pr_3) +
+          parseFloat(pr_4) +
+          parseFloat(pr_5)
       ).toFixed(2);
 
-      this.itemReceivedList.reduct_price_sum = Number(
-        parseFloat(this.itemReceivedList.reduct_price_1) +
-          parseFloat(this.itemReceivedList.reduct_price_2) +
-          parseFloat(this.itemReceivedList.reduct_price_3) +
-          parseFloat(this.itemReceivedList.reduct_price_4) +
-          parseFloat(this.itemReceivedList.reduct_price_5)
-      ).toFixed(2);
-
-      // console.log("price_reduce", this.itemReceivedList.price_reduce);
-
-      if (this.itemReceivedList.price_reduce != "") {
-        this.itemReceivedList.price_after_reduce = Number(
-          parseFloat(this.itemReceivedList.price) -
-            (parseFloat(this.itemReceivedList.reduct_price_sum) +
-              parseFloat(this.itemReceivedList.price_reduce))
+      if (pr_sum > 0) {
+        pc_sum = Number(
+          (parseFloat(pr_sum) * parseFloat(100)) / parseFloat(p)
         ).toFixed(2);
       } else {
-        this.itemReceivedList.price_after_reduce = Number(
-          parseFloat(this.itemReceivedList.price) -
-            parseFloat(this.itemReceivedList.reduct_price_sum)
-        ).toFixed(2);
+        pc_sum = 0;
       }
 
-      this.itemReceivedList.price_sum = Number(
-        parseFloat(this.itemReceivedList.price_after_reduce) *
-          parseFloat(this.itemReceivedList.quantity)
-      ).toFixed(2);
+      if (pr) {
+        par = Number(
+          parseFloat(p) - (parseFloat(pr_sum) + parseFloat(pr))
+        ).toFixed(2);
+      } else {
+        par = Number(parseFloat(p) - parseFloat(pr_sum)).toFixed(2);
+      }
 
-      // console.log("reduct_price_1", this.itemReceivedList.reduct_price_1);
-      // console.log("reduct_price_2", this.itemReceivedList.reduct_price_2);
-      // console.log("reduct_price_3", this.itemReceivedList.reduct_price_3);
-      // console.log("reduct_price_4", this.itemReceivedList.reduct_price_4);
-      // console.log("reduct_price_5", this.itemReceivedList.reduct_price_5);
+      if (q) {
+        p_sum = Number(parseFloat(par) * parseFloat(q)).toFixed(2);
+      } else {
+        p_sum = 0;
+      }
 
-      // console.log("reduct_price_sum", this.itemReceivedList.reduct_price_sum);
-      // console.log("reduct_percen_sum", this.itemReceivedList.reduct_percen_sum);
+      this.itemReceivedList.price = p;
+
+      this.itemReceivedList.reduct_percen_1 = pc_1;
+      this.itemReceivedList.reduct_percen_2 = pc_2;
+      this.itemReceivedList.reduct_percen_3 = pc_3;
+      this.itemReceivedList.reduct_percen_4 = pc_4;
+      this.itemReceivedList.reduct_percen_5 = pc_5;
+      this.itemReceivedList.reduct_percen_sum = pc_sum;
+
+      this.itemReceivedList.reduct_price_1 = pr_1;
+      this.itemReceivedList.reduct_price_2 = pr_2;
+      this.itemReceivedList.reduct_price_3 = pr_3;
+      this.itemReceivedList.reduct_price_4 = pr_4;
+      this.itemReceivedList.reduct_price_5 = pr_5;
+      this.itemReceivedList.reduct_price_sum = pr_sum;
+
+      this.itemReceivedList.price_reduce = pr;
+      this.itemReceivedList.price_after_reduce = par;
+
+      this.itemReceivedList.quantity = q;
+      this.itemReceivedList.price_sum = p_sum;
     },
 
     async alertNoData() {
@@ -699,6 +740,24 @@ export default {
       });
     },
 
+    async checkQuantityInput(e) {
+      e.preventDefault();
+      let checkQuantity = false;
+
+      if (this.itemReceivedList.quantity == 0) {
+        await this.alertInputQuantity();
+        this.$nextTick(() => {
+          this.$refs.quantity.focus();
+        });
+        checkQuantity = false;
+      } else {
+        this.$refs.btnSave.$el.focus();
+        checkQuantity = true;
+      }
+
+      return checkQuantity;
+    },
+
     async alertInputQuantity() {
       this.$swal.fire({
         icon: "warning",
@@ -710,23 +769,31 @@ export default {
     },
 
     async pushItem(e) {
-      console.log("itemReceivedList", this.itemReceivedList);
+      // console.log("e", e);
 
       await this.setValue0();
       await this.calculatorReduct();
 
-      if (this.itemReceivedList.product_unit == null) {
-        this.alertChooseProduct();
-        this.$refs.search.focus();
-      } else if (this.itemReceivedList.quantity == 0) {
-        this.alertInputQuantity();
-        this.$refs.quantity.focus();
-      } else {
-        // let index = this.itemsReceivedList.indexOf(this.itemReceivedList);
-        // this.itemsReceivedList.splice(index, this.itemReceivedList);
+      let checkQuantity = await this.checkQuantityInput(e);
+      // console.log("checkQuantity", checkQuantity);
+
+      if (checkQuantity) {
+        this.alertEditSuccess();
         this.$emit("ressetItemReceivedList");
         this.$emit("closeDialogEditReceivedList");
+      } else {
+        this.$refs.quantity.focus();
       }
+    },
+
+    async alertEditSuccess() {
+      this.$swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "แก้ไขรายการ เรียบร้อยแล้ว",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
 
     async getData() {
@@ -738,7 +805,9 @@ export default {
     itemReceivedList(val) {
       if (val) {
         this.getData();
-        this.$refs.price.focus();
+        this.$nextTick(() => {
+          this.$refs.price.focus();
+        });
       }
     },
 
@@ -754,7 +823,9 @@ export default {
   },
 
   mounted() {
-    this.$refs.price.focus();
+    this.$nextTick(() => {
+      this.$refs.price.focus();
+    });
     window.addEventListener("keydown", (e) => {
       if (e.keyCode == 74) {
         e.preventDefault();
