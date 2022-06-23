@@ -108,6 +108,8 @@ export default {
     credentials: false,
     cors: true,
   },
+
+  
   router: {
     middleware: ["auth"],
   },

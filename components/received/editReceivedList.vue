@@ -382,7 +382,7 @@
 
 <script>
 import { duration } from "moment";
-import searchProductUnit from "../product_2/searchProductUnit.vue";
+import searchProductUnit from "../product/searchProductUnit.vue";
 export default {
   components: { searchProductUnit },
   props: ["itemReceivedList", "itemsReceivedList"],
